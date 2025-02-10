@@ -38,7 +38,7 @@ Welcome to the **Pizzeria** project! This application allows customers to browse
 - **Backend**: Node.js with Express.js
 - **Database**: MongoDB
 - **Authentication**: JSON Web Tokens (JWT)
-- **Payment Processing**: Integration with a payment gateway (e.g., Stripe)
+- **Payment Processing**: Integration with a payment gateway (e.g., Paypal)
 
 ## Installation
 
