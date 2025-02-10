@@ -1,19 +1,35 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { DBconnect } from "./config/DBconnect.js";
-
 dotenv.config();
+import connectDB from "./config/DBconnect.js";
+// Import routes
+import menuRoutes from "./routes/menuRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+// import paymentRoutes from "./routes/paymentRoutes.js";
+import errorMiddleware from "./middleware/errorMiddleware.js";
 
-DBconnect();
+connectDB();
+// middleware
 const app = express();
 app.use(express());
 app.use(cors());
 app.use(express.json());
+app.use(errorMiddleware);
 
+// Use routes
+app.use("/api/menu", menuRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/users", userRoutes);
+// app.use("/api/payments", paymentRoutes);
 app.use("/", (req, res) => {
   res.status(200).json({
     message: "api is working",
+    menuRoutes: "/api/menu",
+    orderRoutes: "/api/orders",
+    userRoutes: "/api/users",
+    paymentRoutes: "/api/payments",
   });
 });
 
