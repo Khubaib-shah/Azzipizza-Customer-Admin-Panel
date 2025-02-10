@@ -1,15 +1,37 @@
 const errorMiddleware = (err, req, res, next) => {
-  console.error(err.stack);
+  try {
+    let error = { ...err };
+    error.message = err.message;
 
-  // If headers are already sent, delegate to the default Express error handler
-  if (res.headersSent) {
-    return next(err);
+    console.error(err);
+
+    // Mongose bad object id
+    if (err.name === "CastError") {
+      const message = "Resourse not found";
+      error = new Error(message);
+      error.statusCode = 404;
+    }
+    // Mongose dublicate key
+    if (err.code === 11000) {
+      const message = "Duplicate field value entered";
+      error = new Error(message);
+      error.statusCode = 400;
+    }
+
+    // mongoose validation error
+    if (err.name === "ValidationError") {
+      const message = Object.values(err.error).map((val) => val.message);
+      error = new Error(message.join(", "));
+      error.statusCode = 400;
+    }
+
+    res.status(error.statusCode || 500).json({
+      succces: false,
+      error: error.message || "Server Error",
+    });
+  } catch (error) {
+    next(error);
   }
-
-  // Set the response status code and send the error message
-  res.status(err.status || 500).json({
-    message: err.message || "Internal Server Error",
-  });
 };
 
 export default errorMiddleware;

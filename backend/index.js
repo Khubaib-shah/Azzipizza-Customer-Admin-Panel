@@ -19,19 +19,19 @@ app.use(express.json());
 app.use(errorMiddleware);
 
 // Use routes
+// app.use("/", (req, res) => {
+//   res.status(200).json({
+//     message: "api is working",
+//     menuRoutes: "/api/menu",
+//     orderRoutes: "/api/orders",
+//     userRoutes: "/api/users",
+//     paymentRoutes: "/api/payments",
+//   });
+// });
 app.use("/api/menu", menuRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/users", userRoutes);
 // app.use("/api/payments", paymentRoutes);
-app.use("/", (req, res) => {
-  res.status(200).json({
-    message: "api is working",
-    menuRoutes: "/api/menu",
-    orderRoutes: "/api/orders",
-    userRoutes: "/api/users",
-    paymentRoutes: "/api/payments",
-  });
-});
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
