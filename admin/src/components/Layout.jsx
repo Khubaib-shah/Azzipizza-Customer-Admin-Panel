@@ -5,12 +5,11 @@ import Footer from "./common/Footer";
 
 const Layout = () => {
   return (
-    <div>
+    <div className="">
       <Header />
-      <main>
+      <main className="w-full mx-auto bg-amber-400 p-8">
         <Outlet />
       </main>
-      <Footer />
     </div>
   );
 };
