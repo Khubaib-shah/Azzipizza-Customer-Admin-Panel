@@ -29,7 +29,7 @@ const Sidebar = () => {
           </li>
           <li>
             <Link
-              to="/orders"
+              to="/"
               className="flex items-center p-3 rounded-lg hover:bg-gray-700 transition-colors duration-200 group"
             >
               <span className="ml-3 group-hover:text-blue-400 transition-colors">

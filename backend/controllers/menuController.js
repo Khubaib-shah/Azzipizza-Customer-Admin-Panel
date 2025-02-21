@@ -1,4 +1,5 @@
 import Menu from "../models/MenuModel.js";
+import cloudinary from "../utils/cloudinary.js";
 
 // Get all menu items
 export const getAllMenuItems = async (req, res) => {
@@ -25,8 +26,30 @@ export const getMenuItemById = async (req, res) => {
 
 // Create a new menu item
 export const createMenuItem = async (req, res) => {
+  const { name, description, price, image, category, ingredients } = req.body;
+
   try {
-    const newMenuItem = new Menu(req.body);
+    if (
+      !name ||
+      !description ||
+      !price ||
+      !image ||
+      !category ||
+      !ingredients
+    ) {
+      req.status(400).json({ message: "All field are mendotary" });
+    }
+    const menuPicture = await cloudinary.uploader.upload(image);
+
+    const menuObject = {
+      name,
+      description,
+      price,
+      image: menuPicture.secure_url,
+      category,
+      ingredients,
+    };
+    const newMenuItem = new Menu(menuObject);
     const savedMenuItem = await newMenuItem.save();
     res.status(201).json(savedMenuItem);
   } catch (error) {

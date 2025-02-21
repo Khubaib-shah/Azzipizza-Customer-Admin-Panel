@@ -5,7 +5,7 @@ const menuSchema = new mongoose.Schema(
     name: { type: String, required: [true, "Name is required"] },
     description: { type: String },
     price: { type: Number, required: [true, "Price is required"] },
-    image: { type: String }, // URL to the image
+    image: { type: String },
     category: {
       type: String,
       enum: ["Pizza", "Pasta", "Drinks", "Desserts"],
