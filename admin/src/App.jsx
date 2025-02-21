@@ -1,19 +1,30 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Layout from "./components/Layout";
-import Order from "./pages/Order";
-import Dashboard from "./pages/Dashboard";
+// src/App.js
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import AddItems from "./pages/AddItems";
+import ListItems from "./pages/ListItems";
+import Orders from "./pages/Orders";
+import Sidebar from "./components/Sidebar";
+import Header from "./components/common/Header";
 
-function App() {
+const App = () => {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="order" element={<Order />} />
-        </Route>
-      </Routes>
+      <div className="min-h-screen bg-gray-100">
+        <Header />
+        <div className="flex">
+          <Sidebar />
+          <main className="flex-1 pt-16  ml-64 transition-all duration-300">
+            <Routes>
+              <Route path="/add-items" element={<AddItems />} />
+              <Route path="/list-items" element={<ListItems />} />
+              <Route path="/orders" element={<Orders />} />
+            </Routes>
+          </main>
+        </div>
+      </div>
     </Router>
   );
-}
+};
 
 export default App;

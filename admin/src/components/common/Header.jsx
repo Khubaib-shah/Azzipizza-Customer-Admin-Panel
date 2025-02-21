@@ -1,12 +1,15 @@
+// src/components/Header.js
 import React from "react";
-
 const Header = () => {
   return (
-    <div className="w-full px-16 py-6 flex items-start border-b border-slate-300">
-      <h1 className="font-bold text-3xl text-amber-500 font-sans drop-shadow-2xl">
-        P<span className="text-black ">izzeria</span>
-      </h1>
-    </div>
+    <header className="flex items-center h-16 px-6 bg-[#e0e0e0] shadow-md fixed w-full z-10">
+      <img
+        src="/Logo.jpg"
+        alt="Logo"
+        className="w-22 mr-3 roundedf transition-transform duration-300"
+      />
+      <h1 className="text-xl font-bold text-[#340036]">Admin Dashboard</h1>
+    </header>
   );
 };
 
