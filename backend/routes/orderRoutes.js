@@ -9,8 +9,9 @@ import {
 } from "../controllers/orderController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
-// Get all orders (admin only)
-router.get("/", authMiddleware, getAllOrders);
+// Get all orders (admin only) 
+// (removed auth middleware for now )
+router.get("/", getAllOrders);
 
 // Get orders for a specific user
 router.get("/user/:userId", authMiddleware, getOrderById);

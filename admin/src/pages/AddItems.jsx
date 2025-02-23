@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { baseUri } from "../config/config";
+import axios from "axios";
 
 const AddItems = () => {
   const [formData, setFormData] = useState({
@@ -29,7 +30,8 @@ const AddItems = () => {
         formDataToSend.append("image", formData.image);
       }
 
-      const response = await baseUri.post("/menu", formDataToSend);
+      // const response = await baseUri.post("/menu", formDataToSend);
+      const response = await axios.post("http://localhost:5002/api/menu",formDataToSend)
 
       if (response.data.success) {
         setSuccess(true);
