@@ -29,15 +29,8 @@ export const createMenuItem = async (req, res) => {
   const { name, description, price, image, category, ingredients } = req.body;
 
   try {
-    if (
-      !name ||
-      !description ||
-      !price ||
-      !image ||
-      !category ||
-      !ingredients
-    ) {
-      req.status(400).json({ message: "All field are mendotary" });
+    if (!name || !description || !price || !image || !category) {
+      req.status(400).json({ message: "All field are mandatory" });
     }
     const menuPicture = await cloudinary.uploader.upload(image);
 
