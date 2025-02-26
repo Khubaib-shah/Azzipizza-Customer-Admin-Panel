@@ -16,7 +16,7 @@ const app = express();
 app.use(express());
 app.use(express.urlencoded({ extended: true }));
 var corsOptions = {
-  origin: "https://pizzeria-backend.vercel.app" || "http://localhost:5173",
+  origin: "http://localhost:5173",
   optionsSuccessStatus: 200,
 };
 app.use(express.json());
