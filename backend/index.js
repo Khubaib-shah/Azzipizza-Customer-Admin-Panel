@@ -3,11 +3,11 @@ import cors from "cors";
 import dotenv from "dotenv";
 dotenv.config();
 import connectDB from "./config/DBconnect.js";
+
 // Import routes
 import menuRoutes from "./routes/menuRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-// import paymentRoutes from "./routes/paymentRoutes.js";
 import errorMiddleware from "./middleware/errorMiddleware.js";
 
 connectDB();

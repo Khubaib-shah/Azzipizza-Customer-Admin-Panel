@@ -6,32 +6,37 @@ const AddItems = () => {
     description: "",
     price: "",
     category: "",
+    ingredients: "",
     image: null,
   });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     setSuccess(false);
 
+    if (!formData.image) {
+      setError("Please select an image");
+      setLoading(false);
+      return;
+    }
+
     try {
       const formDataToSend = new FormData();
       formDataToSend.append("name", formData.name);
       formDataToSend.append("description", formData.description);
       formDataToSend.append("price", formData.price);
+      formDataToSend.append("ingredients", formData.ingredients);
       formDataToSend.append("category", formData.category.toLowerCase());
+      formDataToSend.append("image", formData.image);
 
-      // Debugging: Log FormData entries
-      for (let [key, value] of formDataToSend.entries()) {
-        console.log(key, value);
-      }
-      const response = await baseUri.post("/api/menu", formDataToSend);
+      const response = await baseUri.post("/api/menu", formDataToSend, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-      // Check for HTTP 201 status instead of response.data.success
       if (response.status === 201) {
         setSuccess(true);
         setFormData({
@@ -39,6 +44,8 @@ const AddItems = () => {
           description: "",
           price: "",
           category: "",
+          ingredients: "",
+          image: null,
         });
       }
     } catch (err) {
@@ -48,14 +55,15 @@ const AddItems = () => {
       setLoading(false);
     }
   };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // const handleFileChange = (e) => {
-  //   setFormData((prev) => ({ ...prev, image: e.target.files[0] }));
-  // };
+  const handleFileChange = (e) => {
+    setFormData((prev) => ({ ...prev, image: e.target.files[0] }));
+  };
 
   return (
     <div className="animate-fadeIn rounded-lg max-w-2xl ms-6 mt-6">
@@ -144,13 +152,14 @@ const AddItems = () => {
               <option value="">Select category</option>
               <option value="pizza">Pizza</option>
               <option value="pasta">Pasta</option>
+              <option value="burger">Burger</option>
               <option value="drinks">Drinks</option>
             </select>
           </div>
         </div>
 
         {/* Image Input */}
-        {/* <div>
+        <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Image
           </label>
@@ -161,8 +170,22 @@ const AddItems = () => {
             accept="image/*"
             required
           />
-        </div> */}
+        </div>
 
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Ingredients
+          </label>
+          <input
+            type="text"
+            name="ingredients"
+            value={formData.ingredients}
+            onChange={handleInputChange}
+            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all"
+            placeholder="add ingredient"
+            required
+          />
+        </div>
         {/* Submit Button */}
         <button
           type="submit"

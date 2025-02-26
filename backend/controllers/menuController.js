@@ -30,42 +30,50 @@ export const getMenuItemById = async (req, res) => {
 
 // Create a new menu item
 export const createMenuItem = async (req, res) => {
-  const { name, description, price, category, ingredients } = req.body;
-  const image = req?.file?.path;
   try {
+    const { name, description, price, category, ingredients } = req.body;
+
     // Validate required fields
-    if (!name || !description || !price || !category || !ingredients) {
-      return res.status(400).json({ message: "All fields are mandatory" });
-    }
-    const UploadImage = await cloudinary.uploader.upload(image);
-    console.log("Cloudinary Upload Success:", UploadImage);
-
-    try {
-      await fs.promises.unlink(image);
-      console.log("Local file deleted successfully:", image);
-    } catch (err) {
-      console.error("Error deleting file:", err);
+    if (!name || !description || !price || !category || !req.file) {
+      return res
+        .status(400)
+        .json({ message: "All fields including image are required" });
     }
 
-    // Create menu object
-    const menuObject = {
+    // Convert buffer to a readable stream for Cloudinary
+    const bufferStream = new Readable();
+    bufferStream.push(req.file.buffer);
+    bufferStream.push(null);
+
+    // Upload to Cloudinary
+    const cloudinaryUpload = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.v2.uploader.upload_stream(
+        { folder: "menu-items" },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        }
+      );
+      bufferStream.pipe(uploadStream);
+    });
+
+    console.log("Cloudinary Upload Response:", cloudinaryUpload);
+
+    const newMenuItem = new Menu({
       name,
       description,
       price,
       category,
       ingredients,
-      image: UploadImage.secure_url,
-    };
-    // Save to database
-    const newMenuItem = new Menu(menuObject);
-    const savedMenuItem = await newMenuItem.save();
+      image: cloudinaryUpload.secure_url,
+    });
 
+    // Save to database
+    const savedMenuItem = await newMenuItem.save();
     res.status(201).json(savedMenuItem);
   } catch (error) {
     console.error("Error creating menu item:", error);
-    res
-      .status(500)
-      .json({ message: "Error creating menu item", error: error.message });
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
