@@ -14,7 +14,11 @@ connectDB();
 // middleware
 const app = express();
 app.use(express());
-app.use(cors());
+app.use(express.urlencoded({ extended: true }));
+var corsOptions = {
+  origin: "http://localhost:5173",
+  optionsSuccessStatus: 200,
+};
 app.use(express.json());
 app.use(errorMiddleware);
 
@@ -28,7 +32,7 @@ app.get("/", (req, res) => {
     paymentRoutes: "/api/payments",
   });
 });
-app.use("/api/menu", menuRoutes);
+app.use("/api/menu", cors(corsOptions), menuRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/users", userRoutes);
 // app.use("/api/payments", paymentRoutes);
