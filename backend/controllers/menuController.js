@@ -1,6 +1,6 @@
+import { Readable } from "stream";
 import Menu from "../models/MenuModel.js";
 import cloudinary from "../utils/cloudinary.js";
-import fs from "fs";
 // Get all menu items
 export const getAllMenuItems = async (req, res) => {
   try {
