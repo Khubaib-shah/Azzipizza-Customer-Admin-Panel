@@ -1,5 +1,6 @@
 import Menu from "../models/MenuModel.js";
-
+import cloudinary from "../utils/cloudinary.js";
+import fs from "fs";
 // Get all menu items
 export const getAllMenuItems = async (req, res) => {
   try {
@@ -29,21 +30,32 @@ export const getMenuItemById = async (req, res) => {
 
 // Create a new menu item
 export const createMenuItem = async (req, res) => {
-  const { name, description, price, category } = req.body;
-
+  const { name, description, price, category, ingredients } = req.body;
+  const image = req?.file?.path;
   try {
     // Validate required fields
-    if (!name || !description || !price || !category) {
+    if (!name || !description || !price || !category || !ingredients) {
       return res.status(400).json({ message: "All fields are mandatory" });
     }
+    const UploadImage = await cloudinary.uploader.upload(image);
+    console.log("Cloudinary Upload Success:", UploadImage);
+
+    try {
+      await fs.promises.unlink(image);
+      console.log("Local file deleted successfully:", image);
+    } catch (err) {
+      console.error("Error deleting file:", err);
+    }
+
     // Create menu object
     const menuObject = {
       name,
       description,
       price,
       category,
+      ingredients,
+      image: UploadImage.secure_url,
     };
-
     // Save to database
     const newMenuItem = new Menu(menuObject);
     const savedMenuItem = await newMenuItem.save();

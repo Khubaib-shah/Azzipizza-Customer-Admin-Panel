@@ -18,9 +18,10 @@ const menuSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ["pizza", "pasta", "drinks", "desserts"],
+      enum: ["pizza", "burger", "pasta", "drinks", "desserts"],
       required: [true, "Category is required"],
     },
+    image: { type: String },
     ingredients: {
       type: [String],
       default: [],
@@ -33,9 +34,9 @@ const menuSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// menuSchema.virtual("formattedPrice").get(function () {
-//   return `$${this.price.toFixed(2)}`;
-// });
+menuSchema.virtual("formattedPrice").get(function () {
+  return `$${this.price.toFixed(2)}`;
+});
 
 // Pre-save hook
 menuSchema.pre("save", function (next) {
