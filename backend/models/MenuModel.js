@@ -34,10 +34,6 @@ const menuSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-menuSchema.virtual("formattedPrice").get(function () {
-  return `$${this.price.toFixed(2)}`;
-});
-
 // Pre-save hook
 menuSchema.pre("save", function (next) {
   this.name = this.name.trim().toLowerCase();

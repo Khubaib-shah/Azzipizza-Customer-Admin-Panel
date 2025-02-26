@@ -6,12 +6,32 @@ const AddItems = () => {
     description: "",
     price: "",
     category: "",
-    ingredients: "",
+    ingredients: [],
     image: null,
   });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [newIngredient, setNewIngredient] = useState("");
+
+  // Add ingredient to the list
+  const handleAddIngredient = () => {
+    if (newIngredient.trim() !== "") {
+      setFormData((prev) => ({
+        ...prev,
+        ingredients: [...prev.ingredients, newIngredient.trim()],
+      }));
+      setNewIngredient("");
+    }
+  };
+  // Remove ingredient
+  const handleRemoveIngredient = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      ingredients: prev.ingredients.filter((_, i) => i !== index),
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -29,10 +49,13 @@ const AddItems = () => {
       formDataToSend.append("name", formData.name);
       formDataToSend.append("description", formData.description);
       formDataToSend.append("price", formData.price);
-      formDataToSend.append("ingredients", formData.ingredients);
       formDataToSend.append("category", formData.category.toLowerCase());
       formDataToSend.append("image", formData.image);
 
+      // Append ingredients as separate fields
+      formData.ingredients.forEach((ingredient) => {
+        formDataToSend.append("ingredients[]", ingredient);
+      });
       const response = await baseUri.post("/api/menu", formDataToSend, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -44,10 +67,11 @@ const AddItems = () => {
           description: "",
           price: "",
           category: "",
-          ingredients: "",
+          ingredients: [],
           image: null,
         });
       }
+      document.getElementById("imageInput").value = "";
     } catch (err) {
       setError(err.response?.data?.message || "Failed to add item");
       console.log(err);
@@ -168,6 +192,7 @@ const AddItems = () => {
             onChange={handleFileChange}
             className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all"
             accept="image/*"
+            id="imageInput"
             required
           />
         </div>
@@ -179,12 +204,29 @@ const AddItems = () => {
           <input
             type="text"
             name="ingredients"
-            value={formData.ingredients}
-            onChange={handleInputChange}
+            value={newIngredient}
+            onChange={(e) => setNewIngredient(e.target.value)}
             className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all"
-            placeholder="add ingredient"
+            placeholder="Add ingredient"
             required
           />
+          <button type="button" onClick={handleAddIngredient}>
+            Add
+          </button>
+          {/* Display Ingredients */}
+          <ul>
+            {formData.ingredients.map((ingredient, index) => (
+              <li key={index} className="flex justify-between">
+                {ingredient}{" "}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveIngredient(index)}
+                >
+                  Remove
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
         {/* Submit Button */}
         <button
