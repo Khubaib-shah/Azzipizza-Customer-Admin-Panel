@@ -6,20 +6,27 @@ const ListItems = () => {
   const [list, setList] = useState([]);
 
   useEffect(() => {
-    const fetch = async () => {
-      const { data } = await baseUri.get("api/menu");
-      setList(data);
+    const fetchMenu = async () => {
+      try {
+        const { data } = await baseUri.get("/api/menu");
+        setList(data);
+      } catch (error) {
+        console.error("Error fetching menu:", error);
+      }
     };
-    fetch();
+
+    fetchMenu();
   }, []);
 
   const handleDelete = async (id) => {
-    // console.log(id);
     try {
-      const deleteData = await baseUri.delete(`api/main/${id}`);
-      console.log(deleteData);
+      await baseUri.delete(`/api/menu/${id}`);
+
+      setList((prevList) => prevList.filter((list) => list._id !== id));
+
+      console.log(`Order ${id} deleted successfully`);
     } catch (error) {
-      console.log(error);
+      console.error("Error deleting order:", error);
     }
   };
   return (
