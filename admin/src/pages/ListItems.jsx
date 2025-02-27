@@ -1,4 +1,5 @@
 // src/pages/ListItems.js
+import { TrashIcon } from "@radix-ui/react-icons";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
@@ -14,9 +15,24 @@ const ListItems = () => {
         });
     };
     fetch();
-  }, []);
+  }, [list]);
 
   // console.log("list", list);
+
+
+  const deleteItem =async(id)=>{
+    try {
+      const response =await axios.delete(`http://localhost:5000/api/menu/${id}`)
+console.log("response =>" , response);
+
+
+    } catch (error) {
+      
+      console.log("error =>" , error.message);
+      
+    }
+    
+  }
 
   return (
     <div className="animate-fadeIn p-6 rounded-lg max-w-6xl">
@@ -41,9 +57,16 @@ const ListItems = () => {
                 <span className="text-sm text-gray-700">
                   ${item.price.toFixed(2)}
                 </span>
+                <div className="flex gap-6 flex-col justify-around items-center">
+
                 <span className="text-sm text-gray-500 bg-gray-200 px-2 py-1 rounded-full">
                   {item.category}
                 </span>
+                <button onClick={() => deleteItem(item._id)} className="text-sm text-gray-500 bg-gray-200 px-2 py-1 rounded-full" >
+                  <TrashIcon />
+                </button>
+                </div>
+
               </div>
             </div>
           </div>
