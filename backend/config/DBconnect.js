@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 
 const connectDB = async () => {
   try {
-    // Retrieve the MongoDB URI from environment variables
     const mongoURI = process.env.MONGO_URL;
 
     // Connect to MongoDB

@@ -7,22 +7,14 @@ import {
   updateOrderStatus,
   deleteOrder,
 } from "../controllers/orderController.js";
-import authMiddleware from "../middleware/authMiddleware.js";
+// import authMiddleware from "../middleware/authMiddleware.js";
 
-// Get all orders (admin only) 
-// (removed auth middleware for now )
-router.get("/", getAllOrders);
+router.route("/").get(getAllOrders).post(createOrder);
 
-// Get orders for a specific user
-router.get("/user/:userId", authMiddleware, getOrderById);
-
-// Create a new order
-router.post("/", authMiddleware, createOrder);
-
-// Update order status by ID (admin only)
-router.put("/:id", authMiddleware, updateOrderStatus);
-
-// Delete an order by ID (admin only)
-router.delete("/:id", authMiddleware, deleteOrder);
+router
+  .route("/:id")
+  .put(updateOrderStatus)
+  .get(getOrderById)
+  .delete(deleteOrder);
 
 export default router;

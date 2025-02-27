@@ -2,13 +2,12 @@ import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     items: [
       {
         menuItem: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Menu",
-          required: [true, "Item Name is required"],
+          required: [true, "Item is required"],
         },
         quantity: { type: Number, required: true, default: 1 },
         customizations: [{ type: String }],
@@ -22,9 +21,10 @@ const orderSchema = new mongoose.Schema(
     },
     orderStatus: {
       type: String,
-      enum: ["Processing", "Out for Delivery", "Delivered"],
-      default: "Processing",
+      enum: ["Preparing", "Out for Delivery", "Delivered"],
+      default: "Preparing",
     },
+    name: { type: String },
     deliveryAddress: {
       street: { type: String, required: [true, "Street is required"] },
       city: { type: String, required: [true, "City Name is required"] },

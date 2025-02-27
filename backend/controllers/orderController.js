@@ -3,7 +3,30 @@ import Order from "../models/OrderModel.js";
 // Create a new order
 export const createOrder = async (req, res) => {
   try {
-    const newOrder = new Order(req.body);
+    const {
+      items,
+      totalPrice,
+      paymentStatus,
+      orderStatus,
+      deliveryAddress,
+      phoneNumber,
+    } = req.body;
+
+    if (!items || items.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "At least one item is required." });
+    }
+
+    const newOrder = new Order({
+      items,
+      totalPrice,
+      paymentStatus,
+      orderStatus,
+      deliveryAddress,
+      phoneNumber,
+    });
+
     const savedOrder = await newOrder.save();
     res.status(201).json(savedOrder);
   } catch (error) {
@@ -11,10 +34,10 @@ export const createOrder = async (req, res) => {
   }
 };
 
-// Get all orders
+// Get all orders with menu item details
 export const getAllOrders = async (req, res) => {
   try {
-    const orders = await Order.find().populate("user items.menuItem");
+    const orders = await Order.find().populate("items.menuItem", "name price");
     res.status(200).json(orders);
   } catch (error) {
     res.status(500).json({ message: "Error fetching orders", error });
@@ -25,7 +48,7 @@ export const getAllOrders = async (req, res) => {
 export const getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id).populate(
-      "user items.menuItem"
+      "items.menuItem"
     );
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
@@ -36,24 +59,33 @@ export const getOrderById = async (req, res) => {
   }
 };
 
-// Update an order's status
+// Update order status with validation
 export const updateOrderStatus = async (req, res) => {
   try {
+    const { orderStatus } = req.body;
+    const validStatuses = ["Processing", "Out for Delivery", "Delivered"];
+
+    if (!validStatuses.includes(orderStatus)) {
+      return res.status(400).json({ message: "Invalid order status." });
+    }
+
     const updatedOrder = await Order.findByIdAndUpdate(
       req.params.id,
-      { orderStatus: req.body.orderStatus },
-      { new: true }
+      { orderStatus },
+      { new: true, runValidators: true } // Enforce validation
     );
+
     if (!updatedOrder) {
       return res.status(404).json({ message: "Order not found" });
     }
+
     res.status(200).json(updatedOrder);
   } catch (error) {
     res.status(500).json({ message: "Error updating order status", error });
   }
 };
 
-// Delete an order
+// Delete an order safely
 export const deleteOrder = async (req, res) => {
   try {
     const deletedOrder = await Order.findByIdAndDelete(req.params.id);

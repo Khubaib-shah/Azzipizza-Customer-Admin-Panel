@@ -7,7 +7,6 @@ import connectDB from "./config/DBconnect.js";
 // Import routes
 import menuRoutes from "./routes/menuRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
 import errorMiddleware from "./middleware/errorMiddleware.js";
 
 connectDB();
@@ -15,10 +14,11 @@ connectDB();
 const app = express();
 app.use(express());
 app.use(express.urlencoded({ extended: true }));
-var corsOptions = {
-  origin: "http://localhost:5173",
-  optionsSuccessStatus: 200,
-};
+// var corsOptions = {
+//   origin: "http://localhost:5173",
+//   optionsSuccessStatus: 200,
+// };
+app.use(cors());
 app.use(express.json());
 app.use(errorMiddleware);
 
@@ -28,13 +28,11 @@ app.get("/", (req, res) => {
     message: "api is working",
     menuRoutes: "/api/menu",
     orderRoutes: "/api/orders",
-    userRoutes: "/api/users",
     paymentRoutes: "/api/payments",
   });
 });
-app.use("/api/menu", cors(corsOptions), menuRoutes);
+app.use("/api/menu", menuRoutes);
 app.use("/api/orders", orderRoutes);
-app.use("/api/users", userRoutes);
 // app.use("/api/payments", paymentRoutes);
 
 const PORT = process.env.PORT || 5001;

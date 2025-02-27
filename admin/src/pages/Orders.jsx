@@ -7,7 +7,8 @@ const Orders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await baseUri.get("/api/orders");
+        const response = await baseUri.get("api/orders");
+        console.log(response);
         setGetOrders(response.data);
       } catch (error) {
         console.error("Error fetching orders:", error);
@@ -34,7 +35,7 @@ const Orders = () => {
               <th className="px-4 py-3 border border-gray-300">ETA</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="capitalize">
             {getOrders.map((order, index) => (
               <tr
                 key={order._id}
@@ -57,7 +58,9 @@ const Orders = () => {
                         className="flex items-center space-x-1"
                       >
                         <span className="font-semibold">{item.quantity}x</span>
-                        <span className="text-gray-600">{item.name}</span>
+                        <span className="text-gray-600">
+                          {item.menuItem.name}
+                        </span>
                         {item.customizations &&
                           item.customizations.length > 0 && (
                             <ul className="text-xs text-gray-500 flex flex-wrap">

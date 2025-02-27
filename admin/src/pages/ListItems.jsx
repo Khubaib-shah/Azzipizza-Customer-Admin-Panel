@@ -1,23 +1,27 @@
-// src/pages/ListItems.js
-import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { baseUri } from "../config/config";
+import { CrossCircledIcon } from "@radix-ui/react-icons";
 
 const ListItems = () => {
   const [list, setList] = useState([]);
-  // getting the data from our backend
+
   useEffect(() => {
     const fetch = async () => {
-      const response = await axios
-        .get("http://localhost:5000/api/menu")
-        .then((res) => {
-          setList(res.data);
-        });
+      const { data } = await baseUri.get("api/menu");
+      setList(data);
     };
     fetch();
   }, []);
 
-  // console.log("list", list);
-
+  const handleDelete = async (id) => {
+    // console.log(id);
+    try {
+      const deleteData = await baseUri.delete(`api/main/${id}`);
+      console.log(deleteData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="animate-fadeIn p-6 rounded-lg max-w-6xl">
       <h2 className="text-2xl font-semibold mb-6 text-gray-800">Menu Items</h2>
@@ -25,8 +29,14 @@ const ListItems = () => {
         {list.map((item, index) => (
           <div
             key={index}
-            className="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+            className="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200 relative capitalize"
           >
+            <button
+              onClick={() => handleDelete(item._id)}
+              className="absolute top-4 right-6"
+            >
+              <CrossCircledIcon className="size-5 hover:text-red-800 transition-all duration-300 cursor-pointer" />
+            </button>
             <img
               src={item.image}
               alt={item.name}
