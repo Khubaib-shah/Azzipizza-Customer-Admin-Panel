@@ -10,6 +10,7 @@ export const createOrder = async (req, res) => {
       orderStatus,
       deliveryAddress,
       phoneNumber,
+      name,
     } = req.body;
 
     if (!items || items.length === 0) {
@@ -20,6 +21,7 @@ export const createOrder = async (req, res) => {
 
     const newOrder = new Order({
       items,
+      name,
       totalPrice,
       paymentStatus,
       orderStatus,
@@ -37,7 +39,10 @@ export const createOrder = async (req, res) => {
 // Get all orders with menu item details
 export const getAllOrders = async (req, res) => {
   try {
-    const orders = await Order.find().populate("items.menuItem", "name price");
+    const orders = await Order.find().populate(
+      "items.menuItem",
+      "name price category"
+    );
     res.status(200).json(orders);
   } catch (error) {
     res.status(500).json({ message: "Error fetching orders", error });
@@ -63,7 +68,7 @@ export const getOrderById = async (req, res) => {
 export const updateOrderStatus = async (req, res) => {
   try {
     const { orderStatus } = req.body;
-    const validStatuses = ["Processing", "Out for Delivery", "Delivered"];
+    const validStatuses = ["Preparing", "Out for Delivery", "Delivered"];
 
     if (!validStatuses.includes(orderStatus)) {
       return res.status(400).json({ message: "Invalid order status." });
@@ -72,7 +77,7 @@ export const updateOrderStatus = async (req, res) => {
     const updatedOrder = await Order.findByIdAndUpdate(
       req.params.id,
       { orderStatus },
-      { new: true, runValidators: true } // Enforce validation
+      { new: true, runValidators: true }
     );
 
     if (!updatedOrder) {

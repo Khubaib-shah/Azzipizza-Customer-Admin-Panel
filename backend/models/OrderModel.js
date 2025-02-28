@@ -10,7 +10,7 @@ const orderSchema = new mongoose.Schema(
           required: [true, "Item is required"],
         },
         quantity: { type: Number, required: true, default: 1 },
-        customizations: [{ type: String }],
+        customizations: String,
       },
     ],
     totalPrice: { type: Number, required: [true, "Total price is required"] },
@@ -24,7 +24,7 @@ const orderSchema = new mongoose.Schema(
       enum: ["Preparing", "Out for Delivery", "Delivered"],
       default: "Preparing",
     },
-    name: { type: String },
+    name: String,
     deliveryAddress: {
       street: { type: String, required: [true, "Street is required"] },
       city: { type: String, required: [true, "City Name is required"] },

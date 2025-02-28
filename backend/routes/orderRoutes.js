@@ -7,7 +7,6 @@ import {
   updateOrderStatus,
   deleteOrder,
 } from "../controllers/orderController.js";
-// import authMiddleware from "../middleware/authMiddleware.js";
 
 router.route("/").get(getAllOrders).post(createOrder);
 
