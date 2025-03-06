@@ -13,7 +13,10 @@ const orderSchema = new mongoose.Schema(
         customizations: String,
       },
     ],
-    totalPrice: { type: Number, required: [true, "Total price is required"] },
+    totalPrice: {
+      type: Number,
+      required: [true, "Total price is required"],
+    },
     paymentStatus: {
       type: String,
       enum: ["Pending", "Completed", "Failed"],
@@ -21,16 +24,31 @@ const orderSchema = new mongoose.Schema(
     },
     orderStatus: {
       type: String,
-      enum: ["Preparing", "Out for Delivery", "Delivered"],
-      default: "Preparing",
+      enum: ["Pending", "Preparing", "Out for Delivery", "Delivered"],
+      default: "Pending",
+    },
+    eta: {
+      type: Date,
     },
     name: String,
     deliveryAddress: {
-      street: { type: String, required: [true, "Street is required"] },
-      city: { type: String, required: [true, "City Name is required"] },
-      zipCode: { type: String, required: [true, "Zip code is required"] },
+      street: {
+        type: String,
+        required: [true, "Street is required"],
+      },
+      city: {
+        type: String,
+        required: [true, "City Name is required"],
+      },
+      zipCode: {
+        type: String,
+        required: [true, "Zip code is required"],
+      },
     },
-    phoneNumber: { type: String, required: [true, "Phone Number is required"] },
+    phoneNumber: {
+      type: String,
+      required: [true, "Phone Number is required"],
+    },
   },
   { timestamps: true }
 );

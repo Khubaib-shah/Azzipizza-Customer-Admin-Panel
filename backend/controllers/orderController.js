@@ -64,27 +64,32 @@ export const getOrderById = async (req, res) => {
   }
 };
 
-// Update order status with validation
+// Update order
 export const updateOrderStatus = async (req, res) => {
   try {
-    const { orderStatus } = req.body;
+    const { orderStatus, eta } = req.body;
     const validStatuses = ["Preparing", "Out for Delivery", "Delivered"];
 
-    if (!validStatuses.includes(orderStatus)) {
-      return res.status(400).json({ message: "Invalid order status." });
+    // Prepare the update object (only update `eta` if it's provided)
+    const updateData = { orderStatus };
+    if (eta) {
+      updateData.eta = eta;
     }
 
     const updatedOrder = await Order.findByIdAndUpdate(
       req.params.id,
-      { orderStatus },
-      { new: true, runValidators: true }
+      updateData,
+      { new: true, runValidators: false }
     );
 
     if (!updatedOrder) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    res.status(200).json(updatedOrder);
+    res.status(200).json({
+      message: "Order updated successfully",
+      updatedOrder,
+    });
   } catch (error) {
     res.status(500).json({ message: "Error updating order status", error });
   }
