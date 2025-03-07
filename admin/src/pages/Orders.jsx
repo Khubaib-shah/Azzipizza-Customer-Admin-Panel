@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { baseUri } from "../config/config";
+import io from "socket.io-client";
 
 const statusOptions = ["Pending", "Preparing", "Out for Delivery", "Delivered"];
 
@@ -8,6 +9,18 @@ const Orders = () => {
   const [etas, setEtas] = useState({});
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [etaMinutes, setEtaMinutes] = useState(0);
+
+  const socket = io("http://localhost:5000");
+
+  useEffect(() => {
+    socket.on("latestOrders", (data) => {
+      setOrders(data.reverse())
+    });
+
+    return () => {
+      socket.off("latestOrders");
+    };
+  }, []);
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -86,7 +99,6 @@ const Orders = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {orders.map((order) => {
-                  console.log(order.eta);
                   return (
                     <tr
                       key={order._id}
