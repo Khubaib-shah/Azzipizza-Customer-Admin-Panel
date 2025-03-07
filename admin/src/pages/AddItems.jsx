@@ -1,5 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { baseUri } from "../config/config.js";
+import { PlusCircle, X, Upload, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
 const AddItems = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -13,6 +34,7 @@ const AddItems = () => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const [newIngredient, setNewIngredient] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
 
   // Add ingredient to the list
   const handleAddIngredient = () => {
@@ -24,6 +46,7 @@ const AddItems = () => {
       setNewIngredient("");
     }
   };
+
   // Remove ingredient
   const handleRemoveIngredient = (index) => {
     setFormData((prev) => ({
@@ -31,6 +54,8 @@ const AddItems = () => {
       ingredients: prev.ingredients.filter((_, i) => i !== index),
     }));
   };
+
+  const imageInputRef = useRef(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -56,6 +81,7 @@ const AddItems = () => {
       formData.ingredients.forEach((ingredient) => {
         formDataToSend.append("ingredients[]", ingredient);
       });
+
       const response = await baseUri.post("/api/menu", formDataToSend, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -70,8 +96,11 @@ const AddItems = () => {
           ingredients: [],
           image: null,
         });
+        setImagePreview(null);
       }
-      document.getElementById("imageInput").value = "";
+      if (imageInputRef.current) {
+        imageInputRef.current.value = ""; // Reset the input field
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Failed to add item");
       console.log(err);
@@ -86,157 +115,269 @@ const AddItems = () => {
   };
 
   const handleFileChange = (e) => {
-    setFormData((prev) => ({ ...prev, image: e.target.files[0] }));
+    const file = e.target.files[0];
+    if (file) {
+      setFormData((prev) => ({ ...prev, image: file }));
+
+      // Create image preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
-    <div className="animate-fadeIn rounded-lg max-w-2xl ms-6 mt-6">
-      <h2 className="text-2xl font-semibold mb-6 text-[#340036]">
-        Add New Item
-      </h2>
-
-      {/* Success Message */}
-      {success && (
-        <div className="mb-4 p-3 bg-green-100 text-green-700 rounded">
-          Item added successfully!
-        </div>
-      )}
-
-      {/* Error Message */}
-      {error && (
-        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">{error}</div>
-      )}
-
-      {/* Form */}
-      <form className="space-y-4" onSubmit={handleSubmit}>
-        {/* Name Input */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Item Name
-          </label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all"
-            placeholder="Enter item name"
-            required
-          />
+    <div className="p-6 ml-64 mt-16">
+      <div className="max-w-3xl mx-auto">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">Add Menu Item</h1>
+          <p className="text-gray-500 mt-1">
+            Create a new item for your restaurant menu
+          </p>
         </div>
 
-        {/* Description Input */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Description
-          </label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all"
-            rows="3"
-            placeholder="Item description"
-            required
-          />
-        </div>
+        {success && (
+          <Alert className="mb-6 bg-green-50 text-green-800 border-green-200">
+            <CheckCircle2 className="h-4 w-4 text-green-600" />
+            <AlertTitle>Success</AlertTitle>
+            <AlertDescription>
+              Item has been added successfully to your menu.
+            </AlertDescription>
+          </Alert>
+        )}
 
-        {/* Price and Category Inputs */}
-        <div className="grid grid-cols-2 gap-4">
-          {/* Price Input */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Price
-            </label>
-            <input
-              type="number"
-              name="price"
-              value={formData.price}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all"
-              placeholder="$0.00"
-              min="0"
-              step="0.01"
-              required
-            />
-          </div>
+        {error && (
+          <Alert className="mb-6 bg-red-50 text-red-800 border-red-200">
+            <AlertCircle className="h-4 w-4 text-red-600" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
 
-          {/* Category Select */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Category
-            </label>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all"
-              required
-            >
-              <option value="">Select category</option>
-              <option value="pizza">Pizza</option>
-              <option value="pasta">Pasta</option>
-              <option value="burger">Burger</option>
-              <option value="drinks">Drinks</option>
-            </select>
-          </div>
-        </div>
+        <Card>
+          <form onSubmit={handleSubmit}>
+            <CardHeader>
+              <CardTitle>Item Details</CardTitle>
+              <CardDescription>
+                Fill in the information about the new menu item
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label
+                    className="text-sm font-medium text-gray-700"
+                    htmlFor="name"
+                  >
+                    Item Name
+                  </label>
+                  <Input
+                    id="name"
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    placeholder="Enter item name"
+                    required
+                  />
+                </div>
 
-        {/* Image Input */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Image
-          </label>
-          <input
-            type="file"
-            onChange={handleFileChange}
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all"
-            accept="image/*"
-            id="imageInput"
-            required
-          />
-        </div>
+                <div className="space-y-2">
+                  <label
+                    className="text-sm font-medium text-gray-700"
+                    htmlFor="price"
+                  >
+                    Price ($)
+                  </label>
+                  <Input
+                    id="price"
+                    type="number"
+                    name="price"
+                    value={formData.price}
+                    onChange={handleInputChange}
+                    placeholder="0.00"
+                    min="0"
+                    step="0.01"
+                    required
+                  />
+                </div>
+              </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Ingredients
-          </label>
-          <input
-            type="text"
-            name="ingredients"
-            value={newIngredient}
-            onChange={(e) => setNewIngredient(e.target.value)}
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all"
-            placeholder="Add ingredient"
-            required
-          />
-          <button type="button" onClick={handleAddIngredient}>
-            Add
-          </button>
-          {/* Display Ingredients */}
-          <ul>
-            {formData.ingredients.map((ingredient, index) => (
-              <li key={index} className="flex justify-between">
-                {ingredient}{" "}
-                <button
-                  type="button"
-                  onClick={() => handleRemoveIngredient(index)}
+              <div className="space-y-2">
+                <label
+                  className="text-sm font-medium text-gray-700"
+                  htmlFor="category"
                 >
-                  Remove
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-        {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 transform disabled:opacity-50"
-        >
-          {loading ? "Adding Item..." : "Add Item"}
-        </button>
-      </form>
+                  Category
+                </label>
+                <Select
+                  value={formData.category}
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({ ...prev, category: value }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pizza">Pizza</SelectItem>
+                    <SelectItem value="pasta">Pasta</SelectItem>
+                    <SelectItem value="burger">Burger</SelectItem>
+                    <SelectItem value="drinks">Drinks</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <label
+                  className="text-sm font-medium text-gray-700"
+                  htmlFor="description"
+                >
+                  Description
+                </label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  placeholder="Describe the menu item"
+                  rows={3}
+                  required
+                />
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-sm font-medium text-gray-700">
+                  Ingredients
+                </label>
+                <div className="flex gap-2">
+                  <Input
+                    type="text"
+                    value={newIngredient}
+                    onChange={(e) => setNewIngredient(e.target.value)}
+                    placeholder="Add an ingredient"
+                    className="flex-1"
+                  />
+                  <Button
+                    type="button"
+                    onClick={handleAddIngredient}
+                    variant="outline"
+                    size="icon"
+                  >
+                    <PlusCircle className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                {formData.ingredients.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {formData.ingredients.map((ingredient, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-1 bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm"
+                      >
+                        <span>{ingredient}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveIngredient(index)}
+                          className="text-gray-500 hover:text-gray-700"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-sm font-medium text-gray-700">
+                  Item Image
+                </label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                  {imagePreview ? (
+                    <div className="space-y-3">
+                      <img
+                        src={imagePreview || "/placeholder.svg"}
+                        alt="Preview"
+                        className="mx-auto h-40 object-contain"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setImagePreview(null);
+                          setFormData((prev) => ({ ...prev, image: null }));
+                          document.getElementById("imageInput").value = "";
+                        }}
+                      >
+                        Remove Image
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="flex justify-center">
+                        <Upload className="h-10 w-10 text-gray-400" />
+                      </div>
+                      <div className="text-gray-600">
+                        <p className="font-medium">
+                          Click to upload or drag and drop
+                        </p>
+                        <p className="text-xs">
+                          SVG, PNG, JPG or GIF (max. 2MB)
+                        </p>
+                      </div>
+                      <Input
+                        id="imageInput"
+                        type="file"
+                        ref={imageInputRef} // Attach the ref
+                        onChange={handleFileChange}
+                        accept="image/*"
+                        className="hidden"
+                      />
+
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() =>
+                          document.getElementById("imageInput").click()
+                        }
+                      >
+                        Select Image
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter className="flex justify-end gap-3 border-t pt-6">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setFormData({
+                    name: "",
+                    description: "",
+                    price: "",
+                    category: "",
+                    ingredients: [],
+                    image: null,
+                  });
+                  setImagePreview(null);
+                  document.getElementById("imageInput").value = "";
+                }}
+              >
+                Reset
+              </Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? "Adding Item..." : "Add Item"}
+              </Button>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
     </div>
   );
 };
