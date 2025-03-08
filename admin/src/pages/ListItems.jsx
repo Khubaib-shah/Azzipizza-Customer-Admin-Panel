@@ -110,23 +110,23 @@ const ListItems = () => {
   const categories = ["pizza", "pasta", "burger", "drinks"];
 
   return (
-    <div className="p-6 ml-64 mt-16">
-      <div className="max-w-6xl mx-auto">
+    <>
+      <div className="max-w-6xl mx-auto ">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Menu Items</h1>
+            <h1 className="text-2xl  font-bold text-gray-900">Menu Items</h1>
             <p className="text-gray-500 mt-1">
               Manage your restaurant menu items
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col lg:flex-row gap-3">
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
               <Input
                 type="search"
                 placeholder="Search items..."
-                className="pl-9 w-full sm:w-64"
+                className="pl-9 w-full lg:w-64"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -138,7 +138,7 @@ const ListItems = () => {
                 setCategoryFilter(value === "all" ? "" : value)
               }
             >
-              <SelectTrigger className="w-full sm:w-40">
+              <SelectTrigger className="w-full lg:w-40">
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
@@ -281,7 +281,7 @@ const ListItems = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 };
 

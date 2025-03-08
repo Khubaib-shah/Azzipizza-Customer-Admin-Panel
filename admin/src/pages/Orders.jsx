@@ -2,14 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { baseUri } from "../config/config";
 import io from "socket.io-client";
 import OrderSideBar from "../components/OrderSideBar";
-import {
-  Search,
-  Filter,
-  Clock,
-  AlertCircle,
-  ChevronDown,
-  RefreshCw,
-} from "lucide-react";
+import { Search, Filter, Clock, AlertCircle, RefreshCw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,12 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Table,
@@ -36,6 +24,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import NotificationBar from "../components/NotificationBar";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -47,9 +36,10 @@ const Orders = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [refreshing, setRefreshing] = useState(false);
+  const [notifications, setNotifications] = useState([]);
 
   const socket = io("http://localhost:5000", { transports: ["websocket"] });
-
+  console.log(orders);
   // Fetch Orders from API
   const fetchOrders = useCallback(async () => {
     try {
@@ -71,20 +61,40 @@ const Orders = () => {
     setTimeout(() => setRefreshing(false), 500);
   };
 
+  // Handle real-time order updates
   useEffect(() => {
     fetchOrders();
 
-    // Handle real-time order updates
     socket.on("latestOrders", (data) => {
-      setOrders(data.reverse());
-      setFilteredOrders(applyFilters(data.reverse(), searchTerm, statusFilter));
+      setOrders((prevOrders) => {
+        const reversedData = data.slice().reverse();
+
+        const latestOrder = reversedData[0];
+
+        if (!latestOrder || !latestOrder.items) return prevOrders;
+
+        if (!prevOrders.some((order) => order.id === latestOrder.id)) {
+          setNotifications((prev) => [
+            ...prev,
+            {
+              id: new Date().getTime(),
+              message: "New order received!",
+              items: latestOrder.items,
+            },
+          ]);
+        }
+
+        // Update filtered orders
+        setFilteredOrders(applyFilters(reversedData, searchTerm, statusFilter));
+
+        return reversedData;
+      });
     });
 
     return () => {
       socket.off("latestOrders");
-      socket.disconnect();
     };
-  }, [fetchOrders]);
+  }, [fetchOrders, searchTerm, statusFilter]);
 
   useEffect(() => {
     setFilteredOrders(applyFilters(orders, searchTerm, statusFilter));
@@ -201,9 +211,9 @@ const Orders = () => {
 
   return (
     <div
-      className={`p-6 ml-64 mt-16 transition-all duration-300 ${
+      className={`transition-all duration-300 ${
         selectedOrder ? "mr-80" : ""
-      }`}
+      }overflow-hidden`}
     >
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
@@ -216,20 +226,20 @@ const Orders = () => {
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col lg:flex-row gap-3">
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
               <Input
                 type="search"
                 placeholder="Search orders..."
-                className="pl-9 w-full sm:w-64"
+                className="pl-9 w-full lg:w-64"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
 
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-40">
+              <SelectTrigger className="w-full lg:w-40">
                 <SelectValue placeholder="All Statuses" />
               </SelectTrigger>
               <SelectContent>
@@ -246,7 +256,9 @@ const Orders = () => {
               variant="outline"
               size="icon"
               onClick={refreshOrders}
-              className={refreshing ? "animate-spin" : ""}
+              className={`${
+                refreshing ? "animate-spin" : ""
+              } hidden lg:flex items-center justify-center`}
             >
               <RefreshCw className="h-4 w-4" />
             </Button>
@@ -489,6 +501,14 @@ const Orders = () => {
         handleStatusChange={handleStatusChange}
         handleDeleteOrder={handleDeleteOrder}
       />
+
+      {/* Notification Bar */}
+      <div className="fixed -top-11 right-0 z-50 mt-16 mr-6 ">
+        <NotificationBar
+          notifications={notifications}
+          setNotifications={setNotifications}
+        />
+      </div>
     </div>
   );
 };

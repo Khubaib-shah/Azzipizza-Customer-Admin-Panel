@@ -129,7 +129,7 @@ const AddItems = () => {
   };
 
   return (
-    <div className="p-6 ml-64 mt-16">
+    <div className="">
       <div className="max-w-3xl mx-auto">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Add Menu Item</h1>
