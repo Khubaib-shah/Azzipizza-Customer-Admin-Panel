@@ -13,17 +13,13 @@ import { Server } from "socket.io";
 import Order from "./models/OrderModel.js";
 
 connectDB();
+
 // middleware
 const app = express();
 const server = createServer(app);
 
 app.use(express());
 app.use(express.urlencoded({ extended: true }));
-
-// var corsOptions = {
-//   origin: "http://localhost:5173",
-//   optionsSuccessStatus: 200,
-// };
 
 app.use(cors());
 app.use(express.json());
@@ -36,13 +32,11 @@ const io = new Server(server, {
 });
 export const sendUpdatedOrders = async () => {
   try {
-    // Populate `menuItem` inside `items` to get name, price, and category
     const orders = await Order.find().populate(
       "items.menuItem",
       "name price category"
     );
 
-    // Log orders to verify population
     orders.forEach((order, index) => {
       console.log(`Order ${index + 1}:`);
       order.items.forEach((item, i) => {
@@ -65,7 +59,7 @@ export const sendUpdatedOrders = async () => {
 };
 
 // Use routes
-app.get("/", (_, res) => {
+app.use("/", (_, res) => {
   res.status(200).json({
     message: "api is working",
     menuRoutes: "/api/menu",
