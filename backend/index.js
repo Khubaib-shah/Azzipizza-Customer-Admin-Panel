@@ -58,6 +58,9 @@ export const sendUpdatedOrders = async () => {
 };
 
 // Use routes
+app.get("/", (req, res) => {
+  res.send("API is running");
+});
 app.use("/api/menu", menuRoutes);
 app.use("/api/orders", orderRoutes);
 
