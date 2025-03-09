@@ -38,9 +38,7 @@ const Orders = () => {
   const [refreshing, setRefreshing] = useState(false);
   const { setNotifications } = useNotifications();
 
-  const socket = io(
-    `http://localhost:5000` || import.meta.env.VITE_API_BASE_URL
-  );
+  const socket = io("http://localhost:5000");
 
   // Fetch Orders from API
   const fetchOrders = useCallback(async () => {

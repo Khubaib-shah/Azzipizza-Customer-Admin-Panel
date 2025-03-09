@@ -14,7 +14,7 @@ import Order from "./models/OrderModel.js";
 
 connectDB();
 
-// Create Express app
+// middleware
 const app = express();
 const server = createServer(app);
 
@@ -58,8 +58,11 @@ export const sendUpdatedOrders = async () => {
 };
 
 // Use routes
+app.get("/", (req, res) => {
+  res.send("API is running");
+});
 app.use("/api/menu", menuRoutes);
 app.use("/api/orders", orderRoutes);
 
-// Export the Express app as a serverless function
-export default app;
+const PORT = process.env.PORT || 5001;
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
