@@ -18,11 +18,9 @@ connectDB();
 const app = express();
 const server = createServer(app);
 
-app.use(express());
-app.use(express.urlencoded({ extended: true }));
-
-app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 app.use(errorMiddleware);
 
 const io = new Server(server, {
@@ -30,6 +28,7 @@ const io = new Server(server, {
     origin: "*",
   },
 });
+
 export const sendUpdatedOrders = async () => {
   try {
     const orders = await Order.find().populate(
@@ -61,7 +60,6 @@ export const sendUpdatedOrders = async () => {
 // Use routes
 app.use("/api/menu", menuRoutes);
 app.use("/api/orders", orderRoutes);
-// app.use("/api/payments", paymentRoutes);
 
 const PORT = process.env.PORT || 5001;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
