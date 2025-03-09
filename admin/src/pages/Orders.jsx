@@ -1,8 +1,16 @@
-import React, { useEffect, useState, useCallback, useContext } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { baseUri } from "../config/config";
 import io from "socket.io-client";
 import OrderSideBar from "../components/OrderSideBar";
-import { Search, Filter, Clock, AlertCircle, RefreshCw } from "lucide-react";
+import {
+  Search,
+  Filter,
+  Clock,
+  AlertCircle,
+  RefreshCw,
+  Volume2,
+  VolumeOff,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,6 +33,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNotifications } from "../hooks/useNotifications";
+import NotificationSound from "/notification-sound.wav";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -37,6 +46,12 @@ const Orders = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const { setNotifications } = useNotifications();
+
+  const [isUserInteracted, setIsUserInteracted] = useState(() => {
+    // Initialize from localStorage
+    const storedValue = localStorage.getItem("isUserInteracted");
+    return storedValue ? JSON.parse(storedValue) : false;
+  });
 
   const socket = io("http://localhost:5000");
 
@@ -61,6 +76,35 @@ const Orders = () => {
     setTimeout(() => setRefreshing(false), 500);
   };
 
+  // Save isUserInteracted to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("isUserInteracted", JSON.stringify(isUserInteracted));
+  }, [isUserInteracted]);
+
+  // Toggle sound notifications
+  const toggleSoundNotifications = () => {
+    const newValue = !isUserInteracted;
+    localStorage.setItem("isUserInteracted", JSON.stringify(newValue));
+    setIsUserInteracted(newValue);
+  };
+
+  // Play notification sound
+  const playNotificationSound = async () => {
+    if (!isUserInteracted) {
+      console.log(
+        "User has not interacted with the page yet. Sound is disabled."
+      );
+      return;
+    }
+
+    try {
+      const audio = new Audio(NotificationSound);
+      await audio.play();
+    } catch (error) {
+      console.error("Failed to play notification sound:", error);
+    }
+  };
+
   // Handle real-time order updates
   useEffect(() => {
     fetchOrders();
@@ -78,6 +122,9 @@ const Orders = () => {
         const alreadyExists = prev.some((n) => n.id === latestOrder.id);
         if (alreadyExists) return prev;
 
+        // Play notification sound
+        playNotificationSound();
+
         return [
           ...prev,
           {
@@ -94,7 +141,7 @@ const Orders = () => {
     return () => {
       socket.off("latestOrders");
     };
-  }, [fetchOrders, searchTerm, statusFilter]);
+  }, [fetchOrders, searchTerm, statusFilter, isUserInteracted]);
 
   useEffect(() => {
     setFilteredOrders(applyFilters(orders, searchTerm, statusFilter));
@@ -117,7 +164,6 @@ const Orders = () => {
 
     return result;
   };
-
   // Handle Order Selection
   const handleSelectOrder = (order) => {
     setSelectedOrder(order);
@@ -243,7 +289,7 @@ const Orders = () => {
                 <SelectValue placeholder="All Statuses" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem>All Statuses</SelectItem>
                 {statusOptions.map((status) => (
                   <SelectItem key={status} value={status}>
                     {status}
@@ -261,6 +307,13 @@ const Orders = () => {
               } hidden lg:flex items-center justify-center`}
             >
               <RefreshCw className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              onClick={toggleSoundNotifications}
+              className="mb-4"
+            >
+              {isUserInteracted ? <Volume2 /> : <VolumeOff />}
             </Button>
           </div>
         </div>
