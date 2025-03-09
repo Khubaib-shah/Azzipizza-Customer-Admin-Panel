@@ -8,12 +8,14 @@
   },
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "build": "echo 'Building...'"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@vercel/node": "^5.1.12",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.5.1",
     "cors": "^2.8.5",
