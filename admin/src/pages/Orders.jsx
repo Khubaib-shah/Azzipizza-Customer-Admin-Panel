@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useContext } from "react";
 import { baseUri } from "../config/config";
 import io from "socket.io-client";
 import OrderSideBar from "../components/OrderSideBar";
@@ -24,7 +24,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import NotificationBar from "../components/NotificationBar";
+import { useNotifications } from "../hooks/useNotifications";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -36,16 +36,16 @@ const Orders = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [refreshing, setRefreshing] = useState(false);
-  const [notifications, setNotifications] = useState([]);
+  const { setNotifications } = useNotifications();
 
   const socket = io("http://localhost:5000", { transports: ["websocket"] });
-  console.log(orders);
+
   // Fetch Orders from API
   const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
       const { data } = await baseUri.get("/api/orders");
-      setOrders(data.reverse());
+      setOrders(data);
       setFilteredOrders(data.reverse());
       setLoading(false);
     } catch (error) {
@@ -66,29 +66,29 @@ const Orders = () => {
     fetchOrders();
 
     socket.on("latestOrders", (data) => {
-      setOrders((prevOrders) => {
-        const reversedData = data.slice().reverse();
+      const reversedData = data.slice().reverse();
+      setOrders(reversedData);
+      console.log("Latest Orders:", reversedData);
 
-        const latestOrder = reversedData[0];
+      const latestOrder = reversedData[0];
 
-        if (!latestOrder || !latestOrder.items) return prevOrders;
+      if (!latestOrder || !latestOrder.items) return;
 
-        if (!prevOrders.some((order) => order.id === latestOrder.id)) {
-          setNotifications((prev) => [
-            ...prev,
-            {
-              id: new Date().getTime(),
-              message: "New order received!",
-              items: latestOrder.items,
-            },
-          ]);
-        }
+      setNotifications((prev) => {
+        const alreadyExists = prev.some((n) => n.id === latestOrder.id);
+        if (alreadyExists) return prev;
 
-        // Update filtered orders
-        setFilteredOrders(applyFilters(reversedData, searchTerm, statusFilter));
-
-        return reversedData;
+        return [
+          ...prev,
+          {
+            id: latestOrder._id,
+            message: "New order received!",
+            items: latestOrder,
+          },
+        ];
       });
+
+      setFilteredOrders(applyFilters(reversedData, searchTerm, statusFilter));
     });
 
     return () => {
@@ -501,14 +501,6 @@ const Orders = () => {
         handleStatusChange={handleStatusChange}
         handleDeleteOrder={handleDeleteOrder}
       />
-
-      {/* Notification Bar */}
-      <div className="fixed -top-11 right-0 z-50 mt-16 mr-6 ">
-        <NotificationBar
-          notifications={notifications}
-          setNotifications={setNotifications}
-        />
-      </div>
     </div>
   );
 };

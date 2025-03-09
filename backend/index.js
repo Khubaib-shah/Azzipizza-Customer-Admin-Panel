@@ -11,6 +11,7 @@ import orderRoutes from "./routes/orderRoutes.js";
 import errorMiddleware from "./middleware/errorMiddleware.js";
 import { Server } from "socket.io";
 import Order from "./models/OrderModel.js";
+import { getAllMenuItems } from "./controllers/menuController.js";
 
 connectDB();
 // middleware
@@ -19,10 +20,12 @@ const server = createServer(app);
 
 app.use(express());
 app.use(express.urlencoded({ extended: true }));
+
 // var corsOptions = {
 //   origin: "http://localhost:5173",
 //   optionsSuccessStatus: 200,
 // };
+
 app.use(cors());
 app.use(express.json());
 app.use(errorMiddleware);
@@ -32,10 +35,30 @@ const io = new Server(server, {
     origin: "*",
   },
 });
-
 export const sendUpdatedOrders = async () => {
   try {
-    const orders = await Order.find().populate("items.menuItem", "name price category");
+    // Populate `menuItem` inside `items` to get name, price, and category
+    const orders = await Order.find().populate(
+      "items.menuItem",
+      "name price category"
+    );
+
+    // Log orders to verify population
+    orders.forEach((order, index) => {
+      console.log(`Order ${index + 1}:`);
+      order.items.forEach((item, i) => {
+        if (item.menuItem) {
+          console.log(
+            `  Item ${i + 1}: ${item.menuItem.name} - $${
+              item.menuItem.price
+            } (${item.menuItem.category}) x${item.quantity}`
+          );
+        } else {
+          console.log(`  Item ${i + 1}: ⚠️ Missing menuItem reference!`);
+        }
+      });
+    });
+
     io.emit("latestOrders", orders);
   } catch (error) {
     console.error("Error fetching orders:", error);
@@ -43,7 +66,7 @@ export const sendUpdatedOrders = async () => {
 };
 
 // Use routes
-app.get("/", (req, res) => {
+app.get("/", (_, res) => {
   res.status(200).json({
     message: "api is working",
     menuRoutes: "/api/menu",

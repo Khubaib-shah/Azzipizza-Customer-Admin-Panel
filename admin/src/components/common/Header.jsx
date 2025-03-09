@@ -1,5 +1,6 @@
 import React from "react";
 import { Menu } from "lucide-react";
+import NotificationBar from "../NotificationBar";
 
 const Header = () => {
   return (
@@ -17,6 +18,7 @@ const Header = () => {
           </h1>
         </div>
       </div>
+      <NotificationBar />
     </header>
   );
 };

@@ -4,8 +4,6 @@ import Order from "../models/OrderModel.js";
 // ************* HAMMAD UR REHMAN ************* //
 // this is a method of socket io for fetch real time updated
 
-
-
 // Create a new order
 export const createOrder = async (req, res) => {
   try {
@@ -36,10 +34,10 @@ export const createOrder = async (req, res) => {
     });
 
     const savedOrder = await newOrder.save();
-   const orderSent = await sendUpdatedOrders();
-   if(orderSent) {
-    console.log("Order real time pe gaya!")
-   }
+    const orderSent = await sendUpdatedOrders();
+    if (orderSent) {
+      console.log("Order real time pe gaya!");
+    }
     res.status(201).json(savedOrder);
   } catch (error) {
     res.status(500).json({ message: "Error creating order", error });
@@ -78,9 +76,7 @@ export const getOrderById = async (req, res) => {
 export const updateOrderStatus = async (req, res) => {
   try {
     const { orderStatus, eta } = req.body;
-    const validStatuses = ["Preparing", "Out for Delivery", "Delivered"];
 
-    // Prepare the update object (only update `eta` if it's provided)
     const updateData = { orderStatus };
     if (eta) {
       updateData.eta = eta;
