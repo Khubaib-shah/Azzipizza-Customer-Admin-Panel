@@ -59,14 +59,6 @@ export const sendUpdatedOrders = async () => {
 };
 
 // Use routes
-app.use("/", (_, res) => {
-  res.status(200).json({
-    message: "api is working",
-    menuRoutes: "/api/menu",
-    orderRoutes: "/api/orders",
-    paymentRoutes: "/api/payments",
-  });
-});
 app.use("/api/menu", menuRoutes);
 app.use("/api/orders", orderRoutes);
 // app.use("/api/payments", paymentRoutes);

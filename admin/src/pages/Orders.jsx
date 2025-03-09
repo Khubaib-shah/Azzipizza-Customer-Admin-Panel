@@ -48,7 +48,7 @@ const Orders = () => {
       setLoading(true);
       const { data } = await baseUri.get("/api/orders");
       setOrders(data);
-      setFilteredOrders(data.reverse());
+      setFilteredOrders(data);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -291,7 +291,7 @@ const Orders = () => {
                   <div className="flex justify-center items-center h-64">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
                   </div>
-                ) : filteredOrders.filter(
+                ) : filteredOrders?.filter(
                     (order) =>
                       order.orderStatus !== "Delivered" &&
                       order.orderStatus !== "Cancelled"
