@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { List, ShoppingBag, LogOut, ChevronDown, Menu, X } from "lucide-react";
+import { List, ShoppingBag, ChevronDown, Menu, X } from "lucide-react";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -128,12 +128,6 @@ const Sidebar = () => {
               ))}
             </ul>
           </nav>
-          <div className="p-4 border-t border-gray-200">
-            <button className="flex items-center gap-3 p-2.5 w-full rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
-              <LogOut className="h-5 w-5 text-gray-500" />
-              <span>Logout</span>
-            </button>
-          </div>
         </div>
       </aside>
     </>

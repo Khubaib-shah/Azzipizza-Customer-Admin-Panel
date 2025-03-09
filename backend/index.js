@@ -11,7 +11,6 @@ import orderRoutes from "./routes/orderRoutes.js";
 import errorMiddleware from "./middleware/errorMiddleware.js";
 import { Server } from "socket.io";
 import Order from "./models/OrderModel.js";
-import { getAllMenuItems } from "./controllers/menuController.js";
 
 connectDB();
 // middleware

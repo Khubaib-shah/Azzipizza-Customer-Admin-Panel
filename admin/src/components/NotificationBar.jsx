@@ -11,8 +11,9 @@ import { useNavigate } from "react-router-dom";
 
 const NotificationBar = () => {
   const { notifications, setNotifications } = useNotifications();
-  console.log(notifications);
   const navigate = useNavigate();
+
+  console.log("Notifications:", notifications); // Debugging
 
   const handleClearNotifications = () => {
     setNotifications([]);
@@ -28,26 +29,41 @@ const NotificationBar = () => {
           )}
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="w-64 bg-white shadow-lg rounded-lg p-2">
+        <DropdownMenuContent className="w-64 bg-white shadow-lg rounded-lg p-2 z-1000">
           {notifications.length === 0 ? (
             <p className="text-center text-gray-500 text-sm">
               No notifications
             </p>
           ) : (
             notifications.map((notify) => {
+              console.log("Notification object:", notify); // Debugging
+
               return (
                 <DropdownMenuItem
                   key={notify.id}
-                  className="text-sm p-2 hover:bg-gray-100"
+                  className="text-sm p-2 hover:bg-gray-100 cursor-pointer"
                   onClick={() => navigate(`/`)}
                 >
                   <p className="font-semibold">{notify.message}</p>
-                  {/* Show menu items */}
-                  {/* {notify.items.map((item, index) => ( */}
-                  <div className="text-xs text-gray-600 ml-2">
-                    {/* {notify.name} - {notify.items[0].quantity}x */}
-                  </div>
-                  {/* ))} */}
+
+                  {/* Access items array correctly */}
+                  {Array.isArray(notify.items?.items) ? (
+                    notify.items.items.map((item, index) =>
+                      item.menuItem ? (
+                        <div key={index} className="text-xs text-gray-600 ml-2">
+                          {item.menuItem.name} - {item.quantity}x
+                        </div>
+                      ) : (
+                        <div key={index} className="text-xs text-red-500 ml-2">
+                          ⚠️ Item data missing!
+                        </div>
+                      )
+                    )
+                  ) : (
+                    <p className="text-xs text-red-500 ml-2">
+                      ⚠️ No items found in this order.
+                    </p>
+                  )}
                 </DropdownMenuItem>
               );
             })
