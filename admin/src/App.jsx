@@ -12,14 +12,18 @@ const App = () => {
     <Router>
       <div className="min-h-screen bg-gray-100">
         <Header />
-        <div className="flex">
-          <Sidebar />
-          <main className="flex-1 pt-16 ml-64 transition-all duration-300">
+        <div className="grid grid-cols-1 md:grid-cols-10 lg:grid-cols-12 gap-0">
+          {/* Sidebar: Fixed on the left */}
+          <div className="col-span-3 md:col-span-3 lg:col-span-3">
+            <Sidebar />
+          </div>
+
+          {/* Main Content: Pushed to the right */}
+          <main className="col-span-1 md:col-span-7 lg:col-span-9 p-6 transition-all duration-300 mt-16 ">
             <Routes>
               <Route path="/add-items" element={<AddItems />} />
               <Route path="/list-items" element={<ListItems />} />
               <Route path="/" element={<Orders />} />
-              {/* Catch-all route inside the layout */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
