@@ -16,7 +16,8 @@ dotenv.config();
 connectDB();
 
 // Parse allowed origins from environment variable
-const allowedOrigins = process.env.ALLOWED_ORIGINS;
+const allowedOrigins = process.env.ALLOWED_ORIGINS.split(",");
+console.log("Allowed origins:", allowedOrigins);
 
 // Initialize Express app and HTTP server
 const app = express();
@@ -31,12 +32,12 @@ app.use(
   cors({
     origin: (origin, callback) => {
       if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true); // Allow the request
+        callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS")); // Deny the request
+        callback(new Error("Not allowed by CORS"));
       }
     },
-    credentials: true, // Allow credentials (if needed)
+    credentials: true,
   })
 );
 
@@ -48,13 +49,12 @@ const io = new Server(server, {
   cors: {
     origin: (origin, callback) => {
       if (allowedOrigins.includes(origin)) {
-        callback(null, true); // Allow the connection
+        callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS")); // Deny the connection
+        callback(new Error("Not allowed by CORS"));
       }
     },
-    methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
-    credentials: true, // Allow credentials (if needed)
+    methods: ["GET", "POST", "PUT", "DELETE"],
   },
 });
 

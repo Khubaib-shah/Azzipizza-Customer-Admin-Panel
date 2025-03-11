@@ -13,10 +13,16 @@ const Sidebar = () => {
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+    // Reset submenu state when sidebar is closed
+    if (isSidebarOpen) {
+      setOpenSubmenu(null);
+    }
   };
 
   const closeSidebar = () => {
     setIsSidebarOpen(false);
+    // Reset submenu state when sidebar is closed
+    setOpenSubmenu(null);
   };
 
   const isActive = (path) => location.pathname === path;
@@ -37,7 +43,7 @@ const Sidebar = () => {
     <>
       {/* Mobile Toggle Button */}
       <button
-        className="md:hidden fixed top-2 left-4 z-50 p-2 bg-white border border-gray-200 rounded-md shadow"
+        className="md:hidden fixed top-2 left-4 p-2 bg-white border border-gray-200 rounded-md shadow z-50001"
         onClick={toggleSidebar}
       >
         <Menu className="h-6 w-6 text-gray-700" />
@@ -46,13 +52,13 @@ const Sidebar = () => {
       {/* Sidebar + Overlay */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0  bg-opacity-50 z-40 md:hidden"
+          className="fixed inset-0 bg-opacity-50 z-40 md:hidden"
           onClick={closeSidebar}
         ></div>
       )}
 
       <aside
-        className={`fixed top-0 left-0 pt-16 h-full w-64 bg-white border-r border-gray-200 shadow-md z-2 transition-transform duration-300 ease-in-out 
+        className={`fixed top-0 left-0 pt-16 h-full w-64 bg-white border-r border-gray-200 shadow-md z-50 transition-transform duration-300 ease-in-out 
           ${
             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           } md:translate-x-0`}
@@ -73,7 +79,10 @@ const Sidebar = () => {
                   {item.submenu ? (
                     <div className="mb-1">
                       <button
-                        onClick={() => toggleSubmenu(item.title)}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent event propagation
+                          toggleSubmenu(item.title);
+                        }}
                         className={`flex items-center justify-between w-full p-2.5 rounded-md text-sm font-medium transition-colors ${
                           openSubmenu === item.title
                             ? "bg-primary/10 text-primary"
@@ -91,7 +100,7 @@ const Sidebar = () => {
                         />
                       </button>
                       {openSubmenu === item.title && (
-                        <ul className="mt-1 ml-6 space-y-1">
+                        <ul className="mt-1 ml-6 space-y-1 transition-all duration-300 ease-in-out">
                           {item.submenu.map((subItem, subIndex) => (
                             <li key={subIndex}>
                               <Link
