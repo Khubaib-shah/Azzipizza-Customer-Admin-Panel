@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { baseUri } from "../config/config";
+import { baseUri, URL } from "../config/config";
 import io from "socket.io-client";
 import OrderSideBar from "../components/OrderSideBar";
 import {
@@ -53,7 +53,7 @@ const Orders = () => {
     return storedValue ? JSON.parse(storedValue) : false;
   });
 
-  const socket = io("http://localhost:5000");
+  const socket = io(URL);
 
   // Fetch Orders from API
   const fetchOrders = useCallback(async () => {
