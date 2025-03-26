@@ -6,7 +6,7 @@ import { FaBicycle, FaSearch } from "react-icons/fa";
 
 import Context from "../../context/dataContext";
 import MenuModal from "../Modal/MenuModel";
-import CompanyDetails from "../CompanyDetails";
+import CompDetails from "../CompDetails";
 // Main Products List Component
 function ProductsList() {
   const { items } = useContext(Context);
@@ -128,7 +128,7 @@ function ProductsList() {
         </div>
       ))}
 
-      <CompanyDetails />
+      <CompDetails />
 
       {/* Render Modal */}
       {isModalOpen && (
