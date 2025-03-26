@@ -1,4 +1,4 @@
-import { useState, useRef, useContext } from "react";
+import { useState, useRef, useContext, useMemo } from "react";
 import ProductCard from "../cards/ProductsCard"; // Ensure correct path
 import { MdGroups, MdStarOutline, MdInfoOutline } from "react-icons/md";
 import { PiListBulletsBold } from "react-icons/pi";
@@ -14,13 +14,41 @@ function ProductsList() {
   const [activeCategory, setActiveCategory] = useState("pasta");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const categoryRefs = useRef({});
+  const [searchQuery, setSearchQuery] = useState("");
 
+  // Get unique categories
   const menuItems = [...new Set(items.map((item) => item.category))].reverse();
 
-  const listing = menuItems.reduce((acc, category) => {
-    acc[category] = items.filter((item) => item.category === category);
-    return acc;
-  }, {});
+  // Filter items based on search query
+  const filteredItems = useMemo(() => {
+    if (!searchQuery) return items;
+
+    return items.filter(
+      (item) =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.category.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [items, searchQuery]);
+
+  // Group filtered items by category
+  const listing = useMemo(() => {
+    const result = {};
+
+    menuItems.forEach((category) => {
+      const categoryItems = filteredItems.filter(
+        (item) => item.category === category
+      );
+      if (categoryItems.length > 0) {
+        result[category] = categoryItems;
+      }
+    });
+
+    return result;
+  }, [filteredItems, menuItems]);
+
+  // Get categories that have items after filtering
+  const visibleCategories = Object.keys(listing);
 
   const handleCategoryClick = (category) => {
     setActiveCategory(category);
@@ -80,57 +108,88 @@ function ProductsList() {
           type="text"
           placeholder="Cerca il prodotto..."
           className="pl-10 pr-3 py-2 w-full border rounded-3xl focus:ring-2 focus:ring-sky-500 text-sm sm:text-base"
+          value={searchQuery}
+          onChange={(e) => {
+            setSearchQuery(e.target.value);
+            // Reset active category when searching
+            if (e.target.value) {
+              setActiveCategory("");
+            }
+          }}
         />
       </div>
 
       {/* Menu Items (Scrollable on Mobile) */}
-      <div className="flex items-center justify-between mt-5">
-        <div className="flex overflow-x-auto gap-2 w-full hide-scrollbar whitespace-nowrap">
-          {menuItems.map((item) => (
-            <button
-              key={item}
-              className={`px-5 py-1 font-semibold text-sm sm:text-base transition rounded-md uppercase ${
-                activeCategory === item
-                  ? "bg-black text-white"
-                  : "text-black hover:bg-black hover:text-white"
-              }`}
-              onClick={() => handleCategoryClick(item)}
-            >
-              {item}
-            </button>
-          ))}
+      {!searchQuery && (
+        <div className="flex items-center justify-between mt-5">
+          <div className="flex overflow-x-auto gap-2 w-full hide-scrollbar whitespace-nowrap">
+            {menuItems.map((item) => (
+              <button
+                key={item}
+                className={`px-5 py-1 font-semibold text-sm sm:text-base transition rounded-md uppercase ${
+                  activeCategory === item
+                    ? "bg-black text-white"
+                    : "text-black hover:bg-black hover:text-white"
+                }`}
+                onClick={() => handleCategoryClick(item)}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+          <button
+            className="w-20 h-10 flex items-center justify-center bg-white-200 hover:bg-white-300 rounded-md transition ml-2"
+            onClick={() => setIsModalOpen(true)}
+          >
+            <PiListBulletsBold size={22} />
+          </button>
         </div>
-        <button
-          className="w-20 h-10 flex items-center justify-center bg-white-200 hover:bg-white-300 rounded-md transition ml-2"
-          onClick={() => setIsModalOpen(true)}
-        >
-          <PiListBulletsBold size={22} />
-        </button>
-      </div>
+      )}
 
       {/* Product Categories & Listing */}
-      {menuItems.map((category) => (
-        <div
-          key={category}
-          ref={(el) => (categoryRefs.current[category] = el)}
-          className="mt-6"
-        >
+      {searchQuery ? (
+        // Show all filtered items in one section when searching
+        <div className="mt-6">
           <h2 className="text-lg sm:text-xl font-semibold capitalize">
-            {category}
+            Risultati della ricerca
           </h2>
-          {listing[category]?.length > 0 ? (
+          {filteredItems.length > 0 ? (
             <div className="grid md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
-              {listing[category].map((item) => (
+              {filteredItems.map((item) => (
                 <ProductCard key={item._id} products={item} />
               ))}
             </div>
           ) : (
             <p className="text-sm text-gray-500 mt-2">
-              No items available in this category.
+              Nessun prodotto trovato per "{searchQuery}"
             </p>
           )}
         </div>
-      ))}
+      ) : (
+        // Show items grouped by category when not searching
+        visibleCategories.map((category) => (
+          <div
+            key={category}
+            ref={(el) => (categoryRefs.current[category] = el)}
+            className="mt-6"
+          >
+            <h2 className="text-lg sm:text-xl font-semibold capitalize">
+              {category}
+            </h2>
+            {listing[category]?.length > 0 ? (
+              <div className="grid md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
+                {listing[category].map((item) => (
+                  <ProductCard key={item._id} products={item} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-gray-500 mt-2">
+                No items available in this category.
+              </p>
+            )}
+          </div>
+        ))
+      )}
 
       <CompDetails />
 
