@@ -7,14 +7,15 @@ import { FaBicycle, FaSearch } from "react-icons/fa";
 import Context from "../../context/dataContext";
 import MenuModal from "../Modal/MenuModel";
 import CompDetails from "../CompDetails";
+
 // Main Products List Component
 function ProductsList() {
   const { items } = useContext(Context);
-  const [activeCategory, setActiveCategory] = useState("");
+  const [activeCategory, setActiveCategory] = useState("pasta");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const categoryRefs = useRef({});
 
-  const menuItems = [...new Set(items.map((item) => item.category))];
+  const menuItems = [...new Set(items.map((item) => item.category))].reverse();
 
   const listing = menuItems.reduce((acc, category) => {
     acc[category] = items.filter((item) => item.category === category);
@@ -24,16 +25,19 @@ function ProductsList() {
   const handleCategoryClick = (category) => {
     setActiveCategory(category);
 
-    if (categoryRefs.current[category]) {
-      categoryRefs.current[category].scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
+    setTimeout(() => {
+      if (categoryRefs.current[category]) {
+        categoryRefs.current[category].scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
 
-      setTimeout(() => {
-        window.scrollBy(0, -100);
-      }, 300);
-    }
+        // Offset scroll slightly
+        setTimeout(() => {
+          window.scrollBy(0, -80);
+        }, 300);
+      }
+    }, 100);
   };
 
   return (
@@ -115,7 +119,7 @@ function ProductsList() {
             {category}
           </h2>
           {listing[category]?.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div className="grid md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
               {listing[category].map((item) => (
                 <ProductCard key={item._id} products={item} />
               ))}

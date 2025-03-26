@@ -1,18 +1,17 @@
 import { createContext, useState, useEffect } from "react";
+import { baseUri } from "../config/config";
 
 const Context = createContext();
 
 export const ContextProvider = ({ children }) => {
-  const [items, setItems] = useState([]); // Menu Items
+  const [items, setItems] = useState([]);
   const [cartItems, setCartItems] = useState(
     JSON.parse(localStorage.getItem("cartItems")) || []
-  ); // Cart Items
+  );
 
-  // Fetch menu from backend
   const fetchMenu = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/menu");
-      const data = await response.json();
+      const { data } = await baseUri.get("/api/menu");
       setItems(data);
     } catch (error) {
       console.error("Error fetching menu:", error);
@@ -42,16 +41,18 @@ export const ContextProvider = ({ children }) => {
         : [...prevCart, { ...item, quantity: 1 }];
     });
   };
+
+  // ✅ Decrease item quantity
   const CartDecrement = (item) => {
-    setCartItems((prevCart) => {
-      return prevCart
+    setCartItems((prevCart) =>
+      prevCart
         .map((cartItem) =>
           cartItem._id === item._id
             ? { ...cartItem, quantity: cartItem.quantity - 1 }
             : cartItem
         )
-        .filter((cartItem) => cartItem.quantity > 0);
-    });
+        .filter((cartItem) => cartItem.quantity > 0)
+    );
   };
 
   // ✅ Remove item from cart
@@ -66,7 +67,6 @@ export const ContextProvider = ({ children }) => {
         cartItems,
         addToCart,
         removeFromCart,
-        // placeOrder,
         CartDecrement,
       }}
     >

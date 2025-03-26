@@ -1,10 +1,10 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Minus, Plus, Trash2, X } from "lucide-react";
+import { Minus, Plus, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Context from "../context/dataContext";
-import axios from "axios";
+import { baseUri } from "../config/config";
 import OrderModal from "../components/Modal/OrderModel";
 
 // Cart Component
@@ -12,7 +12,8 @@ function Cart() {
   const { cartItems, addToCart, removeFromCart, CartDecrement } =
     useContext(Context);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [orderedItemId, setOrderedItemId] = useState([]);
+  const [orderedItemId, setOrderedItemId] = useState(null);
+  const [orderedItem, setOrderedItem] = useState(null);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -32,7 +33,8 @@ function Cart() {
     0
   );
 
-  const placeOrder = (orderData) => {
+  // ✅ Place Order with Axios
+  const placeOrder = async (orderData) => {
     const formattedOrder = {
       name: orderData.name,
       phoneNumber: orderData.phoneNumber,
@@ -45,43 +47,38 @@ function Cart() {
         menuItem: item._id,
         quantity: item.quantity,
       })),
-
       customizations: orderData.customizations || "",
     };
 
     console.log("Formatted Order Data:", formattedOrder);
 
-    // Send order to backend
-    fetch("http://localhost:5000/api/orders", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formattedOrder),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to place order");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("Order placed successfully:", data);
-        setOrderedItemId(data._id);
-
-        toast.success("Order placed successfully!", { position: "top-center" });
-      })
-      .catch((error) => {
-        console.error("Error placing order:", error);
-        toast.error("Failed to place order!", { position: "top-center" });
-      });
+    try {
+      const { data } = await baseUri.post("/api/orders", formattedOrder);
+      console.log("Order placed successfully:", data);
+      setOrderedItemId(data._id);
+      toast.success("Order placed successfully!", { position: "top-center" });
+    } catch (error) {
+      console.error("Error placing order:", error);
+      toast.error("Failed to place order!", { position: "top-center" });
+    }
   };
 
-  const orderedItem = async () => {
-    const { data } = await axios.get(
-      `http://localhost:5000/api/orders/${orderedItemId}`
-    );
-    console.log(data);
-  };
-  console.log(orderedItem());
+  // ✅ Fetch Ordered Item when orderedItemId changes
+  useEffect(() => {
+    if (!orderedItemId) return;
+
+    const fetchOrderedItem = async () => {
+      try {
+        const { data } = await baseUri.get(`/api/orders/${orderedItemId}`);
+        setOrderedItem(data);
+        console.log("Ordered Item:", data);
+      } catch (error) {
+        console.error("Error fetching order details:", error);
+      }
+    };
+
+    fetchOrderedItem();
+  }, [orderedItemId]);
 
   return (
     <div className="container mx-auto px-4 py-5">

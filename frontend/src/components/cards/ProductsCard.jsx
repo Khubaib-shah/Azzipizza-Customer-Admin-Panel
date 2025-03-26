@@ -19,7 +19,7 @@ function ProductCard({ products }) {
   };
 
   return (
-    <div className="product-card bg-white rounded-lg shadow-md hover:shadow-lg  overflow-hidden relative transition-transform">
+    <div className=" bg-white rounded-lg shadow-md hover:shadow-lg  overflow-hidden relative transition-transform">
       <div className="flex flex-col h-full">
         {/* Product Image */}
         <div className="relative w-full h-48 overflow-hidden">
