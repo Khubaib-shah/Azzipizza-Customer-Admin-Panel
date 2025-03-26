@@ -1,5 +1,4 @@
 import { useState, useContext } from "react";
-import { Dialog } from "@headlessui/react";
 import { Link } from "react-router-dom";
 import { Minus, Plus, Trash2, X } from "lucide-react";
 import { toast } from "react-toastify";

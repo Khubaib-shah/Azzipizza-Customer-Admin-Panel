@@ -1,60 +1,63 @@
 import { Button } from "@mui/material";
 import { useContext, useState } from "react";
-import { MdOutlineIndeterminateCheckBox } from "react-icons/md";
 import { PiMotorcycle } from "react-icons/pi";
-import { RiDeleteBin5Line } from "react-icons/ri";
+import { RiShoppingCartLine } from "react-icons/ri";
 import Context from "../../context/dataContext";
 import CartCard from "../Cart/CartCard";
+import { MdOutlineTakeoutDining } from "react-icons/md";
 
 function SideBar() {
-  const [activeBar, setActiveBar] = useState("activeOne");
+  const [activeTab, setActiveTab] = useState("delivery");
   const { cartItems } = useContext(Context);
 
-  console.log(cartItems);
+  const tabs = [
+    { id: "delivery", icon: <PiMotorcycle /> },
+    { id: "pickup", icon: <MdOutlineTakeoutDining /> },
+  ];
+
+  const validCartItems =
+    cartItems?.filter((item) => item?.id && item?.image && item?.name) || [];
+
   return (
-    <aside className="py-5 sticky top-0">
-      <div className="mb-4 flex items-center flex-col">
-        <h1 className="text-xl font-bold">Carrello</h1>
-        <div className="row32 flex items-center mt-4 bg-[#E6E3DE] p-1 w-full !rounded-full">
-          <div className="w-[50%]">
+    <aside className="sticky top-10 p-5">
+      <div className="flex flex-col gap-4">
+        <h1 className="text-xl font-bold text-center">Your Cart</h1>
+
+        {/* Tabs */}
+        <div className="flex bg-gray-100 p-1 rounded-full">
+          {tabs.map((tab) => (
             <Button
-              onClick={() => setActiveBar("activeOne")}
-              className={`transition w-full !text-md !text-[#000] !font-[500] !rounded-full flex gap-2 ${
-                activeBar === "activeOne" ? "!bg-white" : "!bg-none"
+              key={tab.id}
+              fullWidth
+              onClick={() => setActiveTab(tab.id)}
+              className={`!rounded-full !transition-all ${
+                activeTab === tab.id
+                  ? "!bg-white !shadow-sm"
+                  : "!bg-transparent"
               }`}
             >
-              <PiMotorcycle className="text-[18px]" />
+              <span className="flex items-center gap-2">{tab.icon}</span>
             </Button>
-          </div>
-          <div className="w-[50%]">
-            <Button
-              onClick={() => setActiveBar("activeTwo")}
-              className={`transition w-full !text-md !text-[#000] !font-[500] !rounded-full flex gap-2 ${
-                activeBar === "activeTwo" ? "!bg-white" : "!bg-none"
-              }`}
-            >
-              <MdOutlineIndeterminateCheckBox className="text-[18px]" />
-            </Button>
-          </div>
+          ))}
         </div>
 
-        <div className="w-full mt-4">
-          <div
-            className={`no-item flex flex-col gap-2 items-center justify-center w-full h-[300px] ${
-              cartItems.length > 0 ? "hidden" : "block"
-            }`}
-          >
-            <RiDeleteBin5Line className="text-[60px]" />
-            <h1 className="text-xl font-bold">Riempi il carrello</h1>
-            <p className="text-md">Il carrello è vuoto</p>
+        {/* Cart Content */}
+        {validCartItems.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-10 text-center text-gray-500">
+            <RiShoppingCartLine className="text-5xl mb-2" />
+            <h2 className="text-xl font-semibold">Your cart is empty</h2>
+            <p>Add some items to get started</p>
           </div>
-
-          <div className="cart-items w-full ">
-            {cartItems.map((item, index) => (
-              <CartCard key={index} products={item} />
+        ) : (
+          <div className="space-y-4">
+            {validCartItems.map((item) => (
+              <CartCard
+                key={`${item.id}-${item.variant || "default"}`}
+                product={item}
+              />
             ))}
           </div>
-        </div>
+        )}
       </div>
     </aside>
   );

@@ -3,8 +3,8 @@ import { createBrowserRouter } from "react-router-dom";
 // components
 import App from "../App";
 import Home from "../pages/Home";
-import ContactUs from "../pages/contactUs";
-import Cart from "../pages/cartPage";
+import ContactUs from "../pages/ContactUs";
+import Cart from "../pages/CartPage";
 import AboutUs from "../pages/aboutUs";
 
 const router = createBrowserRouter([
@@ -17,15 +17,15 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "about", // About page ka route
+        path: "about",
         element: <AboutUs />,
       },
       {
-        path: "contact", // About page ka route
+        path: "contact",
         element: <ContactUs />,
       },
       {
-        path: "cart", // About page ka route
+        path: "cart",
         element: <Cart />,
       },
     ],

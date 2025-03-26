@@ -1,9 +1,8 @@
 import React from "react";
-import pizzaImage from "../assets/hero-image.jpg"; // Ensure you have a pizza image in your project
-import teamImage from "../assets/hero-image.jpg"; // Add an image of the team or restaurant
-import ingredientsImage from "../assets/parts.pizza.jpg"; // Add an image of fresh ingredients
-import restaurantImage from "../assets/restunent.jpg"; // Add an image of the restaurant ambiance
-import Team from "../assets/meet-our.png"; // Add an image of the restaurant ambiance
+import pizzaImage from "../assets/hero-image.jpg";
+import ingredientsImage from "../assets/parts.pizza.jpg";
+import restaurantImage from "../assets/resturent.jpg";
+import Team from "../assets/meet-our.png";
 
 const AboutUs = () => {
   return (
