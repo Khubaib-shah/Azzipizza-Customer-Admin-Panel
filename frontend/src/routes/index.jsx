@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
 import Home from "../pages/Home";
 import About from "../pages/About";
-import ContactUs from "../pages/ContactUs";
+import Contact from "../pages/Contact";
 import Cart from "../pages/CartPage";
 // components
 
@@ -21,7 +21,7 @@ const router = createBrowserRouter([
       },
       {
         path: "contact",
-        element: <ContactUs />,
+        element: <Contact />,
       },
       {
         path: "cart",
