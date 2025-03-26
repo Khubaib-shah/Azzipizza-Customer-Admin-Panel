@@ -1,4 +1,8 @@
 import React from "react";
+import pizzaImage from "../assets/logo-pizza.png";
+import ingredientsImage from "../assets/parts.pizza.jpg";
+import restaurantImage from "../assets/resturent.jpg";
+import Team from "../assets/meet-our.png";
 
 const About = () => {
   return (
