@@ -4,6 +4,7 @@ import Home from "../pages/Home";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
 import Cart from "../pages/Cart";
+import OrderHistory from "../pages/OrderHistory";
 // components
 
 const router = createBrowserRouter([
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: "cart",
         element: <Cart />,
+      },
+      {
+        path: "orders",
+        element: <OrderHistory />,
       },
     ],
   },
