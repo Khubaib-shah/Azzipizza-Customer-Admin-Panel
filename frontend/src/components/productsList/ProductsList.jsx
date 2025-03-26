@@ -40,8 +40,8 @@ function ProductsList() {
     <div className="container  mx-auto px-4 pt-5 mt-3">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-center">
-        <h1 className="text-xl sm:text-2xl font-bold text-center sm:text-left">
-          Azzipizza Mica Pizza e Fichi
+        <h1 className="text-xl sm:text-xl font-bold text-center sm:text-left lg:text-3xl md:text-[18px] flex-1">
+          Azzipizza Mica Pizza
         </h1>
         <div className="flex gap-3 mt-3 sm:mt-0">
           <button className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-transparent hover:bg-gray-300 rounded-lg transition text-sm sm:text-base">
