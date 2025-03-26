@@ -1,10 +1,6 @@
 import React from "react";
-import pizzaImage from "../assets/hero-image.jpg";
-import ingredientsImage from "../assets/parts.pizza.jpg";
-import restaurantImage from "../assets/resturent.jpg";
-import Team from "../assets/meet-our.png";
 
-const AboutUs = () => {
+const About = () => {
   return (
     <div className="bg-gray-300 min-h-screen flex items-center justify-center p-6">
       <div className="max-w-4xl bg-white shadow-lg rounded-xl p-6">
@@ -137,4 +133,4 @@ const AboutUs = () => {
   );
 };
 
-export default AboutUs;
+export default About;
