@@ -10,9 +10,9 @@ const orderSchema = new mongoose.Schema(
           required: [true, "Item is required"],
         },
         quantity: { type: Number, required: true, default: 1 },
-        customizations: String,
       },
     ],
+    customizations: String,
     totalPrice: {
       type: Number,
       required: [true, "Total price is required"],

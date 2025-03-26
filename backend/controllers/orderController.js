@@ -15,6 +15,7 @@ export const createOrder = async (req, res) => {
       deliveryAddress,
       phoneNumber,
       name,
+      customizations,
     } = req.body;
 
     // Validate items
@@ -61,6 +62,7 @@ export const createOrder = async (req, res) => {
       orderStatus,
       deliveryAddress,
       phoneNumber,
+      customizations,
     });
 
     // Save the order

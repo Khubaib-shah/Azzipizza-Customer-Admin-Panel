@@ -3,9 +3,9 @@ import { createBrowserRouter } from "react-router-dom";
 // components
 import App from "../App";
 import Home from "../pages/Home";
-import AboutUs from "../pages/aboutus";
 import ContactUs from "../pages/contactUs";
-import Cart from "../pages/cart-page";
+import Cart from "../pages/cartPage";
+import AboutUs from "../pages/aboutUs";
 
 const router = createBrowserRouter([
   {

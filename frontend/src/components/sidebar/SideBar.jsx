@@ -3,16 +3,16 @@ import { useContext, useState } from "react";
 import { MdOutlineIndeterminateCheckBox } from "react-icons/md";
 import { PiMotorcycle } from "react-icons/pi";
 import { RiDeleteBin5Line } from "react-icons/ri";
-import Context from "../../context";
-import CartCard from "../cards/cart.card";
+import Context from "../../context/dataContext";
+import CartCard from "../Cart/CartCard";
 
 function SideBar() {
   const [activeBar, setActiveBar] = useState("activeOne");
-  const { cartItems, setCartItems } = useContext(Context);
+  const { cartItems } = useContext(Context);
 
   console.log(cartItems);
   return (
-    <aside className="py-5">
+    <aside className="py-5 sticky top-0">
       <div className="mb-4 flex items-center flex-col">
         <h1 className="text-xl font-bold">Carrello</h1>
         <div className="row32 flex items-center mt-4 bg-[#E6E3DE] p-1 w-full !rounded-full">
@@ -23,7 +23,7 @@ function SideBar() {
                 activeBar === "activeOne" ? "!bg-white" : "!bg-none"
               }`}
             >
-              <PiMotorcycle className="text-[18px]" /> Consegna
+              <PiMotorcycle className="text-[18px]" />
             </Button>
           </div>
           <div className="w-[50%]">
@@ -33,7 +33,7 @@ function SideBar() {
                 activeBar === "activeTwo" ? "!bg-white" : "!bg-none"
               }`}
             >
-              <MdOutlineIndeterminateCheckBox className="text-[18px]" /> Ritiro
+              <MdOutlineIndeterminateCheckBox className="text-[18px]" />
             </Button>
           </div>
         </div>
@@ -49,7 +49,7 @@ function SideBar() {
             <p className="text-md">Il carrello è vuoto</p>
           </div>
 
-          <div className="cart-items w-full">
+          <div className="cart-items w-full ">
             {cartItems.map((item, index) => (
               <CartCard key={index} products={item} />
             ))}

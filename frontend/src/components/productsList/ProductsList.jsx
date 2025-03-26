@@ -1,63 +1,43 @@
-import { useState, useRef } from "react";
-import { listing, menuItems } from "./productdata";
-import ProductCard from "../cards/products.card"; // Ensure correct path
+import { useState, useRef, useContext } from "react";
+import ProductCard from "../cards/ProductsCard"; // Ensure correct path
 import { MdGroups, MdStarOutline, MdInfoOutline } from "react-icons/md";
 import { PiListBulletsBold } from "react-icons/pi";
 import { FaBicycle, FaSearch } from "react-icons/fa";
-import Companydetails from "../companydetails";
 
-function MenuModal({ menuItems, onClose, onSelectCategory }) {
-  return (
-    <div className="fixed inset-0 flex justify-center items-center z-50 px-4">
-      <div className="bg-white text-black p-6 rounded-lg w-full max-w-xl shadow-xl overflow-y-auto max-h-[80vh]">
-        <div className="flex justify-between items-center border-b pb-3">
-          <h2 className="text-lg font-bold">Menu Items</h2>
-          <button
-            onClick={onClose}
-            className="text-red-500 text-xl font-bold p-2 rounded hover:bg-red-100"
-          >
-            ✖
-          </button>
-        </div>
-        <ul className="mt-4 space-y-2 max-h-[60vh] overflow-y-auto">
-          {menuItems.map((item, index) => (
-            <li
-              key={index}
-              className="text-lg cursor-pointer p-3 bg-white text-black hover:bg-black hover:text-white rounded-md transition"
-              onClick={() => {
-                onSelectCategory(item);
-                onClose();
-              }}
-            >
-              {item}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  );
-}
-
+import Context from "../../context/dataContext";
+import MenuModal from "../Modal/MenuModel";
+import CompanyDetails from "../CompanyDetails";
 // Main Products List Component
 function ProductsList() {
-  const [activeCategory, setActiveCategory] = useState(
-    menuItems[0] || "Pizze Rosse"
-  );
+  const { items } = useContext(Context);
+  const [activeCategory, setActiveCategory] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const categoryRefs = useRef({});
 
+  const menuItems = [...new Set(items.map((item) => item.category))];
+
+  const listing = menuItems.reduce((acc, category) => {
+    acc[category] = items.filter((item) => item.category === category);
+    return acc;
+  }, {});
+
   const handleCategoryClick = (category) => {
     setActiveCategory(category);
+
     if (categoryRefs.current[category]) {
       categoryRefs.current[category].scrollIntoView({
         behavior: "smooth",
         block: "start",
       });
+
+      setTimeout(() => {
+        window.scrollBy(0, -100);
+      }, 300);
     }
   };
 
   return (
-    <div className="container mx-auto px-4 pt-5 mt-3">
+    <div className="container  mx-auto px-4 pt-5 mt-3">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-center">
         <h1 className="text-xl sm:text-2xl font-bold text-center sm:text-left">
@@ -105,7 +85,7 @@ function ProductsList() {
           {menuItems.map((item) => (
             <button
               key={item}
-              className={`px-5 py-1 font-semibold text-sm sm:text-base transition rounded-md ${
+              className={`px-5 py-1 font-semibold text-sm sm:text-base transition rounded-md uppercase ${
                 activeCategory === item
                   ? "bg-black text-white"
                   : "text-black hover:bg-black hover:text-white"
@@ -131,11 +111,13 @@ function ProductsList() {
           ref={(el) => (categoryRefs.current[category] = el)}
           className="mt-6"
         >
-          <h2 className="text-lg sm:text-xl font-semibold">{category}</h2>
+          <h2 className="text-lg sm:text-xl font-semibold capitalize">
+            {category}
+          </h2>
           {listing[category]?.length > 0 ? (
-            <div className="grid grid-cols-1 gap-4 mt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
               {listing[category].map((item) => (
-                <ProductCard key={item.id} products={item} />
+                <ProductCard key={item._id} products={item} />
               ))}
             </div>
           ) : (
@@ -146,7 +128,7 @@ function ProductsList() {
         </div>
       ))}
 
-      <Companydetails />
+      <CompanyDetails />
 
       {/* Render Modal */}
       {isModalOpen && (

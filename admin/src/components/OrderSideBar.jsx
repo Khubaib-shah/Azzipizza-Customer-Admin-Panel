@@ -39,6 +39,7 @@ const OrderSideBar = ({
 }) => {
   if (!selectedOrder) return null;
 
+  console.log(selectedOrder.customizations);
   const getStatusColor = (status) => {
     switch (status) {
       case "Delivered":
@@ -140,17 +141,18 @@ const OrderSideBar = ({
                         </span>
                         <span className="text-sm">{item.menuItem?.name}</span>
                       </div>
-                      {item.customizations && (
-                        <p className="text-xs text-gray-500 mt-1 ml-6">
-                          {item.customizations}
-                        </p>
-                      )}
                     </div>
                     <span className="text-sm font-medium">
                       ${(item.quantity * item.menuItem?.price).toFixed(2)}
                     </span>
                   </div>
                 ))}
+
+                {selectedOrder?.customizations && (
+                  <div className="text-sm">
+                    Note : {selectedOrder?.customizations}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

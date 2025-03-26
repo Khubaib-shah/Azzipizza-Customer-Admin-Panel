@@ -1,7 +1,7 @@
 import React from "react";
 import { FaCalendarAlt } from "react-icons/fa";
 
-const Companydetails = () => {
+const CompanyDetails = () => {
   return (
     <div className="px-4 md:px-6 lg:px-8 mt-12">
       <div className="flex flex-row justify-start items-center">
@@ -40,4 +40,4 @@ const Companydetails = () => {
   );
 };
 
-export default Companydetails;
+export default CompanyDetails;

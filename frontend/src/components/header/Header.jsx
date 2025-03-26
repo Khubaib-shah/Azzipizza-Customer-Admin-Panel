@@ -8,7 +8,7 @@ import {
 } from "react-icons/ai";
 import { MdOutlineMenu } from "react-icons/md";
 import { Button } from "@mui/material";
-import Context from "../../context/index";
+import Context from "../../context/dataContext";
 import HeaderModal from "./headerModal/headerModal";
 import logo from "../../assets/logo-pizza.png";
 

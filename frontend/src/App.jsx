@@ -1,20 +1,17 @@
 import { Outlet, useLocation } from "react-router-dom";
-import Context, { ContextProvider } from "./context";
+import { ContextProvider } from "./context/dataContext";
 import Header from "./components/header/Header";
 import SideBar from "./components/sidebar/SideBar";
-import { useState } from "react";
 import Footer from "./components/footer/Footer";
 import "./index.css";
-import "./App.css";
+import { ToastContainer } from "react-toastify";
 
 function App() {
-  const [cartItems, setCartItems] = useState([]);
-  const location = useLocation(); // Get current route
-
+  const location = useLocation();
   return (
-    <ContextProvider value={{ cartItems, setCartItems }}>
+    <ContextProvider>
       <Header />
-      <main className="bg-gray-100 dark:bg-gray-800 dark:text-white">
+      <main className="bg-gray-100">
         <div className="grid grid-cols-12">
           {/* Main Content - Outlet */}
           <div
@@ -29,12 +26,14 @@ function App() {
 
           {/* Sidebar only on Home Page */}
           {location.pathname === "/" && (
-            <div className="col-span-3 hidden md:block bg-white dark:bg-gray-900 p-4 filter drop-shadow-[-10px_0_15px_rgba(0,0,0,0.1)]">
+            <div className="col-span-3 hidden md:block bg-white p-4 filter drop-shadow-[-10px_0_15px_rgba(0,0,0,0.1)]">
               <SideBar />
             </div>
           )}
         </div>
       </main>
+      <ToastContainer />
+
       <Footer />
     </ContextProvider>
   );
