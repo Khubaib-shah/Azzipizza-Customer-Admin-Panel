@@ -23,7 +23,7 @@ function ProductsList() {
   const filteredItems = useMemo(() => {
     if (!searchQuery) return items;
 
-    return items.filter(
+    return items?.filter(
       (item) =>
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -47,7 +47,6 @@ function ProductsList() {
     return result;
   }, [filteredItems, menuItems]);
 
-  // Get categories that have items after filtering
   const visibleCategories = Object.keys(listing);
 
   const handleCategoryClick = (category) => {
@@ -145,7 +144,6 @@ function ProductsList() {
           </button>
         </div>
       )}
-
       {/* Product Categories & Listing */}
       {searchQuery ? (
         // Show all filtered items in one section when searching
@@ -177,10 +175,18 @@ function ProductsList() {
               {category}
             </h2>
             {listing[category]?.length > 0 ? (
-              <div className="grid md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
-                {listing[category].map((item) => (
-                  <ProductCard key={item._id} products={item} />
-                ))}
+              <div className="relative mt-4">
+                {/* Scrollable container for product cards */}
+                <div className="flex gap-4 overflow-x-auto whitespace-nowrap scroll-smooth styled-scrollbar pb-4">
+                  {listing[category].map((item) => (
+                    <div
+                      key={item._id}
+                      className="inline-block flex-shrink-0 w-[250px]"
+                    >
+                      <ProductCard products={item} />
+                    </div>
+                  ))}
+                </div>
               </div>
             ) : (
               <p className="text-sm text-gray-500 mt-2">

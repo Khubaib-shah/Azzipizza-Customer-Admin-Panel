@@ -12,7 +12,7 @@ function ProductCard({ products }) {
     addToCart(products);
 
     toast.success(`${products.name} added to cart!`, {
-      position: "top-right",
+      position: "bottom-right",
       autoClose: 3000,
       theme: "light",
     });
