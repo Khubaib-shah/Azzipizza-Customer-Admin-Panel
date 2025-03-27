@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import {
   CheckCircle,
@@ -6,23 +6,25 @@ import {
   MapPin,
   ShoppingBag,
   ChevronLeft,
+  ChevronDown,
   Loader2,
 } from "lucide-react";
 import { toast } from "react-toastify";
-import axios from "axios";
+import Context from "../context/dataContext";
+import { baseUri } from "../config/config";
 
 function OrderHistory() {
+  const { cartItems } = useContext(Context);
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true); // Changed initial state to true
+  const [loading, setLoading] = useState(true);
   const [expandedOrder, setExpandedOrder] = useState(null);
+  const id = [cartItems._id];
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get(
-          `http://localhost:5000/api/orders/67e460b34ebd370bb5bfcfd0`
-        );
+        const { data } = await baseUri.get(`/api/orders/${id}`);
 
         // Ensure we always work with an array
         const ordersArray = Array.isArray(data) ? data : [data];
@@ -79,7 +81,7 @@ function OrderHistory() {
       <div className="flex items-center gap-4 mb-8">
         <Link
           to="/"
-          className="flex items-center text-amber-600 hover:text-amber-700"
+          className="flex items-center text-amber-600 hover:text-amber-700 transition-colors"
         >
           <ChevronLeft size={20} />
           <span>Back to Home</span>
@@ -91,33 +93,33 @@ function OrderHistory() {
       </div>
 
       {!orders || orders.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-sm p-8 text-center">
-          <ShoppingBag className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+        <div className="bg-white rounded-lg shadow-sm p-8 text-center transition-all duration-300">
+          <ShoppingBag className="mx-auto h-12 w-12 text-gray-400 mb-4 transition-transform duration-300 hover:scale-110" />
           <h3 className="text-lg font-medium text-gray-900">No orders yet</h3>
           <p className="mt-2 text-gray-500">
             You haven't placed any orders. Ready to order something delicious?
           </p>
           <Link
             to="/menu"
-            className="mt-6 inline-block bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-lg"
+            className="mt-6 inline-block bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-lg transition-colors duration-300"
           >
             Browse Menu
           </Link>
         </div>
       ) : (
         <div className="space-y-4">
-          {orders.map((order) => (
+          {orders.reverse().map((order) => (
             <div
               key={order._id}
-              className="bg-white rounded-lg shadow-sm border overflow-hidden"
+              className="bg-white rounded-lg shadow-sm border overflow-hidden transition-all duration-300 hover:shadow-md"
             >
               <button
                 onClick={() => toggleOrder(order._id)}
-                className="w-full p-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"
+                className="w-full p-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-300"
               >
                 <div className="flex items-center gap-4">
                   <div
-                    className={`p-2 rounded-full ${getStatusColor(
+                    className={`p-2 rounded-full transition-colors duration-300 ${getStatusColor(
                       order.orderStatus
                     )}`}
                   >
@@ -134,7 +136,7 @@ function OrderHistory() {
                 </div>
                 <div className="flex items-center gap-4">
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                    className={`px-3 py-1 rounded-full text-xs font-medium transition-colors duration-300 ${getStatusColor(
                       order.orderStatus
                     )}`}
                   >
@@ -143,10 +145,21 @@ function OrderHistory() {
                   <span className="font-medium">
                     ${order.totalPrice.toFixed(2)}
                   </span>
+                  <ChevronDown
+                    className={`h-5 w-5 text-gray-500 transition-transform duration-300 ${
+                      expandedOrder === order._id ? "rotate-180" : ""
+                    }`}
+                  />
                 </div>
               </button>
 
-              {expandedOrder === order._id && (
+              <div
+                className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                  expandedOrder === order._id
+                    ? "max-h-[2000px] opacity-100"
+                    : "max-h-0 opacity-0"
+                }`}
+              >
                 <div className="p-4 border-t">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
@@ -187,7 +200,7 @@ function OrderHistory() {
                         <p>
                           <span className="font-medium">Payment Status:</span>
                           <span
-                            className={`ml-2 px-2 py-1 rounded-full text-xs ${
+                            className={`ml-2 px-2 py-1 rounded-full text-xs transition-colors duration-300 ${
                               order.paymentStatus === "Paid"
                                 ? "bg-green-100 text-green-800"
                                 : "bg-amber-100 text-amber-800"
@@ -214,20 +227,22 @@ function OrderHistory() {
                       {order.items.map((item, index) => (
                         <div
                           key={index}
-                          className="flex justify-between items-start"
+                          className="flex justify-between items-start transition-opacity duration-300"
                         >
                           <div className="flex items-start gap-3">
-                            <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden">
-                              {item.menuItem.image && (
+                            <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden transition-transform duration-300 hover:scale-105">
+                              {item && (
                                 <img
                                   src={item.menuItem.image}
-                                  alt={item.name}
-                                  className="w-full h-full object-cover"
+                                  alt={item.menuItem.name}
+                                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
                                 />
                               )}
                             </div>
                             <div>
-                              <p className="font-medium">{item.name}</p>
+                              <p className="font-medium">
+                                {item.menuItem.name}
+                              </p>
                               <p className="text-sm text-gray-500">
                                 Qty: {item.quantity}
                               </p>
@@ -263,7 +278,7 @@ function OrderHistory() {
                     </div>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           ))}
         </div>

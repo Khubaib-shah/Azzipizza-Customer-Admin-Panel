@@ -38,10 +38,10 @@ function Cart() {
   const closeModal = () => {
     setIsModalOpen(false);
     if (isOrderConfirmed) {
+      // Clear the cart when modal closes after order confirmation
       clearCart();
     }
   };
-
   const increaseQuantity = (id) => {
     const item = cartItems.find((item) => item._id === id);
     if (item) addToCart(item);
@@ -56,7 +56,6 @@ function Cart() {
     (acc, item) => acc + item.price * item.quantity,
     0
   );
-
   const placeOrder = async (orderData) => {
     const formattedOrder = {
       name: orderData.name,
@@ -81,10 +80,11 @@ function Cart() {
       setOrderedItem(data);
       setIsOrderConfirmed(true);
 
-      // Save the order ID to localStorage
       saveOrderToLocalStorage(data._id);
 
       toast.success("Order placed successfully!", { position: "top-center" });
+
+      clearCart();
     } catch (error) {
       console.error("Error placing order:", error);
       toast.error("Failed to place order!", { position: "top-center" });

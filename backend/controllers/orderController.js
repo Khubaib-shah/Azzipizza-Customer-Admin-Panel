@@ -87,7 +87,7 @@ export const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find().populate(
       "items.menuItem",
-      "name price category"
+      "name price category image"
     );
     res.status(200).json(orders);
   } catch (error) {
