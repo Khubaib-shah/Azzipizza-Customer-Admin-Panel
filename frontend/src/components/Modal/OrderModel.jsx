@@ -1,4 +1,5 @@
 import { Dialog } from "@headlessui/react";
+import axios from "axios";
 import { X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -18,7 +19,8 @@ function OrderModal({ isOpen, closeModal, placeOrder, totalPrice }) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = () => {
+
+  const handleSubmit = async () => {
     if (
       !formData.name ||
       !formData.phoneNumber ||
@@ -31,10 +33,21 @@ function OrderModal({ isOpen, closeModal, placeOrder, totalPrice }) {
       });
       return;
     }
-    placeOrder(formData);
-    toast.success("Order placed successfully!", { position: "top-center" });
-    closeModal();
+
+    try {
+      const response = await axios.post(`http://localhost:5000/api/payments/pay-for-order`, formData);
+
+      if (response.data.approval_url) {
+        window.location.href = response.data.approval_url;
+      } else {
+        toast.error("Failed to initiate payment!", { position: "top-center" });
+      }
+    } catch (error) {
+      console.error("Payment error:", error);
+      toast.error("Something went wrong with PayPal!", { position: "top-center" });
+    }
   };
+
 
   return (
     <Dialog
