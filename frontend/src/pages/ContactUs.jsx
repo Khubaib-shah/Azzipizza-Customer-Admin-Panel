@@ -8,7 +8,7 @@ import {
   FaInstagram,
 } from "react-icons/fa";
 
-const Contact = () => {
+const ContactUs = () => {
   return (
     <div className="bg-gray-300 min-h-screen flex items-center justify-center p-6">
       <div className="max-w-4xl bg-white shadow-lg rounded-xl p-6 w-full">
@@ -93,4 +93,4 @@ const Contact = () => {
   );
 };
 
-export default Contact;
+export default ContactUs;
