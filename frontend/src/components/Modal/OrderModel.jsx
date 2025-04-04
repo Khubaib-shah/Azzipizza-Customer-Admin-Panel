@@ -5,7 +5,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 
 // Order Modal Component
-function OrderModal({ isOpen, closeModal, placeOrder, totalPrice }) {
+function OrderModal({ isOpen, closeModal, placeOrder, totalPrice, cartItems }) {
   const [formData, setFormData] = useState({
     name: "",
     phoneNumber: "",
@@ -29,13 +29,13 @@ function OrderModal({ isOpen, closeModal, placeOrder, totalPrice }) {
       !formData.zipCode
     ) {
       toast.error("Please fill in all required fields!", {
-        position: "top-center",
+        position: "top-center", 
       });
       return;
     }
 
     try {
-      const response = await axios.post(`http://localhost:5000/api/payments/pay-for-order`, formData);
+      const response = await axios.post(`http://localhost:5000/api/payments/pay-for-order`, { ...formData, cartItems });
 
       if (response.data.approval_url) {
         window.location.href = response.data.approval_url;
@@ -44,7 +44,7 @@ function OrderModal({ isOpen, closeModal, placeOrder, totalPrice }) {
       }
     } catch (error) {
       console.error("Payment error:", error);
-      toast.error("Something went wrong with PayPal!", { position: "top-center" });
+      toast.error(error.message, { position: "top-center" });
     }
   };
 

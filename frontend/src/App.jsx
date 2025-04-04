@@ -14,9 +14,8 @@ function App() {
         <div className="grid grid-cols-12">
           {/* Main Content - Outlet */}
           <div
-            className={`${
-              location.pathname === "/" ? "col-span-12" : "col-span-12"
-            }`}
+            className={`${location?.pathname === "/" ? "col-span-12" : "col-span-12"
+              }`}
           >
             <Outlet />
           </div>

@@ -327,6 +327,7 @@ function Cart() {
         closeModal={closeModal}
         placeOrder={placeOrder}
         totalPrice={totalPrice}
+        cartItems={cartItems}
       />
     </div>
   );
