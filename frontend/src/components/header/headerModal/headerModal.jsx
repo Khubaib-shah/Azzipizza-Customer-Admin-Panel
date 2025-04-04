@@ -1,18 +1,14 @@
 import { Button, Dialog } from "@mui/material";
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { use, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 // icons
-import {
-  IoBusinessOutline,
-  IoCloseOutline,
-  IoStorefrontOutline,
-} from "react-icons/io5";
-import { CiDiscount1, CiCircleInfo } from "react-icons/ci";
-import { MdOutlineDeliveryDining } from "react-icons/md";
+import { IoCloseOutline } from "react-icons/io5";
+import { CiCircleInfo } from "react-icons/ci";
 
 function HeaderModal({ open, setOpen }) {
   const [fullWidth, setFullWidth] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 768px)");
@@ -27,6 +23,10 @@ function HeaderModal({ open, setOpen }) {
       mediaQuery.removeEventListener("change", handleMediaChange);
     };
   }, []);
+  const handleNavigate = () => {
+    setOpen(false);
+    navigate("/about");
+  };
 
   return (
     <Dialog open={open} onClose={() => setOpen(false)} fullScreen={fullWidth}>
@@ -45,66 +45,17 @@ function HeaderModal({ open, setOpen }) {
           </span>
         </div>
 
-        {/* Login/Signup Buttons */}
-        <div className="flex items-center gap-3 sm:gap-4 mt-2">
-          <Button className="w-1/2 !bg-[#EDE9E5] hover:!bg-[rgb(216,212,208)] !text-[#000] !font-[600] !text-[14px] !rounded-full">
-            Accedi
-          </Button>
-          <Button className="w-1/2 !bg-[#F36805] hover:!bg-[rgb(243,73,5)] !text-white !font-[600] !rounded-full">
-            Crea un account
-          </Button>
-        </div>
-
         {/* Navigation Links */}
         <div className="mt-2">
           <ul className="border-b pb-2 border-gray-200">
             <li className="p-2 hover:bg-gray-100">
-              <Link
-                to="/cartefedeltà"
-                className="flex items-center gap-2 text-[14px] sm:text-[16px] font-[500]"
-              >
-                <CiDiscount1 className="text-[20px] sm:text-[22px]" />
-                Carte Fedeltà
-              </Link>
-            </li>
-            <li className="p-2 hover:bg-gray-100">
-              <Link
-                to="/cartefedeltà"
+              <button
+                onClick={() => handleNavigate()}
                 className="flex items-center gap-2 text-[14px] sm:text-[16px] font-[500]"
               >
                 <CiCircleInfo className="text-[20px] sm:text-[22px]" />
                 Ti serve aiuto?
-              </Link>
-            </li>
-          </ul>
-
-          <ul className="mt-2">
-            <li className="p-2 hover:bg-gray-100">
-              <Link
-                to="/cartefedeltà"
-                className="flex items-center gap-2 text-[14px] sm:text-[16px] font-[500]"
-              >
-                <MdOutlineDeliveryDining className="text-[20px] sm:text-[22px]" />
-                Diventa rider
-              </Link>
-            </li>
-            <li className="p-2 hover:bg-gray-100">
-              <Link
-                to="/cartefedeltà"
-                className="flex items-center gap-2 text-[14px] sm:text-[16px] font-[500]"
-              >
-                <IoBusinessOutline className="text-[20px] sm:text-[22px]" />
-                Just Eat for business
-              </Link>
-            </li>
-            <li className="p-2 hover:bg-gray-100">
-              <Link
-                to="/cartefedeltà"
-                className="flex items-center gap-2 text-[14px] sm:text-[16px] font-[500]"
-              >
-                <IoStorefrontOutline className="text-[20px] sm:text-[22px]" />
-                Diventa Partner
-              </Link>
+              </button>
             </li>
           </ul>
         </div>
