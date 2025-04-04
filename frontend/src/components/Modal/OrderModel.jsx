@@ -35,7 +35,7 @@ function OrderModal({ isOpen, closeModal, placeOrder, totalPrice, cartItems }) {
     }
 
     try {
-      const response = await axios.post(`http://localhost:5000/api/payments/pay-for-order`, { ...formData, cartItems });
+      const response = await axios.post(`https://pizzeria-backend-production.up.railway.app/api/payments/pay-for-order`, { ...formData, cartItems });
 
       if (response.data.approval_url) {
         window.location.href = response.data.approval_url;
