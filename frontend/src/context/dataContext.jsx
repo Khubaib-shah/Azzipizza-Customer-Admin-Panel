@@ -26,7 +26,7 @@ export const ContextProvider = ({ children }) => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  // ✅ Add item to cart
+  // Add item to cart
   const addToCart = (item) => {
     setCartItems((prevCart) => {
       const existingItem = prevCart.find(
@@ -42,7 +42,7 @@ export const ContextProvider = ({ children }) => {
     });
   };
 
-  // ✅ Decrease item quantity
+  // Decrease item quantity
   const CartDecrement = (item) => {
     setCartItems((prevCart) =>
       prevCart
@@ -55,9 +55,15 @@ export const ContextProvider = ({ children }) => {
     );
   };
 
-  // ✅ Remove item from cart
+  // Remove item from cart
   const removeFromCart = (itemId) => {
     setCartItems((prevCart) => prevCart.filter((item) => item._id !== itemId));
+  };
+
+  // ✅ New function to clear the cart
+  const clearCart = () => {
+    setCartItems([]);
+    localStorage.removeItem("cartItems");
   };
 
   return (
@@ -68,6 +74,7 @@ export const ContextProvider = ({ children }) => {
         addToCart,
         removeFromCart,
         CartDecrement,
+        clearCart,
       }}
     >
       {children}

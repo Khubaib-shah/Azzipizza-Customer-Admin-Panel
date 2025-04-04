@@ -8,6 +8,7 @@ import menuRoutes from "./routes/menuRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import errorMiddleware from "./middleware/errorMiddleware.js";
 import Order from "./models/OrderModel.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -95,6 +96,7 @@ app.get("/", (req, res) => {
 });
 app.use("/api/menu", menuRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/payments", paymentRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 5001;
