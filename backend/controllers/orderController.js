@@ -1,4 +1,4 @@
-import { sendUpdatedOrders } from "../index.js";
+import { sendUpdatedOrders } from "../app.js";
 import Menu from "../models/MenuModel.js";
 import Order from "../models/OrderModel.js";
 
