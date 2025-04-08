@@ -9,7 +9,7 @@ import {
 import { MdOutlineMenu, MdHistory } from "react-icons/md";
 import { Button } from "@mui/material";
 import Context from "../../context/dataContext";
-import HeaderModal from "./headerModal/headerModal";
+import HeaderModal from "../Modal/headerModal";
 import logo from "../../assets/logo-pizza.png";
 
 function Header() {

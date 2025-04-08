@@ -49,13 +49,14 @@ function HeaderModal({ open, setOpen }) {
         <div className="mt-2">
           <ul className="border-b pb-2 border-gray-200">
             <li className="p-2 hover:bg-gray-100">
-              <button
+              <Link
+                to="/contact"
                 onClick={() => handleNavigate()}
-                className="flex items-center gap-2 text-[14px] sm:text-[16px] font-[500]"
+                className="flex items-center gap-2 text-[14px] sm:text-[16px] font-[500] cursor-pointer"
               >
-                <CiCircleInfo className="text-[20px] sm:text-[22px]" />
+                <CiCircleInfo className="text-[20px] sm:text-[22px] " />
                 Ti serve aiuto?
-              </button>
+              </Link>
             </li>
           </ul>
         </div>

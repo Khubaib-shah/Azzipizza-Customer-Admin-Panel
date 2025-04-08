@@ -110,7 +110,6 @@ function ProductCard({ products }) {
       </div>
 
       {/* Product Details Modal */}
-      {/* Product Details Modal */}
       {isModalOpen && (
         <Modal onClose={closeModal}>
           <div className="max-w-4xl w-full bg-white rounded-lg overflow-hidden max-h-[90vh] flex flex-col">

@@ -100,7 +100,7 @@ function OrderHistory() {
             You haven't placed any orders. Ready to order something delicious?
           </p>
           <Link
-            to="/menu"
+            to="/"
             className="mt-6 inline-block bg-amber-500 hover:bg-amber-600 text-white px-6 py-3 rounded-lg transition-colors duration-300"
           >
             Browse Menu

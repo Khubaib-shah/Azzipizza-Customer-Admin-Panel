@@ -6,7 +6,7 @@ function MenuModal({ menuItems, onClose, onSelectCategory }) {
           <h2 className="text-lg font-bold">Menu Items</h2>
           <button
             onClick={onClose}
-            className="text-red-500 text-xl font-bold p-2 rounded hover:bg-red-100"
+            className="text-red-500 text-xl font-bold p-2 rounded hover:bg-red-100 cursor-pointer"
           >
             ✖
           </button>
@@ -15,7 +15,7 @@ function MenuModal({ menuItems, onClose, onSelectCategory }) {
           {menuItems?.map((item, index) => (
             <li
               key={index}
-              className="text-lg cursor-pointer p-3 bg-white text-black hover:bg-black hover:text-white rounded-md transition"
+              className="text-lg cursor-pointer p-3 bg-white text-black hover:bg-orange-400 hover:text-white rounded-md transition"
               onClick={() => {
                 onSelectCategory(item);
                 onClose();

@@ -128,7 +128,7 @@ function ProductsList() {
             ))}
           </div>
           <button
-            className="w-20 h-10 flex items-center justify-center bg-white-200 hover:bg-white-300 rounded-md transition ml-2"
+            className="w-20 h-10 flex items-center justify-center bg-white-200 hover:bg-white-300 rounded-md transition ml-2 cursor-pointer"
             onClick={() => setIsModalOpen(true)}
           >
             <PiListBulletsBold size={22} />
