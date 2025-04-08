@@ -39,7 +39,7 @@ const OrderSideBar = ({
 }) => {
   if (!selectedOrder) return null;
 
-  console.log(selectedOrder.customizations);
+  // console.log(selectedOrder.items.map((item) => item.customizations));
   const getStatusColor = (status) => {
     switch (status) {
       case "Delivered":
@@ -130,29 +130,24 @@ const OrderSideBar = ({
             <Card>
               <CardContent className="p-3 space-y-2">
                 {selectedOrder.items.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex justify-between items-start py-2 border-b border-gray-100 last:border-0"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">
-                          {item.quantity}x
-                        </span>
-                        <span className="text-sm">{item.menuItem?.name}</span>
+                  <div key={index}>
+                    <div className="flex justify-between items-start py-2 border-b border-gray-100 last:border-0">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium">
+                            {item.quantity}x
+                          </span>
+                          <span className="text-sm">{item.menuItem?.name}</span>
+                        </div>
                       </div>
+                      <span className="text-sm font-medium">
+                        ${(item.quantity * item.menuItem?.price).toFixed(2)}
+                      </span>
                     </div>
-                    <span className="text-sm font-medium">
-                      ${(item.quantity * item.menuItem?.price).toFixed(2)}
-                    </span>
+
+                    <div className="text-sm">Note : {item.customizations}</div>
                   </div>
                 ))}
-
-                {selectedOrder?.customizations && (
-                  <div className="text-sm">
-                    Note : {selectedOrder?.customizations}
-                  </div>
-                )}
               </CardContent>
             </Card>
           </div>

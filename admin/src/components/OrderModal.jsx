@@ -2,6 +2,7 @@ import React from "react";
 
 const OrderModal = ({ order, eta, onClose }) => {
   if (!order) return null;
+  console.log(order);
 
   return (
     <div className="fixed inset-0  backdrop-blur-sm flex items-center justify-center p-4">
