@@ -1,9 +1,9 @@
 import { useState, useRef, useContext, useMemo } from "react";
 import ProductCard from "../cards/ProductsCard"; // Ensure correct path
-import { MdGroups, MdStarOutline, MdInfoOutline } from "react-icons/md";
+import { MdStarOutline } from "react-icons/md";
 import { PiListBulletsBold } from "react-icons/pi";
 import { FaBicycle, FaSearch } from "react-icons/fa";
-
+import smoothscroll from "smoothscroll-polyfill";
 import Context from "../../context/dataContext";
 import MenuModal from "../Modal/MenuModel";
 import CompDetails from "../CompDetails";
@@ -11,14 +11,14 @@ import CompDetails from "../CompDetails";
 // Main Products List Component
 function ProductsList() {
   const { items } = useContext(Context);
-  const [activeCategory, setActiveCategory] = useState("pasta");
+  const [activeCategory, setActiveCategory] = useState("fritti");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const categoryRefs = useRef({});
   const [searchQuery, setSearchQuery] = useState("");
 
   // Get unique categories
   const menuItems = [...new Set(items.map((item) => item.category))].reverse();
-
+  smoothscroll.polyfill();
   // Filter items based on search query
   const filteredItems = useMemo(() => {
     if (!searchQuery) return items;
@@ -52,19 +52,18 @@ function ProductsList() {
   const handleCategoryClick = (category) => {
     setActiveCategory(category);
 
-    setTimeout(() => {
-      if (categoryRefs.current[category]) {
-        categoryRefs.current[category].scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
+    requestAnimationFrame(() => {
+      const el = categoryRefs.current[category];
+      if (el) {
+        const offset = 125;
+        const topPos = el.getBoundingClientRect().top + window.scrollY - offset;
 
-        // Offset scroll slightly
-        setTimeout(() => {
-          window.scrollBy(0, -80);
-        }, 300);
+        window.scrollTo({
+          top: topPos,
+          behavior: "smooth",
+        });
       }
-    }, 100);
+    });
   };
 
   return (
@@ -97,7 +96,7 @@ function ProductsList() {
         <input
           type="text"
           placeholder="Cerca il prodotto..."
-          className="pl-10 pr-3 py-2 w-full border rounded-3xl focus:ring-2 focus:ring-sky-500 text-sm sm:text-base"
+          className="pl-10 pr-3 py-2 w-full border border-amber-500 rounded-3xl focus:ring-0 focus:ring-sky-500 text-sm sm:text-base "
           value={searchQuery}
           onChange={(e) => {
             setSearchQuery(e.target.value);
@@ -111,15 +110,15 @@ function ProductsList() {
 
       {/* Menu Items (Scrollable on Mobile) */}
       {!searchQuery && (
-        <div className="flex items-center justify-between mt-5">
+        <div className="flex items-center justify-between sticky top-16 bg-white z-10 py-2 px-4 shadow-md rounded-md w-full mt-4">
           <div className="flex overflow-x-auto gap-2 w-full hide-scrollbar whitespace-nowrap">
             {menuItems?.map((item) => (
               <button
                 key={item}
                 className={`px-5 py-1 font-semibold text-sm sm:text-base transition rounded-md uppercase ${
                   activeCategory === item
-                    ? "bg-black text-white"
-                    : "text-black hover:bg-black hover:text-white"
+                    ? "bg-orange-400 text-white"
+                    : "text-black hover:bg-orange-400 cursor-pointer hover:text-white"
                 }`}
                 onClick={() => handleCategoryClick(item)}
               >

@@ -1,10 +1,11 @@
-import { Button, Dialog } from "@mui/material";
-import { use, useEffect, useState } from "react";
+import { Dialog } from "@mui/material";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 // icons
 import { IoCloseOutline } from "react-icons/io5";
 import { CiCircleInfo } from "react-icons/ci";
+import { MdHistory } from "react-icons/md";
 
 function HeaderModal({ open, setOpen }) {
   const [fullWidth, setFullWidth] = useState(false);
@@ -56,6 +57,16 @@ function HeaderModal({ open, setOpen }) {
               >
                 <CiCircleInfo className="text-[20px] sm:text-[22px] " />
                 Ti serve aiuto?
+              </Link>
+            </li>
+            <li className="p-2 hover:bg-gray-100">
+              <Link
+                to="/orders"
+                onClick={() => handleNavigate()}
+                className="flex items-center gap-2 text-[14px] sm:text-[16px] font-[500] cursor-pointer"
+              >
+                <MdHistory className="text-[20px] sm:text-[22px] " />
+                Order History
               </Link>
             </li>
           </ul>

@@ -54,7 +54,7 @@ function ProductCard({ products }) {
         {/* Product Info */}
         <div className="p-4 flex flex-col flex-grow">
           <div className="flex justify-between items-start gap-2 mb-2">
-            <h1 className="text-lg font-bold text-gray-800 truncate flex-1">
+            <h1 className="text-lg font-bold text-gray-800 truncate flex-1 capitalize">
               {products.name}
             </h1>
             <span className="bg-amber-100 text-amber-800 text-sm font-semibold px-2 py-1 rounded whitespace-nowrap shrink-0">
@@ -130,7 +130,7 @@ function ProductCard({ products }) {
 
               {/* Product Details */}
               <div className="p-6 flex flex-col">
-                <h1 className="text-2xl font-bold text-gray-800 mb-2">
+                <h1 className="text-2xl font-bold text-gray-800 mb-2 capitalize">
                   {products.name}
                 </h1>
 

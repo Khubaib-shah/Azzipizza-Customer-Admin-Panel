@@ -28,7 +28,7 @@ const About = () => {
             <h2 className="text-3xl font-bold text-center text-red-600 mb-6">
               Our Story
             </h2>
-            <div className="prose prose-lg max-w-none text-gray-700">
+            <article className="prose prose-lg max-w-none text-gray-700">
               <p className="mb-6">
                 La nostra pizza nasce da un impasto ricco, rustico e saporito,
                 realizzato con una miscela di farine selezionate. Usiamo infatti
@@ -55,7 +55,7 @@ const About = () => {
                 poi continua la sua lunga lievitazione prima di essere steso e
                 cotto.
               </p>
-            </div>
+            </article>
           </section>
 
           {/* Mission & Vision */}
@@ -122,7 +122,7 @@ const About = () => {
               <img
                 src={Team}
                 alt="Our Team"
-                className="rounded-xl shadow-lg mx-auto mb-6 max-w-md"
+                className="rounded-xl shadow-lg w-full"
               />
               <p className="text-lg text-gray-700 max-w-2xl mx-auto">
                 Passione, qualità e gusto: il nostro team lavora ogni giorno per
@@ -133,11 +133,10 @@ const About = () => {
             </div>
           </section>
 
-          <section className="bg-white p-8 rounded-xl shadow-md">
+          <section>
             <h2 className="text-3xl font-bold text-center text-red-600 mb-8">
               Featured Article About Us
             </h2>
-
             <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
               <div className="h-96 w-full">
                 {" "}
@@ -151,12 +150,11 @@ const About = () => {
                 ></iframe>
               </div>
             </div>
-
             <div className="mt-6 prose prose-lg max-w-none text-gray-700">
               <p className="text-center">
-                Read about our inspiring journey in this feature from Corriere
-                di Bologna - from fleeing war to opening two successful
-                pizzerias in Bologna.
+                Scopri la nostra storia ispiratrice in questo articolo del
+                Corriere di Bologna – dalla fuga dalla guerra all’apertura di
+                due pizzerie di successo a Bologna.
               </p>
               <div className="text-center mt-4">
                 <a
@@ -166,6 +164,49 @@ const About = () => {
                   className="inline-block bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition-colors"
                 >
                   Read Full Article
+                </a>
+              </div>
+            </div>{" "}
+          </section>
+          <section className="mt-16">
+            <h2 className="text-3xl font-bold text-center text-green-700 mb-8">
+              Visit Our Pizzerias in Bologna
+            </h2>
+            <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
+              <div className="h-96 w-full">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2846.1529902922857!2d11.329174276641153!3d44.49153189780795!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x477fd5fe539fb66b%3A0x63cfb4f9ab408962!2sPizzeria%20AZZIPIZZA%20mica%20pizza%20e%20fichi!5e0!3m2!1sen!2s!4v1744142734200!5m2!1sen!2s"
+                  width="100%"
+                  height="100%"
+                  allowFullScreen=""
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="w-full h-full"
+                ></iframe>
+              </div>
+            </div>
+
+            <div className="mt-6 prose prose-lg max-w-none text-gray-700">
+              <p className="text-center">
+                Vuoi gustare una pizza autentica e fresca nel cuore di Bologna?
+                Vieni a trovarci in una delle nostre due accoglienti pizzerie,
+                dove la tradizione incontra il sapore. Trovarci è facilissimo
+                grazie alla mappa qui sopra — siamo proprio dietro l'angolo,
+                pronti a servirti una fetta di felicità.
+              </p>
+              <p className="text-center mt-2">
+                Che tu voglia uno spuntino veloce o una cena in compagnia di
+                amici e famiglia, le nostre porte sono sempre aperte e i forni
+                sempre caldi!
+              </p>
+              <div className="text-center mt-4">
+                <a
+                  href="https://www.google.com/maps/place/Pizzeria+AZZIPIZZA+mica+pizza+e+fichi/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block bg-green-700 hover:bg-green-800 text-white px-6 py-2 rounded-lg transition-colors"
+                >
+                  Open in Google Maps
                 </a>
               </div>
             </div>
