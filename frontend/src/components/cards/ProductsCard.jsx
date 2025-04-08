@@ -3,6 +3,7 @@ import { useContext, useState } from "react";
 import Context from "../../context/dataContext";
 import { toast } from "react-toastify";
 import Modal from "../Modal/ProductDetailModal";
+import { toppings150, toppings200 } from "../../utils/toping";
 
 function ProductCard({ products }) {
   const { addToCart } = useContext(Context);
@@ -13,8 +14,11 @@ function ProductCard({ products }) {
     addToCart(products);
     toast.success(`${products.name} added to cart!`, {
       position: "bottom-right",
-      autoClose: 3000,
-      theme: "light",
+      autoClose: 2000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: false,
     });
   };
 
@@ -100,7 +104,7 @@ function ProductCard({ products }) {
             {/* Add to Cart Button */}
             <button
               className="bg-amber-500 hover:bg-amber-600 text-white p-2 rounded-full transition-colors shadow-md hover:shadow-lg active:scale-95 shrink-0"
-              onClick={handleCart}
+              onClick={() => setIsModalOpen(true)}
               aria-label={`Add ${products.name} to cart`}
             >
               <FaPlus size={14} />
@@ -138,11 +142,6 @@ function ProductCard({ products }) {
                   <span className="text-xl font-bold text-amber-600">
                     ${products.price.toFixed(2)}
                   </span>
-                  {products.originalPrice && (
-                    <span className="text-gray-400 line-through ml-2">
-                      ${products.originalPrice.toFixed(2)}
-                    </span>
-                  )}
                 </div>
 
                 <div className="flex items-center mb-4">
@@ -174,19 +173,57 @@ function ProductCard({ products }) {
                   </p>
                 </div>
 
-                {products.details && (
+                <h3 className="font-semibold text-gray-800 mb-2">
+                  Topping <span>Only For € 1.50</span>
+                </h3>
+                {toppings150 && (
                   <div className="mb-6 overflow-y-auto max-h-[200px]">
-                    <h3 className="font-semibold text-gray-800 mb-2">
-                      Details
-                    </h3>
-                    <ul className="list-disc list-inside text-gray-600">
-                      {products.details.map((detail, index) => (
-                        <li key={index}>{detail}</li>
+                    <ul className="list-none text-gray-600 space-y-2">
+                      {toppings150.map((detail, index) => (
+                        <li key={index}>
+                          <label
+                            htmlFor={`topping-${index}`}
+                            className="flex flex-row-reverse items-center justify-between gap-3 cursor-pointer"
+                          >
+                            <input
+                              type="checkbox"
+                              value={detail}
+                              id={`topping-${index}`}
+                              className="w-5 h-5 accent-orange-500 rounded focus:ring-2 focus:ring-orange-400"
+                            />
+                            <span className="text-sm">{detail}</span>
+                          </label>
+                        </li>
                       ))}
                     </ul>
                   </div>
                 )}
+                <h3 className="font-semibold text-gray-800 mb-2">
+                  Topping <span>Only For € 2</span>
+                </h3>
 
+                {toppings200 && (
+                  <div className="mb-6 overflow-y-auto max-h-[200px]">
+                    <ul className="list-none text-gray-600 space-y-2">
+                      {toppings200.map((detail, index) => (
+                        <li key={index}>
+                          <label
+                            htmlFor={`topping-${index}`}
+                            className="flex flex-row-reverse items-center justify-between gap-3 cursor-pointer"
+                          >
+                            <input
+                              type="checkbox"
+                              value={detail}
+                              id={`topping-${index}`}
+                              className="w-5 h-5 accent-orange-500 rounded focus:ring-2 focus:ring-orange-400"
+                            />
+                            <span className="text-sm">{detail}</span>
+                          </label>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 <div className="mt-auto pt-4 border-t border-gray-200">
                   <div className="flex justify-between items-center">
                     <button
