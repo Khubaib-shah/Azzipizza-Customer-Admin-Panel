@@ -222,10 +222,12 @@ const AddItems = () => {
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="pizza">Pizza</SelectItem>
-                    <SelectItem value="pasta">Pasta</SelectItem>
-                    <SelectItem value="burger">Burger</SelectItem>
-                    <SelectItem value="drinks">Drinks</SelectItem>
+                    <SelectItem value="Pizze rosse">Pizze rosse</SelectItem>
+                    <SelectItem value="Pizze bianche">Pizze bianche</SelectItem>
+                    <SelectItem value="fritti">Fritti</SelectItem>
+                    <SelectItem value="Dolci">Dolci</SelectItem>
+                    <SelectItem value="bibite">Bibite</SelectItem>
+                    <SelectItem value="birre">Birre</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

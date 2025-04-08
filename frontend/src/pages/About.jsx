@@ -6,15 +6,29 @@ import Team from "../assets/meet-our.png";
 
 const About = () => {
   return (
-    <div className="bg-gray-300 min-h-screen flex items-center justify-center p-6">
-      <div className="max-w-4xl bg-white shadow-lg rounded-xl p-6">
+    <div className="min-h-screen flex items-center justify-center p-6">
+      <div className="max-w-4xl p-6">
         <h1 className="text-4xl font-bold text-center text-red-600 mb-6">
           About Our Pizza
         </h1>
         <p className="text-gray-700 text-lg text-center mb-4">
-          We craft the most delicious and mouth-watering pizzas using fresh
-          ingredients and traditional recipes. Our goal is to serve you the best
-          pizza experience you'll ever have.
+          La nostra pizza nasce da un impasto ricco, rustico e saporito,
+          realizzato con una miscela di farine selezionate. Usiamo infatti 3-4
+          tipi di farina diversi, tra cui la semola di grano duro, la farina
+          integrale, la farina di segale, avena, e una speciale miscela chiamata
+          “pane farro e grano saraceno”, che conferisce all’impasto un gusto
+          unico e un profilo nutrizionale più completo. Il nostro impasto viene
+          lavorato con una lievitazione lunga, di oltre 48 ore, per garantire
+          una pizza leggera, digeribile e fragrante. Utilizziamo una tecnica
+          tradizionale chiamata “biga”, un preimpasto che richiede tempo, cura e
+          attenzione. Cos’è la biga? La biga è un preimpasto fatto con farina,
+          acqua e una piccola quantità di lievito. Viene lasciata fermentare
+          lentamente per 16-24 ore a temperatura controllata. Questo processo
+          sviluppa aromi complessi, migliora la struttura dell’impasto finale e
+          rende la pizza più leggera e profumata. Dopo la maturazione della
+          biga, viene impastata nuovamente con il resto degli ingredienti per
+          creare l’impasto definitivo, che poi continua la sua lunga
+          lievitazione prima di essere steso e cotto.
         </p>
         <div className="flex justify-center mb-6">
           <img

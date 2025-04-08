@@ -7,11 +7,12 @@ import {
   FaTwitter,
   FaInstagram,
 } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const ContactUs = () => {
   return (
-    <div className="bg-gray-300 min-h-screen flex items-center justify-center p-6">
-      <div className="max-w-4xl bg-white shadow-lg rounded-xl p-6 w-full">
+    <div className=" min-h-screen flex items-center justify-center p-6">
+      <div className="max-w-4xl rounded-xl p-6 w-full">
         <h1 className="text-4xl font-bold text-center text-blue-600 mb-6">
           Contact Us
         </h1>
@@ -21,7 +22,7 @@ const ContactUs = () => {
         </p>
 
         {/* Contact Form */}
-        <div className="bg-gray-100 p-6 rounded-lg shadow-md">
+        <div className="bg-gray-100 ">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
             Get in Touch
           </h2>
@@ -58,13 +59,13 @@ const ContactUs = () => {
               Our Location
             </h2>
             <p className="text-gray-700 mt-2 text-base">
-              123 Pizza Street, Food City, 56789
+              Via Frassinago, 16b, 40123 Bologna BO
             </p>
           </div>
           <div className="p-4 bg-green-100 rounded-lg shadow-md text-center">
             <FaPhoneAlt className="text-green-800 text-4xl mx-auto mb-2" />
             <h2 className="text-xl font-semibold text-green-800">Call Us</h2>
-            <p className="text-gray-700 mt-2 text-base">+1 (234) 567-890</p>
+            <p className="text-gray-700 mt-2 text-base">371 39 85 810</p>
           </div>
         </div>
 
@@ -80,7 +81,13 @@ const ContactUs = () => {
             <div className="flex justify-center gap-4 mb-2">
               <FaFacebook className="text-orange-800 text-4xl" />
               <FaTwitter className="text-orange-800 text-4xl" />
-              <FaInstagram className="text-orange-800 text-4xl" />
+              <Link
+                to="https://www.instagram.com/azzipizzamicapizzaefichi?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                target="_blank"
+              >
+                {" "}
+                <FaInstagram className="text-orange-800 text-4xl" />
+              </Link>
             </div>
             <h2 className="text-xl font-semibold text-orange-800">Follow Us</h2>
             <p className="text-gray-700 mt-2 text-base">

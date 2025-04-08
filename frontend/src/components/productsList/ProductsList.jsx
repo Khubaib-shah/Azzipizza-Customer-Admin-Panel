@@ -72,30 +72,21 @@ function ProductsList() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-center">
         <h1 className="text-xl sm:text-xl font-bold text-center sm:text-left lg:text-3xl md:text-[18px] flex-1">
-          Azzipizza Mica Pizza
+          Azzipizza Mica Pizza e Fichi
         </h1>
-        <div className="flex gap-3 mt-3 sm:mt-0">
-          <button className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-transparent hover:bg-gray-300 rounded-lg transition text-sm sm:text-base">
-            <MdGroups size={22} className="text-orange-500" />
-            <span>Ordini di gruppo</span>
-          </button>
-          <button className="p-2 bg-transparent hover:bg-gray-300 rounded-lg transition">
-            <MdInfoOutline size={24} />
-          </button>
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2">
+            <MdStarOutline size={22} className="text-amber-500" />
+            <p className="text-sm">0 Recensioni</p>
+          </div>
+          <div className="flex items-center gap-2 bg-amber-600 text-white px-3 py-1 rounded-md">
+            <FaBicycle size={18} />
+            <p>Gratis</p>
+          </div>
         </div>
       </div>
 
       {/* Rating & Delivery */}
-      <div className="flex flex-wrap items-center gap-4 mt-3">
-        <div className="flex items-center gap-2">
-          <MdStarOutline size={22} className="text-amber-500" />
-          <p className="text-sm">0 Recensioni</p>
-        </div>
-        <div className="flex items-center gap-2 bg-amber-600 text-white px-3 py-1 rounded-md">
-          <FaBicycle size={18} />
-          <p>Gratis</p>
-        </div>
-      </div>
 
       {/* Search Bar */}
       <div className="relative mt-5">
@@ -122,7 +113,7 @@ function ProductsList() {
       {!searchQuery && (
         <div className="flex items-center justify-between mt-5">
           <div className="flex overflow-x-auto gap-2 w-full hide-scrollbar whitespace-nowrap">
-            {menuItems.map((item) => (
+            {menuItems?.map((item) => (
               <button
                 key={item}
                 className={`px-5 py-1 font-semibold text-sm sm:text-base transition rounded-md uppercase ${
