@@ -39,7 +39,6 @@ const OrderSideBar = ({
 }) => {
   if (!selectedOrder) return null;
 
-  // console.log(selectedOrder.items.map((item) => item.customizations));
   const getStatusColor = (status) => {
     switch (status) {
       case "Delivered":
