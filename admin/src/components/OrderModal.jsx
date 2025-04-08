@@ -69,7 +69,7 @@ const OrderModal = ({ order, eta, onClose }) => {
                     <p className="text-sm font-medium text-gray-900">
                       {item.quantity}x {item.menuItem.name}
                     </p>
-                    {item.customizations && (
+                    {item.menuItem.customizations && (
                       <p className="text-xs text-gray-500 mt-1">
                         Customizations: {item.customizations}
                       </p>
