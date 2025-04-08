@@ -1,15 +1,15 @@
 import { Dialog } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 // icons
 import { IoCloseOutline } from "react-icons/io5";
 import { CiCircleInfo } from "react-icons/ci";
 import { MdHistory } from "react-icons/md";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 
 function HeaderModal({ open, setOpen }) {
   const [fullWidth, setFullWidth] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 768px)");
@@ -26,7 +26,6 @@ function HeaderModal({ open, setOpen }) {
   }, []);
   const handleNavigate = () => {
     setOpen(false);
-    navigate("/about");
   };
 
   return (
@@ -67,6 +66,16 @@ function HeaderModal({ open, setOpen }) {
               >
                 <MdHistory className="text-[20px] sm:text-[22px] " />
                 Order History
+              </Link>
+            </li>
+            <li className="p-2 hover:bg-gray-100">
+              <Link
+                to="/about"
+                onClick={() => handleNavigate()}
+                className="flex items-center gap-2 text-[14px] sm:text-[16px] font-[500] cursor-pointer"
+              >
+                <AiOutlineInfoCircle className="text-[20px] sm:text-[22px] " />
+                About Us
               </Link>
             </li>
           </ul>
