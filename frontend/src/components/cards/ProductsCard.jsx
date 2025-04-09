@@ -8,10 +8,17 @@ import { toppings150, toppings200 } from "../../utils/toping";
 function ProductCard({ products }) {
   const { addToCart } = useContext(Context);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [toping, setToping] = useState([]);
 
   const handleCart = (e) => {
     e.stopPropagation();
-    addToCart(products);
+    addToCart((product) => {
+      // console.log(product);
+      return {
+        ...product,
+        ingredients: toping,
+      };
+    });
     toast.success(`${products.name} added to cart!`, {
       position: "bottom-right",
       autoClose: 2000,
@@ -30,8 +37,23 @@ function ProductCard({ products }) {
     setIsModalOpen(false);
   };
 
-  const rating = products.rating || 5;
+  const rating = products.rating || Math.floor(Math.random() * 50) + 100;
 
+  const reviews = products.reviews || Math.floor(Math.random() * 50) + 100;
+
+  if (reviews < rating) {
+  }
+  const handleToping = (e) => {
+    console.log(e.target.value);
+    setToping((prev) => {
+      if (e.target.checked) {
+        return [...prev, e.target.value];
+      } else {
+        return prev.filter((item) => item !== e.target.value);
+      }
+    });
+  };
+  // console.log(toping);
   return (
     <>
       {/* Product Card */}
@@ -48,7 +70,7 @@ function ProductCard({ products }) {
             loading="lazy"
           />
 
-          {products.isPopular && (
+          {products.category !== "bibite" && (
             <span className="absolute top-2 left-2 bg-amber-500 text-white text-xs font-bold px-2 py-1 rounded truncate max-w-[80%]">
               Popular
             </span>
@@ -93,9 +115,9 @@ function ProductCard({ products }) {
                 <span className="text-sm font-medium text-gray-700 truncate">
                   {rating}
                 </span>
-                {products.reviews && (
+                {reviews && (
                   <span className="text-sm text-gray-500 ml-1 truncate">
-                    ({products.reviews})
+                    ({reviews})
                   </span>
                 )}
               </div>
@@ -125,7 +147,7 @@ function ProductCard({ products }) {
                   src={products.image}
                   alt={products.name}
                 />
-                {products.isPopular && (
+                {products.category !== "bibite" && (
                   <span className="absolute top-4 left-4 bg-amber-500 text-white text-sm font-bold px-3 py-1 rounded">
                     Popular
                   </span>
@@ -176,10 +198,10 @@ function ProductCard({ products }) {
                 <h3 className="font-semibold text-gray-800 mb-2">
                   Topping <span>Only For € 1.50</span>
                 </h3>
-                {toppings150 && (
+                {products.ingredients && (
                   <div className="mb-6 overflow-y-auto max-h-[200px]">
                     <ul className="list-none text-gray-600 space-y-2">
-                      {toppings150.map((detail, index) => (
+                      {products.ingredients.map((detail, index) => (
                         <li key={index}>
                           <label
                             htmlFor={`topping-${index}`}
@@ -190,6 +212,7 @@ function ProductCard({ products }) {
                               value={detail}
                               id={`topping-${index}`}
                               className="w-5 h-5 accent-orange-500 rounded focus:ring-2 focus:ring-orange-400"
+                              onChange={(e) => handleToping(e)}
                             />
                             <span className="text-sm">{detail}</span>
                           </label>
@@ -198,14 +221,15 @@ function ProductCard({ products }) {
                     </ul>
                   </div>
                 )}
-                <h3 className="font-semibold text-gray-800 mb-2">
+
+                {/* Toppings for €2 */}
+                {/* <h3 className="font-semibold text-gray-800 mb-2">
                   Topping <span>Only For € 2</span>
                 </h3>
-
-                {toppings200 && (
+                {products.ingredients && (
                   <div className="mb-6 overflow-y-auto max-h-[200px]">
                     <ul className="list-none text-gray-600 space-y-2">
-                      {toppings200.map((detail, index) => (
+                      {products.ingredients.map((detail, index) => (
                         <li key={index}>
                           <label
                             htmlFor={`topping-${index}`}
@@ -223,7 +247,7 @@ function ProductCard({ products }) {
                       ))}
                     </ul>
                   </div>
-                )}
+                )} */}
                 <div className="mt-auto pt-4 border-t border-gray-200">
                   <div className="flex justify-between items-center">
                     <button

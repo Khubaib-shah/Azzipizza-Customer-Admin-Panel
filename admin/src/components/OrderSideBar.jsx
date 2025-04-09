@@ -116,8 +116,7 @@ const OrderSideBar = ({
                   <span className="text-sm">
                     {selectedOrder.deliveryAddress.street},{" "}
                     {selectedOrder.deliveryAddress.city},{" "}
-                    {selectedOrder.deliveryAddress.postalCode ||
-                      selectedOrder.deliveryAddress.zipCode}
+                    {selectedOrder.deliveryAddress.zipCode}
                   </span>
                 </div>
               </CardContent>
@@ -140,11 +139,34 @@ const OrderSideBar = ({
                         </div>
                       </div>
                       <span className="text-sm font-medium">
-                        ${(item.quantity * item.menuItem?.price).toFixed(2)}
+                        €{(item.quantity * item.menuItem?.price).toFixed(2)}
                       </span>
                     </div>
 
-                    <div className="text-sm">Note : {item.customizations}</div>
+                    <div className="my-2 flex justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium">
+                          {item.ingredients.length}x
+                        </span>
+                        <span className="text-sm">
+                          {item.ingredients.map((name, index) => (
+                            <span key={index}>{name.name} </span>
+                          ))}
+                        </span>
+                      </div>
+
+                      <span className="text-sm font-medium">
+                        €
+                        {item.ingredients
+                          ?.reduce(
+                            (acc, ingredient) => acc + ingredient.price,
+                            0
+                          )
+                          .toFixed(2)}
+                      </span>
+                    </div>
+
+                    <u className="text-sm">Note : {item.customizations}</u>
                   </div>
                 ))}
               </CardContent>
