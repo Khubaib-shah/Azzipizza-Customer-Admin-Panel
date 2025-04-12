@@ -53,6 +53,7 @@ const Orders = () => {
     return storedValue ? JSON.parse(storedValue) : false;
   });
 
+  console.log(orders);
   const socket = io(URL);
 
   // Fetch Orders from API

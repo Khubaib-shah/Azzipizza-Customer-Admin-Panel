@@ -143,30 +143,37 @@ const OrderSideBar = ({
                         €{(item.quantity * item.menuItem?.price).toFixed(2)}
                       </span>
                     </div>
-                    {item.ingredients && item.ingredients.length > 0 && (
-                      <div className="my-2 flex justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium">
-                            {item.ingredients.length}x
-                          </span>
-                          <span className="text-sm">
-                            {item.ingredients.map((name, index) => (
-                              <span key={index}>{name.name} </span>
+                    {item.selectedIngredients &&
+                      item.selectedIngredients.length > 0 && (
+                        <div className="my-2 flex justify-between">
+                          <div className="flex items-center gap-2">
+                            {item.selectedIngredients.map((name, index) => (
+                              <>
+                                <span className="text-sm font-medium">
+                                  {item.quantity}x
+                                </span>
+                                <span
+                                  key={index}
+                                  className="text-sm font-medium"
+                                >
+                                  {name.name}
+                                </span>
+                              </>
                             ))}
+                          </div>
+
+                          <span className="text-sm font-medium">
+                            €
+                            {item.selectedIngredients
+                              ?.reduce(
+                                (acc, selectedIngredient) =>
+                                  acc + selectedIngredient.price,
+                                0
+                              )
+                              .toFixed(2)}
                           </span>
                         </div>
-
-                        <span className="text-sm font-medium">
-                          €
-                          {item.ingredients
-                            ?.reduce(
-                              (acc, ingredient) => acc + ingredient.price,
-                              0
-                            )
-                            .toFixed(2)}
-                        </span>
-                      </div>
-                    )}
+                      )}
                     {item.customizations && (
                       <u className="text-sm">Note : {item.customizations}</u>
                     )}
