@@ -40,7 +40,7 @@ export const ContextProvider = ({ children }) => {
         updatedCart[existingItemIndex] = {
           ...updatedCart[existingItemIndex],
           quantity: updatedCart[existingItemIndex].quantity + 1,
-          // Scale up ingredients by adding them again
+
           selectedIngredients: [
             ...updatedCart[existingItemIndex].selectedIngredients,
             ...selectedIngredients,

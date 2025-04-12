@@ -63,52 +63,42 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
     setIsSubmitting(true);
 
     try {
-      // Format items properly for backend
-      const formattedItems = cartItems.map((item) => {
-        // Get the first ingredient from the selectedIngredients array{
-        console.log(item);
-        return {
-          menuItem: item._id,
-          quantity: item.quantity,
-          selectedIngredients:
-            item.selectedIngredients?.map((ing) => ing._id) || [],
-          customizations: item.customizations || "",
-        };
-      });
+      const formattedItems = cartItems.map((item) => ({
+        menuItem: item._id,
+        quantity: item.quantity,
+        selectedIngredients:
+          item.selectedIngredients?.map((ing) => ing._id) || [],
+      }));
 
-      // Create order payload
       const orderData = {
         items: formattedItems,
         name: formData.name,
         phoneNumber: formData.phoneNumber,
+        customizations: formData.customizations || "",
         deliveryAddress: {
           street: formData.street,
           city: formData.city,
           zipCode: formData.zipCode,
         },
-        specialInstructions: formData.customizations,
-        total: Math.round(totalPrice * 100),
+        total: totalPrice,
       };
 
-      // Create order
+      console.log("Order Data:", orderData);
       const orderResponse = await axios.post(
         "http://localhost:5000/api/orders",
         orderData
       );
 
-      // Initiate payment
+      // Uncomment and adjust payment processing if needed
       // const paymentResponse = await axios.post(
       //   "http://localhost:5000/api/payments/pay-for-order",
       //   {
       //     orderId: orderResponse.data._id,
-      //     amount: orderResponse.data.total,
+      //     amount: totalPrice * 100, // Convert to cents if needed
       //   }
       // );
 
-      // if (paymentResponse.data.approvalUrl) {
-      //   localStorage.setItem("currentOrder", orderResponse.data._id);
-      //   window.location.href = paymentResponse.data.approvalUrl;
-      // }
+      // Handle payment redirect if needed
     } catch (error) {
       console.error("Order error:", error.response?.data || error);
       toast.error(error.response?.data?.message || "Failed to process order", {
@@ -118,6 +108,7 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
       setIsSubmitting(false);
     }
   };
+
   return (
     <Dialog
       open={isOpen}
@@ -132,11 +123,9 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
         >
           <X size={22} />
         </button>
-
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-5">
           🛍️ Place Your Order
         </h2>
-
         <div className="space-y-4">
           <div className="flex gap-3">
             <div className="w-1/2">
@@ -233,14 +222,12 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
             rows="3"
           />
         </div>
-
         <div className="mt-6 flex justify-between items-center">
           <h3 className="text-lg font-semibold">
             Total:{" "}
-            <span className="text-green-600">${totalPrice.toFixed(2)}</span>
+            <span className="text-green-600">€{totalPrice.toFixed(2)}</span>
           </h3>
-        </div>
-
+        </div>{" "}
         <div className="mt-6 flex justify-end gap-3">
           <button
             onClick={closeModal}

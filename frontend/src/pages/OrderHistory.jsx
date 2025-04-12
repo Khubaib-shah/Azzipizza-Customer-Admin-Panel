@@ -25,8 +25,6 @@ function OrderHistory() {
       try {
         setLoading(true);
         const { data } = await baseUri.get(`/api/orders/${id}`);
-
-        // Ensure we always work with an array
         const ordersArray = Array.isArray(data) ? data : [data];
         setOrders(ordersArray);
       } catch (error) {
@@ -229,34 +227,34 @@ function OrderHistory() {
                           key={index}
                           className="flex justify-between items-start transition-opacity duration-300"
                         >
-                          <div className="flex items-start gap-3">
-                            <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden transition-transform duration-300 hover:scale-105">
-                              {item && (
-                                <img
-                                  src={item.menuItem.image}
-                                  alt={item.menuItem.name}
-                                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
-                                />
-                              )}
-                            </div>
-                            <div>
-                              <p className="font-medium">
-                                {item.menuItem.name}
-                              </p>
-                              <p className="text-sm text-gray-500">
-                                Qty: {item.quantity}
-                              </p>
-                              {item.selectedOptions && (
-                                <div className="mt-1 text-xs text-gray-500">
-                                  {item.selectedOptions.map((opt, i) => (
-                                    <p key={i}>{opt}</p>
+                          <div>
+                            <p className="font-medium">{item.menuItem.name}</p>
+                            <p className="text-sm text-gray-500">
+                              Qty: {item.quantity}
+                            </p>
+                            {item.selectedIngredients?.length > 0 && (
+                              <div className="mt-1 text-sm text-gray-600">
+                                <p className="font-medium">Extras:</p>
+                                <ul className="list-disc pl-4">
+                                  {item.selectedIngredients.map((ing, i) => (
+                                    <li key={i} className="text-sm">
+                                      {ing.name} (+€{ing.price.toFixed(2)})
+                                    </li>
                                   ))}
-                                </div>
-                              )}
-                            </div>
+                                </ul>
+                              </div>
+                            )}
                           </div>
                           <p className="font-medium">
-                            ${(item.menuItem.price * item.quantity).toFixed(2)}
+                            €
+                            {(
+                              (item.menuItem.price +
+                                item.selectedIngredients?.reduce(
+                                  (sum, ing) => sum + ing.price,
+                                  0
+                                )) *
+                              item.quantity
+                            ).toFixed(2)}
                           </p>
                         </div>
                       ))}
@@ -265,7 +263,7 @@ function OrderHistory() {
                     <div className="mt-4 pt-4 border-t">
                       <div className="flex justify-between font-medium">
                         <span>Subtotal</span>
-                        <span>${order.totalPrice.toFixed(2)}</span>
+                        <span>€{order.totalPrice.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between text-sm text-gray-500 mt-1">
                         <span>Delivery Fee</span>
@@ -273,7 +271,7 @@ function OrderHistory() {
                       </div>
                       <div className="flex justify-between font-bold text-lg mt-3">
                         <span>Total</span>
-                        <span>${order.totalPrice.toFixed(2)}</span>
+                        <span>€{order.totalPrice.toFixed(2)}</span>
                       </div>
                     </div>
                   </div>

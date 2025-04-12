@@ -12,15 +12,9 @@ function ProductCard({ products }) {
   const handleAddToCart = (e) => {
     e.stopPropagation();
 
-    const totalPrice =
-      products.price +
-      selectedToppings.reduce((sum, topping) => sum + topping.price, 0);
-    console.log(totalPrice);
-
     addToCart(
       {
         ...products,
-        price: totalPrice,
       },
       selectedToppings
     );
@@ -53,7 +47,7 @@ function ProductCard({ products }) {
         return prev.filter((item) => item._id !== ingredient._id);
       }
       return e.target.checked
-        ? [...prev, ingredient] // Store full ingredient objects
+        ? [...prev, ingredient]
         : prev.filter((item) => item._id !== ingredient._id);
     });
   };
