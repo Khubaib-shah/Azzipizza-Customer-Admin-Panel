@@ -9,19 +9,29 @@ function ProductCard({ products }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedToppings, setSelectedToppings] = useState([]);
 
-  const handleAddToCart = (e) => {
-    e.stopPropagation();
-    console.log(products, selectedToppings);
-    addToCart(products, selectedToppings);
-    toast.success(`${products.name} added to cart!`, {
-      position: "bottom-right",
-      autoClose: 2000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: false,
-      draggable: false,
-    });
-  };
+    const handleAddToCart = (e) => {
+      e.stopPropagation();
+    
+      const extrasprice = selectedToppings.reduce((acc, curr) => {
+        const total = acc + curr.price;
+        return total;
+      }, 0);
+
+      const updatedProductsData = {
+        ...products,
+        price: products.price + extrasprice
+      }
+
+      addToCart(updatedProductsData, selectedToppings);
+      toast.success(`${products.name} added to cart!`, {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: false,
+      });
+    };
 
   const openModal = (e) => {
     e.stopPropagation();
