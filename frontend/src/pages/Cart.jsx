@@ -4,7 +4,6 @@ import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Context from "../context/dataContext";
-import { baseUri } from "../config/config";
 import OrderModal from "../components/Modal/OrderModel";
 import OrderConfirmModal from "../components/Modal/OrderConfirmModal";
 
@@ -34,6 +33,16 @@ function Cart() {
     }
   };
 
+  const handleOrderSuccess = (orderData) => {
+    setOrderedItem({
+      ...orderData,
+      orderId: orderData._id || Math.random().toString(36).substr(2, 9),
+      totalPrice: totalPrice,
+    });
+    setIsOrderConfirmed(true);
+    saveOrderToLocalStorage(orderData);
+    clearCart();
+  };
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => {
     setIsModalOpen(false);
@@ -50,44 +59,19 @@ function Cart() {
     }
   };
 
-  const placeOrder = async (orderData) => {
-    const formattedOrder = {
-      ...orderData,
-      items: cartItems.map((item) => ({
-        menuItem: item._id,
-        name: item.name,
-        price: item.price,
-        quantity: item.quantity,
-        selectedIngredients: item.selectedIngredients || [],
-        image: item.image,
-      })),
-      totalPrice: totalPrice,
-    };
-
-    try {
-      const { data } = await baseUri.post("/api/orders", formattedOrder);
-      setOrderedItem(data);
-      setIsOrderConfirmed(true);
-      saveOrderToLocalStorage(data);
-
-      toast.success("Order placed successfully!", {
-        position: "top-center",
-        autoClose: 3000,
-      });
-    } catch (error) {
-      console.error("Order error:", error.response?.data || error.message);
-      toast.error(error.response?.data?.message || "Failed to place order", {
-        position: "top-center",
-      });
-    }
-  };
-
-  if (isOrderConfirmed && orderedItem) {
-    return <OrderConfirmModal orderedItem={orderedItem} />;
-  }
-
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
+      {isOrderConfirmed && orderedItem && (
+        <OrderConfirmModal
+          isOpen={isOrderConfirmed}
+          onClose={() => {
+            setIsOrderConfirmed(false);
+            setOrderedItem(null);
+          }}
+          orderDetails={orderedItem}
+        />
+      )}
+
       <div className="flex items-center gap-3 mb-8">
         <ShoppingBag size={28} className="text-amber-600" />
         <h1 className="text-3xl font-bold text-gray-800">Your Cart</h1>
@@ -228,9 +212,9 @@ function Cart() {
       <OrderModal
         isOpen={isModalOpen}
         closeModal={closeModal}
-        placeOrder={placeOrder}
         totalPrice={totalPrice}
         cartItems={cartItems}
+        onOrderSuccess={handleOrderSuccess}
       />
     </div>
   );

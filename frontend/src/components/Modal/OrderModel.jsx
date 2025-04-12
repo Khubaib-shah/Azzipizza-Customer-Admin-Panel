@@ -4,7 +4,13 @@ import { X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 
-function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
+function OrderModal({
+  isOpen,
+  closeModal,
+  totalPrice,
+  cartItems,
+  onOrderSuccess,
+}) {
   const [formData, setFormData] = useState({
     name: "",
     phoneNumber: "",
@@ -83,22 +89,14 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
         total: totalPrice,
       };
 
-      console.log("Order Data:", orderData);
       const orderResponse = await axios.post(
         "http://localhost:5000/api/orders",
         orderData
       );
 
-      // Uncomment and adjust payment processing if needed
-      // const paymentResponse = await axios.post(
-      //   "http://localhost:5000/api/payments/pay-for-order",
-      //   {
-      //     orderId: orderResponse.data._id,
-      //     amount: totalPrice * 100, // Convert to cents if needed
-      //   }
-      // );
-
-      // Handle payment redirect if needed
+      // Call the success handler from parent
+      onOrderSuccess(orderResponse.data);
+      closeModal();
     } catch (error) {
       console.error("Order error:", error.response?.data || error);
       toast.error(error.response?.data?.message || "Failed to process order", {
