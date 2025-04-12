@@ -3,22 +3,16 @@ import { useContext, useState } from "react";
 import Context from "../../context/dataContext";
 import { toast } from "react-toastify";
 import Modal from "../Modal/ProductDetailModal";
-import { toppings150, toppings200 } from "../../utils/toping";
 
 function ProductCard({ products }) {
   const { addToCart } = useContext(Context);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [toping, setToping] = useState([]);
+  const [selectedToppings, setSelectedToppings] = useState([]);
 
-  const handleCart = (e) => {
+  const handleAddToCart = (e) => {
     e.stopPropagation();
-    addToCart((product) => {
-      // console.log(product);
-      return {
-        ...product,
-        ingredients: toping,
-      };
-    });
+    console.log(products, selectedToppings);
+    addToCart(products, selectedToppings);
     toast.success(`${products.name} added to cart!`, {
       position: "bottom-right",
       autoClose: 2000,
@@ -29,7 +23,8 @@ function ProductCard({ products }) {
     });
   };
 
-  const openModal = () => {
+  const openModal = (e) => {
+    e.stopPropagation();
     setIsModalOpen(true);
   };
 
@@ -38,22 +33,18 @@ function ProductCard({ products }) {
   };
 
   const rating = products.rating || Math.floor(Math.random() * 50) + 100;
-
   const reviews = products.reviews || Math.floor(Math.random() * 50) + 100;
 
-  if (reviews < rating) {
-  }
-  const handleToping = (e) => {
-    console.log(e.target.value);
-    setToping((prev) => {
+  const handleTopping = (e, ingredient) => {
+    setSelectedToppings((prev) => {
       if (e.target.checked) {
-        return [...prev, e.target.value];
+        return [...prev, ingredient];
       } else {
-        return prev.filter((item) => item !== e.target.value);
+        return prev.filter((item) => item._id !== ingredient._id);
       }
     });
   };
-  // console.log(toping);
+
   return (
     <>
       {/* Product Card */}
@@ -126,7 +117,10 @@ function ProductCard({ products }) {
             {/* Add to Cart Button */}
             <button
               className="bg-amber-500 hover:bg-amber-600 text-white p-2 rounded-full transition-colors shadow-md hover:shadow-lg active:scale-95 shrink-0"
-              onClick={() => setIsModalOpen(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAddToCart(e);
+              }}
               aria-label={`Add ${products.name} to cart`}
             >
               <FaPlus size={14} />
@@ -164,6 +158,15 @@ function ProductCard({ products }) {
                   <span className="text-xl font-bold text-amber-600">
                     ${products.price.toFixed(2)}
                   </span>
+                  {selectedToppings.length > 0 && (
+                    <span className="text-sm text-gray-500 ml-2">
+                      (+$
+                      {selectedToppings
+                        .reduce((sum, topping) => sum + topping.price, 0)
+                        .toFixed(2)}
+                      )
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex items-center mb-4">
@@ -188,33 +191,38 @@ function ProductCard({ products }) {
                   </span>
                 </div>
 
-                {/* Updated Description Section */}
+                {/* Description Section */}
                 <div className="mb-6 overflow-y-auto max-h-[200px]">
                   <p className="text-gray-600 whitespace-pre-line">
                     {products.description}
                   </p>
                 </div>
 
-                <h3 className="font-semibold text-gray-800 mb-2">
-                  Topping <span>Only For € 1.50</span>
-                </h3>
-                {products.ingredients && (
+                {products.ingredients && products.ingredients.length != 0 && (
                   <div className="mb-6 overflow-y-auto max-h-[200px]">
+                    <h3 className="font-semibold text-gray-800 mb-2">
+                      Toppings
+                    </h3>
                     <ul className="list-none text-gray-600 space-y-2">
-                      {products.ingredients.map((detail, index) => (
-                        <li key={index}>
-                          <label
-                            htmlFor={`topping-${index}`}
-                            className="flex flex-row-reverse items-center justify-between gap-3 cursor-pointer"
-                          >
-                            <input
-                              type="checkbox"
-                              value={detail}
-                              id={`topping-${index}`}
-                              className="w-5 h-5 accent-orange-500 rounded focus:ring-2 focus:ring-orange-400"
-                              onChange={(e) => handleToping(e)}
-                            />
-                            <span className="text-sm">{detail}</span>
+                      {products.ingredients.map((ingredient) => (
+                        <li key={ingredient._id}>
+                          <label className="flex items-center justify-between gap-3 cursor-pointer">
+                            <div className="flex items-center">
+                              <input
+                                type="checkbox"
+                                checked={selectedToppings.some(
+                                  (t) => t._id === ingredient._id
+                                )}
+                                onChange={(e) => handleTopping(e, ingredient)}
+                                className="w-5 h-5 accent-orange-500 rounded focus:ring-2 focus:ring-orange-400"
+                              />
+                              <span className="text-sm ml-2">
+                                {ingredient.name}
+                              </span>
+                            </div>
+                            <span className="text-sm font-medium">
+                              +${ingredient.price.toFixed(2)}
+                            </span>
                           </label>
                         </li>
                       ))}
@@ -222,32 +230,6 @@ function ProductCard({ products }) {
                   </div>
                 )}
 
-                {/* Toppings for €2 */}
-                {/* <h3 className="font-semibold text-gray-800 mb-2">
-                  Topping <span>Only For € 2</span>
-                </h3>
-                {products.ingredients && (
-                  <div className="mb-6 overflow-y-auto max-h-[200px]">
-                    <ul className="list-none text-gray-600 space-y-2">
-                      {products.ingredients.map((detail, index) => (
-                        <li key={index}>
-                          <label
-                            htmlFor={`topping-${index}`}
-                            className="flex flex-row-reverse items-center justify-between gap-3 cursor-pointer"
-                          >
-                            <input
-                              type="checkbox"
-                              value={detail}
-                              id={`topping-${index}`}
-                              className="w-5 h-5 accent-orange-500 rounded focus:ring-2 focus:ring-orange-400"
-                            />
-                            <span className="text-sm">{detail}</span>
-                          </label>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )} */}
                 <div className="mt-auto pt-4 border-t border-gray-200">
                   <div className="flex justify-between items-center">
                     <button
@@ -259,7 +241,8 @@ function ProductCard({ products }) {
                     <button
                       className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-lg transition flex items-center gap-2"
                       onClick={(e) => {
-                        handleCart(e);
+                        e.stopPropagation();
+                        handleAddToCart(e);
                         closeModal();
                       }}
                     >

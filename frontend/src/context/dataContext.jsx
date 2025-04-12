@@ -26,28 +26,55 @@ export const ContextProvider = ({ children }) => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  // Add item to cart
-  const addToCart = (item) => {
+  // Add item to cart with selected ingredients
+  const addToCart = (item, selectedIngredients = []) => {
     setCartItems((prevCart) => {
-      const existingItem = prevCart.find(
-        (cartItem) => cartItem._id === item._id
+      // Check if the same item with the same ingredients already exists in cart
+      const existingItemIndex = prevCart.findIndex(
+        (cartItem) =>
+          cartItem._id === item._id &&
+          JSON.stringify(cartItem.selectedIngredients) ===
+            JSON.stringify(selectedIngredients)
       );
-      return existingItem
-        ? prevCart.map((cartItem) =>
-            cartItem._id === item._id
-              ? { ...cartItem, quantity: cartItem.quantity + 1 }
-              : cartItem
-          )
-        : [...prevCart, { ...item, quantity: 1 }];
+
+      if (existingItemIndex >= 0) {
+        // If exists, increment quantity
+        const updatedCart = [...prevCart];
+        updatedCart[existingItemIndex] = {
+          ...updatedCart[existingItemIndex],
+          quantity: updatedCart[existingItemIndex].quantity + 1,
+        };
+        return updatedCart;
+      } else {
+        // If new, add to cart with ingredients
+        return [
+          ...prevCart,
+          {
+            ...item,
+            quantity: 1,
+            selectedIngredients,
+            totalPrice: calculateTotalPrice(item.price, selectedIngredients),
+          },
+        ];
+      }
     });
   };
 
+  // Calculate total price including ingredients
+  const calculateTotalPrice = (basePrice, ingredients) => {
+    const ingredientsTotal = ingredients.reduce(
+      (sum, ingredient) => sum + (ingredient.price || 0),
+      0
+    );
+    return basePrice + ingredientsTotal;
+  };
+
   // Decrease item quantity
-  const CartDecrement = (item) => {
+  const CartDecrement = (itemId) => {
     setCartItems((prevCart) =>
       prevCart
         .map((cartItem) =>
-          cartItem._id === item._id
+          cartItem._id === itemId
             ? { ...cartItem, quantity: cartItem.quantity - 1 }
             : cartItem
         )
@@ -60,11 +87,17 @@ export const ContextProvider = ({ children }) => {
     setCartItems((prevCart) => prevCart.filter((item) => item._id !== itemId));
   };
 
-  // ✅ New function to clear the cart
+  // Clear the cart
   const clearCart = () => {
     setCartItems([]);
     localStorage.removeItem("cartItems");
   };
+
+  // Calculate cart total
+  const cartTotal = cartItems.reduce(
+    (total, item) => total + (item.totalPrice || item.price) * item.quantity,
+    0
+  );
 
   return (
     <Context.Provider
@@ -75,6 +108,7 @@ export const ContextProvider = ({ children }) => {
         removeFromCart,
         CartDecrement,
         clearCart,
+        cartTotal,
       }}
     >
       {children}
