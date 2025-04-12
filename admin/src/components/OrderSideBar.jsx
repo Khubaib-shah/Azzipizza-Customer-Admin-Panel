@@ -53,6 +53,7 @@ const OrderSideBar = ({
         return "bg-gray-400 text-white";
     }
   };
+  console.log(selectedOrder);
 
   return (
     <div className="fixed top-0 right-0 w-80 h-full bg-white shadow-lg border-l border-gray-200 pt-16 transition-transform duration-300 flex flex-col z-10">
@@ -142,31 +143,33 @@ const OrderSideBar = ({
                         €{(item.quantity * item.menuItem?.price).toFixed(2)}
                       </span>
                     </div>
+                    {item.ingredients && item.ingredients.length > 0 && (
+                      <div className="my-2 flex justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium">
+                            {item.ingredients.length}x
+                          </span>
+                          <span className="text-sm">
+                            {item.ingredients.map((name, index) => (
+                              <span key={index}>{name.name} </span>
+                            ))}
+                          </span>
+                        </div>
 
-                    <div className="my-2 flex justify-between">
-                      <div className="flex items-center gap-2">
                         <span className="text-sm font-medium">
-                          {item.ingredients.length}x
-                        </span>
-                        <span className="text-sm">
-                          {item.ingredients.map((name, index) => (
-                            <span key={index}>{name.name} </span>
-                          ))}
+                          €
+                          {item.ingredients
+                            ?.reduce(
+                              (acc, ingredient) => acc + ingredient.price,
+                              0
+                            )
+                            .toFixed(2)}
                         </span>
                       </div>
-
-                      <span className="text-sm font-medium">
-                        €
-                        {item.ingredients
-                          ?.reduce(
-                            (acc, ingredient) => acc + ingredient.price,
-                            0
-                          )
-                          .toFixed(2)}
-                      </span>
-                    </div>
-
-                    <u className="text-sm">Note : {item.customizations}</u>
+                    )}
+                    {item.customizations && (
+                      <u className="text-sm">Note : {item.customizations}</u>
+                    )}
                   </div>
                 ))}
               </CardContent>
