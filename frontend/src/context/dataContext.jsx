@@ -27,57 +27,64 @@ export const ContextProvider = ({ children }) => {
   }, [cartItems]);
 
   // Add item to cart with selected ingredients
-  const addToCart = (item, selectedIngredients = []) => {
+  const addToCart = (item, selectedIngredients = [], customizations = "") => {
     setCartItems((prevCart) => {
-      // Check if the same item with the same ingredients already exists in cart
       const existingItemIndex = prevCart.findIndex(
-        (cartItem) =>
-          cartItem._id === item._id &&
-          JSON.stringify(cartItem.selectedIngredients) ===
-            JSON.stringify(selectedIngredients)
+        (cartItem) => cartItem._id === item._id
       );
 
       if (existingItemIndex >= 0) {
-        // If exists, increment quantity
+        // If exists, increment quantity AND ingredients
         const updatedCart = [...prevCart];
         updatedCart[existingItemIndex] = {
           ...updatedCart[existingItemIndex],
           quantity: updatedCart[existingItemIndex].quantity + 1,
+          // Scale up ingredients by adding them again
+          selectedIngredients: [
+            ...updatedCart[existingItemIndex].selectedIngredients,
+            ...selectedIngredients,
+          ],
         };
         return updatedCart;
       } else {
-        // If new, add to cart with ingredients
         return [
           ...prevCart,
           {
             ...item,
             quantity: 1,
             selectedIngredients,
-            totalPrice: calculateTotalPrice(item.price, selectedIngredients),
+            customizations,
           },
         ];
       }
     });
   };
 
-  // Calculate total price including ingredients
-  const calculateTotalPrice = (basePrice, ingredients) => {
-    const ingredientsTotal = ingredients.reduce(
-      (sum, ingredient) => sum + (ingredient.price || 0),
-      0
-    );
-    return basePrice + ingredientsTotal;
-  };
-
-  // Decrease item quantity
+  // Decrease item quantity (and remove corresponding ingredients)
   const CartDecrement = (itemId) => {
     setCartItems((prevCart) =>
       prevCart
-        .map((cartItem) =>
-          cartItem._id === itemId
-            ? { ...cartItem, quantity: cartItem.quantity - 1 }
-            : cartItem
-        )
+        .map((cartItem) => {
+          if (cartItem._id === itemId) {
+            // Get the ingredients for one portion
+            const ingredientsPerPortion = cartItem.selectedIngredients.slice(
+              0,
+              cartItem.selectedIngredients.length / cartItem.quantity
+            );
+
+            return {
+              ...cartItem,
+              quantity: cartItem.quantity - 1,
+              // Remove one portion's worth of ingredients
+              selectedIngredients: cartItem.selectedIngredients.slice(
+                0,
+                cartItem.selectedIngredients.length -
+                  ingredientsPerPortion.length
+              ),
+            };
+          }
+          return cartItem;
+        })
         .filter((cartItem) => cartItem.quantity > 0)
     );
   };
@@ -93,11 +100,38 @@ export const ContextProvider = ({ children }) => {
     localStorage.removeItem("cartItems");
   };
 
-  // Calculate cart total
-  const cartTotal = cartItems.reduce(
-    (total, item) => total + (item.totalPrice || item.price) * item.quantity,
-    0
-  );
+  // Prepare order data in the required format
+  const prepareOrderData = (customerInfo) => {
+    return {
+      ...customerInfo,
+      items: cartItems.map((item) => ({
+        menuItem: item._id,
+        quantity: item.quantity,
+        // Group ingredients by name and count
+        selectedIngredients: item.selectedIngredients.reduce((acc, ing) => {
+          const existing = acc.find((i) => i.name === ing.name);
+          if (existing) {
+            existing.quantity++;
+          } else {
+            acc.push({ ...ing, quantity: 1 });
+          }
+          return acc;
+        }, []),
+        customizations: item.customizations || "",
+      })),
+      paymentStatus: "Pending",
+      orderStatus: "Preparing",
+    };
+  };
+
+  // Calculate cart total (ingredients included)
+  const cartTotal = cartItems.reduce((total, item) => {
+    const ingredientsTotal =
+      item.selectedIngredients?.reduce((sum, ing) => sum + ing.price, 0) || 0;
+    return (
+      total + (item.price + ingredientsTotal / item.quantity) * item.quantity
+    );
+  }, 0);
 
   return (
     <Context.Provider
@@ -109,6 +143,7 @@ export const ContextProvider = ({ children }) => {
         CartDecrement,
         clearCart,
         cartTotal,
+        prepareOrderData,
       }}
     >
       {children}
