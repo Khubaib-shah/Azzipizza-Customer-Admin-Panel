@@ -76,8 +76,6 @@ function Cart() {
         image: item.image,
       })),
       totalPrice: totalPrice,
-      orderStatus: "Processing",
-      paymentStatus: "Pending",
     };
 
     try {

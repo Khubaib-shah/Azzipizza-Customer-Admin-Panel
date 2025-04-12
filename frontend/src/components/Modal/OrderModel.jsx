@@ -32,7 +32,7 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
 
   const validateForm = () => {
     const errors = {};
-    const phoneRegex = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/;
+    const phoneRegex = /^(?:\+39)?\s?(?:0\d{1,4}|3\d{2})\s?\d{5,8}$/;
     const zipRegex = /^\d{5}(-\d{4})?$/;
 
     if (!formData.name.trim()) errors.name = "Name is required";

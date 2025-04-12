@@ -9,29 +9,30 @@ function ProductCard({ products }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedToppings, setSelectedToppings] = useState([]);
 
-    const handleAddToCart = (e) => {
-      e.stopPropagation();
-    
-      const extrasprice = selectedToppings.reduce((acc, curr) => {
-        const total = acc + curr.price;
-        return total;
-      }, 0);
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
 
-      const updatedProductsData = {
+    const totalPrice =
+      products.price +
+      selectedToppings.reduce((sum, topping) => sum + topping.price, 0);
+    console.log(totalPrice);
+
+    addToCart(
+      {
         ...products,
-        price: products.price + extrasprice
-      }
-
-      addToCart(updatedProductsData, selectedToppings);
-      toast.success(`${products.name} added to cart!`, {
-        position: "bottom-right",
-        autoClose: 2000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: false,
-      });
-    };
+        price: totalPrice,
+      },
+      selectedToppings
+    );
+    toast.success(`${products.name} added to cart!`, {
+      position: "bottom-right",
+      autoClose: 2000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: false,
+    });
+  };
 
   const openModal = (e) => {
     e.stopPropagation();
@@ -47,13 +48,16 @@ function ProductCard({ products }) {
 
   const handleTopping = (e, ingredient) => {
     setSelectedToppings((prev) => {
-      if (e.target.checked) {
-        return [...prev, ingredient];
-      } else {
+      const isSelected = prev.some((t) => t._id === ingredient._id);
+      if (isSelected) {
         return prev.filter((item) => item._id !== ingredient._id);
       }
+      return e.target.checked
+        ? [...prev, ingredient] // Store full ingredient objects
+        : prev.filter((item) => item._id !== ingredient._id);
     });
   };
+  console.log(selectedToppings);
 
   return (
     <>
@@ -85,7 +89,7 @@ function ProductCard({ products }) {
               {products.name}
             </h1>
             <span className="bg-amber-100 text-amber-800 text-sm font-semibold px-2 py-1 rounded whitespace-nowrap shrink-0">
-              ${products.price.toFixed(2)}
+              €{products.price.toFixed(2)}
             </span>
           </div>
 
@@ -166,11 +170,11 @@ function ProductCard({ products }) {
 
                 <div className="flex items-center mb-4">
                   <span className="text-xl font-bold text-amber-600">
-                    ${products.price.toFixed(2)}
+                    €{products.price.toFixed(2)}
                   </span>
                   {selectedToppings.length > 0 && (
                     <span className="text-sm text-gray-500 ml-2">
-                      (+$
+                      (+€
                       {selectedToppings
                         .reduce((sum, topping) => sum + topping.price, 0)
                         .toFixed(2)}

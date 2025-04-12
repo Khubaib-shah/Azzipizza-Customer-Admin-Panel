@@ -28,6 +28,7 @@ export const ContextProvider = ({ children }) => {
 
   // Add item to cart with selected ingredients
   const addToCart = (item, selectedIngredients = [], customizations = "") => {
+    console.log("Adding to cart:", item, selectedIngredients, customizations);
     setCartItems((prevCart) => {
       const existingItemIndex = prevCart.findIndex(
         (cartItem) => cartItem._id === item._id
