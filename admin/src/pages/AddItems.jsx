@@ -34,16 +34,24 @@ const AddItems = () => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const [newIngredient, setNewIngredient] = useState("");
+  const [newIngredientPrice, setNewIngredientPrice] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
 
   // Add ingredient to the list
   const handleAddIngredient = () => {
-    if (newIngredient.trim() !== "") {
+    if (newIngredient.trim() !== "" && newIngredientPrice.trim() !== "") {
       setFormData((prev) => ({
         ...prev,
-        ingredients: [...prev.ingredients, newIngredient.trim()],
+        ingredients: [
+          ...prev.ingredients,
+          {
+            name: newIngredient.trim(),
+            price: parseFloat(newIngredientPrice) || 0,
+          },
+        ],
       }));
       setNewIngredient("");
+      setNewIngredientPrice("");
     }
   };
 
@@ -77,10 +85,11 @@ const AddItems = () => {
       formDataToSend.append("category", formData.category.toLowerCase());
       formDataToSend.append("image", formData.image);
 
-      // Append ingredients as separate fields
-      formData.ingredients.forEach((ingredient) => {
-        formDataToSend.append("ingredients[]", ingredient);
-      });
+      // Append ingredients as JSON string
+      formDataToSend.append(
+        "ingredients",
+        JSON.stringify(formData.ingredients)
+      );
 
       const response = await baseUri.post("/api/menu", formDataToSend, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -259,33 +268,46 @@ const AddItems = () => {
                     type="text"
                     value={newIngredient}
                     onChange={(e) => setNewIngredient(e.target.value)}
-                    placeholder="Add an ingredient"
+                    placeholder="Ingredient name"
                     className="flex-1"
+                  />
+                  <Input
+                    type="number"
+                    value={newIngredientPrice}
+                    onChange={(e) => setNewIngredientPrice(e.target.value)}
+                    placeholder="Price"
+                    min="0"
+                    step="0.01"
+                    className="flex-1 border-s-0"
                   />
                   <Button
                     type="button"
                     onClick={handleAddIngredient}
                     variant="outline"
                     size="icon"
+                    disabled={!newIngredient || !newIngredientPrice}
                   >
                     <PlusCircle className="h-4 w-4" />
                   </Button>
                 </div>
 
                 {formData.ingredients.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-3">
+                  <div className="mt-3 space-y-2">
                     {formData.ingredients.map((ingredient, index) => (
                       <div
                         key={index}
-                        className="flex items-center gap-1 bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm"
+                        className="flex items-center justify-between bg-gray-100 text-gray-800 px-3 py-2 rounded-md text-sm"
                       >
-                        <span>{ingredient}</span>
+                        <div className="flex-1">{ingredient.name}</div>
+                        <div className="flex-1 text-right">
+                          ${ingredient.price.toFixed(2)}
+                        </div>
                         <button
                           type="button"
                           onClick={() => handleRemoveIngredient(index)}
-                          className="text-gray-500 hover:text-gray-700"
+                          className="ml-2 text-gray-500 hover:text-gray-700"
                         >
-                          <X className="h-3 w-3" />
+                          <X className="h-4 w-4" />
                         </button>
                       </div>
                     ))}
