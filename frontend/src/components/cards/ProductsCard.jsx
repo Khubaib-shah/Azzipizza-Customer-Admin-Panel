@@ -51,7 +51,6 @@ function ProductCard({ products }) {
         : prev.filter((item) => item._id !== ingredient._id);
     });
   };
-  console.log(selectedToppings);
 
   return (
     <>
@@ -125,10 +124,7 @@ function ProductCard({ products }) {
             {/* Add to Cart Button */}
             <button
               className="bg-amber-500 hover:bg-amber-600 text-white p-2 rounded-full transition-colors shadow-md hover:shadow-lg active:scale-95 shrink-0"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleAddToCart(e);
-              }}
+              onClick={openModal}
               aria-label={`Add ${products.name} to cart`}
             >
               <FaPlus size={14} />

@@ -73,18 +73,28 @@ function OrderHistory() {
       </div>
     );
   }
+  const handleDelete = async (orderId) => {
+    try {
+      await baseUri.delete(`/api/orders/${orderId}`);
+      setOrders(orders.filter((order) => order._id !== orderId));
+      toast.success("Order deleted successfully");
+    } catch (error) {
+      console.error("Error deleting order:", error);
+      toast.error("Failed to delete order");
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="flex items-center gap-4 mb-8">
+      <div className="flex items-center justify-between mb-8 \">
         <Link
           to="/"
-          className="flex items-center text-amber-600 hover:text-amber-700 transition-colors"
+          className="flex items-center text-amber-600 hover:text-amber-700 transition-colors "
         >
           <ChevronLeft size={20} />
-          <span>Back to Home</span>
+          <span className="text-sm">Back to Home</span>
         </Link>
-        <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-3">
+        <h1 className="text-sm md:text-2xl font-bold flex items-center gap-2">
           <ShoppingBag className="text-amber-600" />
           Your Order History
         </h1>
@@ -106,11 +116,17 @@ function OrderHistory() {
         </div>
       ) : (
         <div className="space-y-4">
-          {orders.reverse().map((order) => (
+          {orders.map((order) => (
             <div
               key={order._id}
-              className="bg-white rounded-lg shadow-sm border overflow-hidden transition-all duration-300 hover:shadow-md"
+              className="bg-white rounded-lg shadow-sm border overflow-hidden transition-all duration-300 hover:shadow-md relative"
             >
+              <button
+                className="absolute right-4 top-4"
+                onClick={() => handleDelete(order._id)}
+              >
+                X
+              </button>
               <button
                 onClick={() => toggleOrder(order._id)}
                 className="w-full p-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-300"

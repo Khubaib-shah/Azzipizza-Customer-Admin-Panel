@@ -95,7 +95,7 @@ const OrderConfirmModal = ({ isOpen, onClose, orderDetails }) => {
                 console.log(item);
 
                 return (
-                  <div key={index} className="pb-4">
+                  <div key={index} className=" pb-4">
                     <div className="flex justify-between">
                       <div>
                         <p className="font-medium">

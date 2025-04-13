@@ -1,4 +1,4 @@
-function MenuModal({ menuItems, onClose, onSelectCategory }) {
+function MenuModal({ menuItems, activeCategory, onClose, onSelectCategory }) {
   return (
     <div className="fixed inset-0 flex justify-center items-center z-50 px-4">
       <div className="bg-white text-black p-6 rounded-lg w-full max-w-xl shadow-xl overflow-y-auto max-h-[80vh]">
@@ -15,7 +15,11 @@ function MenuModal({ menuItems, onClose, onSelectCategory }) {
           {menuItems?.map((item, index) => (
             <li
               key={index}
-              className="text-lg cursor-pointer p-3 bg-white text-black hover:bg-orange-400 hover:text-white rounded-md transition"
+              className={`text-lg cursor-pointer p-3 ${
+                item === activeCategory
+                  ? "bg-orange-400 text-white"
+                  : "bg-white text-black"
+              } hover:bg-orange-400 hover:text-white rounded-md transition`}
               onClick={() => {
                 onSelectCategory(item);
                 onClose();
@@ -29,4 +33,5 @@ function MenuModal({ menuItems, onClose, onSelectCategory }) {
     </div>
   );
 }
+
 export default MenuModal;

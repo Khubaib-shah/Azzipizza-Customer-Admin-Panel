@@ -8,13 +8,20 @@ export const ContextProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(
     JSON.parse(localStorage.getItem("cartItems")) || []
   );
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const fetchMenu = async () => {
+    setIsLoading(true);
+    setError(null);
     try {
       const { data } = await baseUri.get("/api/menu");
       setItems(data);
     } catch (error) {
       console.error("Error fetching menu:", error);
+      setError(error.message || "Failed to load menu");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -40,7 +47,6 @@ export const ContextProvider = ({ children }) => {
         updatedCart[existingItemIndex] = {
           ...updatedCart[existingItemIndex],
           quantity: updatedCart[existingItemIndex].quantity + 1,
-
           selectedIngredients: [
             ...updatedCart[existingItemIndex].selectedIngredients,
             ...selectedIngredients,
@@ -134,17 +140,25 @@ export const ContextProvider = ({ children }) => {
     );
   }, 0);
 
+  // Refresh menu function
+  const refreshMenu = async () => {
+    await fetchMenu();
+  };
+
   return (
     <Context.Provider
       value={{
         items,
         cartItems,
+        isLoading,
+        error,
         addToCart,
         removeFromCart,
         CartDecrement,
         clearCart,
         cartTotal,
         prepareOrderData,
+        refreshMenu,
       }}
     >
       {children}

@@ -7,19 +7,22 @@ import smoothscroll from "smoothscroll-polyfill";
 import Context from "../../context/dataContext";
 import MenuModal from "../Modal/MenuModel";
 import CompDetails from "../CompDetails";
+import LoadingSpinner from "../ProductsListSkeleton";
+import ProductsListSkeleton from "../ProductsListSkeleton";
 
 // Main Products List Component
 function ProductsList() {
-  const { items } = useContext(Context);
-  const [activeCategory, setActiveCategory] = useState("fritti");
+  const { items, isLoading, error } = useContext(Context);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const categoryRefs = useRef({});
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Get unique categories
+  const [activeCategory, setActiveCategory] = useState("pizze rosse");
+
   const menuItems = [...new Set(items.map((item) => item.category))].reverse();
+
   smoothscroll.polyfill();
-  // Filter items based on search query
+
   const filteredItems = useMemo(() => {
     if (!searchQuery) return items;
 
@@ -46,7 +49,7 @@ function ProductsList() {
 
     return result;
   }, [filteredItems, menuItems]);
-
+  const categoriesContainerRef = useRef(null);
   const visibleCategories = Object.keys(listing);
 
   const handleCategoryClick = (category) => {
@@ -85,8 +88,6 @@ function ProductsList() {
         </div>
       </div>
 
-      {/* Rating & Delivery */}
-
       {/* Search Bar */}
       <div className="relative mt-5">
         <FaSearch
@@ -108,31 +109,51 @@ function ProductsList() {
         />
       </div>
 
-      {/* Menu Items (Scrollable on Mobile) */}
-      {!searchQuery && (
-        <div className="flex items-center justify-between sticky top-16 bg-white z-10 py-2 px-4 shadow-md rounded-md w-full mt-4">
-          <div className="flex overflow-x-auto gap-2 w-full hide-scrollbar whitespace-nowrap">
-            {menuItems?.map((item) => (
-              <button
-                key={item}
-                className={`px-5 py-1 font-semibold text-sm sm:text-base transition rounded-md uppercase ${
-                  activeCategory === item
-                    ? "bg-orange-400 text-white"
-                    : "text-black hover:bg-orange-400 cursor-pointer hover:text-white"
-                }`}
-                onClick={() => handleCategoryClick(item)}
-              >
-                {item}
-              </button>
-            ))}
+      {isLoading ? (
+        <ProductsListSkeleton />
+      ) : (
+        //  Menu Items (Scrollable on Mobile)
+        !searchQuery && (
+          <div className="flex items-center justify-between sticky top-16 bg-white z-10 py-2 px-4 shadow-md rounded-md w-full mt-4">
+            <div
+              ref={categoriesContainerRef} // Add this ref
+              className="flex overflow-x-auto gap-2 w-full hide-scrollbar whitespace-nowrap"
+            >
+              {menuItems?.map((item) => (
+                <button
+                  key={item}
+                  className={`px-5 py-1 font-semibold text-sm sm:text-base transition rounded-md uppercase ${
+                    activeCategory === item
+                      ? "bg-orange-400 text-white"
+                      : "text-black hover:bg-orange-400 cursor-pointer hover:text-white"
+                  }`}
+                  onClick={(e) => {
+                    handleCategoryClick(item);
+                    // Scroll to center the clicked button
+                    const container = categoriesContainerRef.current;
+                    const button = e.target;
+                    const containerWidth = container.offsetWidth;
+                    const buttonLeft = button.offsetLeft;
+                    const buttonWidth = button.offsetWidth;
+
+                    container.scrollTo({
+                      left: buttonLeft - containerWidth / 2 + buttonWidth / 2,
+                      behavior: "smooth",
+                    });
+                  }}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+            <button
+              className="w-20 h-10 flex items-center justify-center bg-white-200 hover:bg-white-300 rounded-md transition ml-2 cursor-pointer"
+              onClick={() => setIsModalOpen(true)}
+            >
+              <PiListBulletsBold size={22} />
+            </button>
           </div>
-          <button
-            className="w-20 h-10 flex items-center justify-center bg-white-200 hover:bg-white-300 rounded-md transition ml-2 cursor-pointer"
-            onClick={() => setIsModalOpen(true)}
-          >
-            <PiListBulletsBold size={22} />
-          </button>
-        </div>
+        )
       )}
       {/* Product Categories & Listing */}
       {searchQuery ? (
@@ -186,15 +207,17 @@ function ProductsList() {
           </div>
         ))
       )}
-
       <CompDetails />
 
-      {/* Render Modal */}
       {isModalOpen && (
         <MenuModal
           menuItems={menuItems}
+          activeCategory={activeCategory}
           onClose={() => setIsModalOpen(false)}
-          onSelectCategory={handleCategoryClick}
+          onSelectCategory={(category) => {
+            handleCategoryClick(category);
+            setIsModalOpen(false);
+          }}
         />
       )}
     </div>
