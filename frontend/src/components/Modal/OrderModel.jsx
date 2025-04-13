@@ -3,6 +3,7 @@ import axios from "axios";
 import { X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { baseUri } from "../../config/config";
 
 function OrderModal({
   isOpen,
@@ -89,10 +90,7 @@ function OrderModal({
         total: totalPrice,
       };
 
-      const orderResponse = await axios.post(
-        "http://localhost:5000/api/orders",
-        orderData
-      );
+      const orderResponse = await baseUri.post("/api/orders", orderData);
 
       // Call the success handler from parent
       onOrderSuccess(orderResponse.data);
