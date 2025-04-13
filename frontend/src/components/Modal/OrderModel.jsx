@@ -89,12 +89,13 @@ function OrderModal({
         },
         total: totalPrice,
       };
+      console.log(orderData);
 
-      const orderResponse = await baseUri.post("/api/orders", orderData);
+      // const orderResponse = await baseUri.post("/api/orders", orderData);
 
       // Call the success handler from parent
-      onOrderSuccess(orderResponse.data);
-      closeModal();
+      // onOrderSuccess(orderResponse.data);
+      // closeModal();
     } catch (error) {
       console.error("Order error:", error.response?.data || error);
       toast.error(error.response?.data?.message || "Failed to process order", {
