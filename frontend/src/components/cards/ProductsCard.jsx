@@ -12,12 +12,21 @@ function ProductCard({ products }) {
   const handleAddToCart = (e) => {
     e.stopPropagation();
 
-    addToCart(
-      {
-        ...products,
-      },
-      selectedToppings
-    );
+    const toppingPrices = selectedToppings.map((i) => i.price);
+    const toppingsTotal = toppingPrices.reduce((acc, curr) => acc + curr, 0);
+    const totalPrice = products.price + toppingsTotal;
+
+
+    const cartItem = {
+      ...products,
+      price: totalPrice
+    };
+  
+    console.log("Final cart item:", cartItem);  
+  
+    addToCart(cartItem, selectedToppings);
+  
+
     toast.success(`${products.name} added to cart!`, {
       position: "bottom-right",
       autoClose: 2000,

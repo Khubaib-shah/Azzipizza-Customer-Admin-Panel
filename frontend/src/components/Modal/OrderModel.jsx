@@ -72,7 +72,9 @@ function OrderModal({
     try {
       const formattedItems = cartItems.map((item) => ({
         menuItem: item._id,
+        item_name: item.name,
         quantity: item.quantity,
+        price: item.price,
         selectedIngredients:
           item.selectedIngredients?.map((ing) => ing._id) || [],
       }));
@@ -89,12 +91,15 @@ function OrderModal({
         },
         total: totalPrice,
       };
-      console.log(orderData);
 
-      const orderResponse = await baseUri.post("/api/orders", orderData);
+      const response = await axios.post("https://pizzeria-backend-production.up.railway.app/api/payments/pay-for-order", orderData);
+
+      if(response.status === 200) {
+        window.open(response.data.approvalUrl, "_blank")
+      }
 
       // Call the success handler from parent
-      onOrderSuccess(orderResponse.data);
+      onOrderSuccess(response.data);
       closeModal();
     } catch (error) {
       console.error("Order error:", error.response?.data || error);
@@ -132,9 +137,8 @@ function OrderModal({
                 placeholder="Full Name *"
                 value={formData.name}
                 onChange={handleChange}
-                className={`w-full p-3 border ${
-                  formErrors.name ? "border-red-500" : "border-gray-300"
-                } rounded-lg focus:ring-2 focus:ring-blue-400`}
+                className={`w-full p-3 border ${formErrors.name ? "border-red-500" : "border-gray-300"
+                  } rounded-lg focus:ring-2 focus:ring-blue-400`}
               />
               {formErrors.name && (
                 <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>
@@ -147,9 +151,8 @@ function OrderModal({
                 placeholder="Phone Number *"
                 value={formData.phoneNumber}
                 onChange={handleChange}
-                className={`w-full p-3 border ${
-                  formErrors.phoneNumber ? "border-red-500" : "border-gray-300"
-                } rounded-lg focus:ring-2 focus:ring-blue-400`}
+                className={`w-full p-3 border ${formErrors.phoneNumber ? "border-red-500" : "border-gray-300"
+                  } rounded-lg focus:ring-2 focus:ring-blue-400`}
               />
               {formErrors.phoneNumber && (
                 <p className="text-red-500 text-sm mt-1">
@@ -166,9 +169,8 @@ function OrderModal({
               placeholder="Street Address *"
               value={formData.street}
               onChange={handleChange}
-              className={`w-full p-3 border ${
-                formErrors.street ? "border-red-500" : "border-gray-300"
-              } rounded-lg focus:ring-2 focus:ring-blue-400`}
+              className={`w-full p-3 border ${formErrors.street ? "border-red-500" : "border-gray-300"
+                } rounded-lg focus:ring-2 focus:ring-blue-400`}
             />
             {formErrors.street && (
               <p className="text-red-500 text-sm mt-1">{formErrors.street}</p>
@@ -183,9 +185,8 @@ function OrderModal({
                 placeholder="City *"
                 value={formData.city}
                 onChange={handleChange}
-                className={`w-full p-3 border ${
-                  formErrors.city ? "border-red-500" : "border-gray-300"
-                } rounded-lg focus:ring-2 focus:ring-blue-400`}
+                className={`w-full p-3 border ${formErrors.city ? "border-red-500" : "border-gray-300"
+                  } rounded-lg focus:ring-2 focus:ring-blue-400`}
               />
               {formErrors.city && (
                 <p className="text-red-500 text-sm mt-1">{formErrors.city}</p>
@@ -198,9 +199,8 @@ function OrderModal({
                 placeholder="ZIP Code *"
                 value={formData.zipCode}
                 onChange={handleChange}
-                className={`w-full p-3 border ${
-                  formErrors.zipCode ? "border-red-500" : "border-gray-300"
-                } rounded-lg focus:ring-2 focus:ring-blue-400`}
+                className={`w-full p-3 border ${formErrors.zipCode ? "border-red-500" : "border-gray-300"
+                  } rounded-lg focus:ring-2 focus:ring-blue-400`}
               />
               {formErrors.zipCode && (
                 <p className="text-red-500 text-sm mt-1">

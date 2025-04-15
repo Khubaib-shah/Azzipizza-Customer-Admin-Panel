@@ -15,11 +15,13 @@ function Cart() {
   const [orderedItem, setOrderedItem] = useState(null);
 
   // Calculate total price correctly with ingredients
-  const totalPrice = cartItems.reduce((total, item) => {
-    const ingredientsTotal =
-      item.selectedIngredients?.reduce((sum, ing) => sum + ing.price, 0) || 0;
-    return total + (item.price + ingredientsTotal) * item.quantity;
-  }, 0);
+  // const totalPrice = cartItems.reduce((total, item) => {
+  //   const ingredientsTotal =
+  //     item.selectedIngredients?.reduce((sum, ing) => sum + ing.price, 0) || 0;
+  //   return total + (item.price + ingredientsTotal) * item.quantity;
+  // }, 0);
+
+  // console.log("v", totalPrice)
 
   // Save order to localStorage
   const saveOrderToLocalStorage = (order) => {
@@ -37,7 +39,6 @@ function Cart() {
     setOrderedItem({
       ...orderData,
       orderId: orderData._id || Math.random().toString(36).substr(2, 9),
-      totalPrice: totalPrice,
     });
     setIsOrderConfirmed(true);
     saveOrderToLocalStorage(orderData);
@@ -58,6 +59,10 @@ function Cart() {
       CartDecrement(item._id);
     }
   };
+
+  const cartTotal = cartItems.reduce((acc, item) => {
+    return acc + item.price * item.quantity;
+  }, 0);
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
@@ -101,7 +106,7 @@ function Cart() {
                     0
                   ) || 0;
                 const itemTotal =
-                  (item.price + ingredientsTotal) * item.quantity;
+                item.total * item.quantity;
 
                 return (
                   <div key={item._id} className="p-4 flex gap-4">
@@ -187,7 +192,7 @@ function Cart() {
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Subtotal</span>
-                  <span>€{totalPrice.toFixed(2)}</span>
+                  <span>€{cartTotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Delivery</span>
@@ -195,7 +200,7 @@ function Cart() {
                 </div>
                 <div className="border-t pt-3 flex justify-between font-semibold text-lg">
                   <span>Total</span>
-                  <span>€{totalPrice.toFixed(2)}</span>
+                  <span>€{cartTotal.toFixed(2)}</span>
                 </div>
               </div>
               <button
@@ -212,7 +217,7 @@ function Cart() {
       <OrderModal
         isOpen={isModalOpen}
         closeModal={closeModal}
-        totalPrice={totalPrice}
+        totalPrice={cartTotal}
         cartItems={cartItems}
         onOrderSuccess={handleOrderSuccess}
       />
