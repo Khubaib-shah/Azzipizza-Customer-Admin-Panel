@@ -147,19 +147,24 @@ const OrderSideBar = ({
                       item.selectedIngredients.length > 0 && (
                         <div className="my-2 flex justify-between">
                           <div className="flex items-center gap-2">
-                            {item.selectedIngredients.map((name, index) => (
-                              <>
-                                <span className="text-sm font-medium">
-                                  {item.quantity}x
-                                </span>
-                                <span
-                                  key={index}
-                                  className="text-sm font-medium"
-                                >
-                                  {name.name}
-                                </span>
-                              </>
-                            ))}
+                            {item.selectedIngredients.map(
+                              (name, index) => (
+                                console.log(name),
+                                (
+                                  <>
+                                    <span className="text-sm font-medium">
+                                      {item.quantity}x
+                                    </span>
+                                    <span
+                                      key={index}
+                                      className="text-sm font-medium"
+                                    >
+                                      {name.name}
+                                    </span>
+                                  </>
+                                )
+                              )
+                            )}
                           </div>
 
                           <span className="text-sm font-medium">

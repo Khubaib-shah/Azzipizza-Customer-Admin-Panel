@@ -74,8 +74,7 @@ function OrderModal({
         item_name: item.name,
         quantity: item.quantity,
         price: item.price,
-        selectedIngredients:
-          item.selectedIngredients?.map((ing) => ing._id) || [],
+        selectedIngredients: item.selectedIngredients?.map((ing) => ing) || [],
       }));
 
       const orderData = {
