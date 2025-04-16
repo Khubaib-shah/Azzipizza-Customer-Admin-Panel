@@ -7,7 +7,6 @@ import smoothscroll from "smoothscroll-polyfill";
 import Context from "../../context/dataContext";
 import MenuModal from "../Modal/MenuModel";
 import CompDetails from "../CompDetails";
-import LoadingSpinner from "../ProductsListSkeleton";
 import ProductsListSkeleton from "../ProductsListSkeleton";
 
 // Main Products List Component
@@ -19,7 +18,7 @@ function ProductsList() {
 
   const [activeCategory, setActiveCategory] = useState("pizze rosse");
 
-  const menuItems = [...new Set(items.map((item) => item.category))].reverse();
+  const menuItems = [...new Set(items.map((item) => item.category))];
 
   smoothscroll.polyfill();
 

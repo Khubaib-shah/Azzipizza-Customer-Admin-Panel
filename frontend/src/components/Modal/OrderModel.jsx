@@ -3,7 +3,6 @@ import axios from "axios";
 import { X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { baseUri } from "../../config/config";
 
 function OrderModal({
   isOpen,
@@ -92,10 +91,13 @@ function OrderModal({
         total: totalPrice,
       };
 
-      const response = await axios.post("https://pizzeria-backend-production.up.railway.app/api/payments/pay-for-order", orderData);
+      const response = await axios.post(
+        "https://pizzeria-backend-production.up.railway.app/api/payments/pay-for-order",
+        orderData
+      );
 
-      if(response.status === 200) {
-        window.open(response.data.approvalUrl, "_blank")
+      if (response.status === 200) {
+        window.open(response.data.approvalUrl, "_self");
       }
 
       // Call the success handler from parent
@@ -115,18 +117,18 @@ function OrderModal({
     <Dialog
       open={isOpen}
       onClose={closeModal}
-      className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm"
+      className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm"
     >
       <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-lg relative mx-4">
         <button
           onClick={closeModal}
-          className="absolute top-3 right-3 p-2 text-gray-600 hover:text-gray-900"
+          className="absolute top-3 right-3 p-2 text-gray-600 hover:text-gray-900 cursor-pointer"
           disabled={isSubmitting}
         >
           <X size={22} />
         </button>
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-5">
-          🛍️ Place Your Order
+          Place Your Order
         </h2>
         <div className="space-y-4">
           <div className="flex gap-3">
@@ -137,8 +139,9 @@ function OrderModal({
                 placeholder="Full Name *"
                 value={formData.name}
                 onChange={handleChange}
-                className={`w-full p-3 border ${formErrors.name ? "border-red-500" : "border-gray-300"
-                  } rounded-lg focus:ring-2 focus:ring-blue-400`}
+                className={`w-full p-3 border ${
+                  formErrors.name ? "border-red-500" : "border-gray-300"
+                } rounded-lg focus:ring-2 focus:ring-blue-400`}
               />
               {formErrors.name && (
                 <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>
@@ -151,8 +154,9 @@ function OrderModal({
                 placeholder="Phone Number *"
                 value={formData.phoneNumber}
                 onChange={handleChange}
-                className={`w-full p-3 border ${formErrors.phoneNumber ? "border-red-500" : "border-gray-300"
-                  } rounded-lg focus:ring-2 focus:ring-blue-400`}
+                className={`w-full p-3 border ${
+                  formErrors.phoneNumber ? "border-red-500" : "border-gray-300"
+                } rounded-lg focus:ring-2 focus:ring-blue-400`}
               />
               {formErrors.phoneNumber && (
                 <p className="text-red-500 text-sm mt-1">
@@ -169,8 +173,9 @@ function OrderModal({
               placeholder="Street Address *"
               value={formData.street}
               onChange={handleChange}
-              className={`w-full p-3 border ${formErrors.street ? "border-red-500" : "border-gray-300"
-                } rounded-lg focus:ring-2 focus:ring-blue-400`}
+              className={`w-full p-3 border ${
+                formErrors.street ? "border-red-500" : "border-gray-300"
+              } rounded-lg focus:ring-2 focus:ring-blue-400`}
             />
             {formErrors.street && (
               <p className="text-red-500 text-sm mt-1">{formErrors.street}</p>
@@ -185,8 +190,9 @@ function OrderModal({
                 placeholder="City *"
                 value={formData.city}
                 onChange={handleChange}
-                className={`w-full p-3 border ${formErrors.city ? "border-red-500" : "border-gray-300"
-                  } rounded-lg focus:ring-2 focus:ring-blue-400`}
+                className={`w-full p-3 border ${
+                  formErrors.city ? "border-red-500" : "border-gray-300"
+                } rounded-lg focus:ring-2 focus:ring-blue-400`}
               />
               {formErrors.city && (
                 <p className="text-red-500 text-sm mt-1">{formErrors.city}</p>
@@ -199,8 +205,9 @@ function OrderModal({
                 placeholder="ZIP Code *"
                 value={formData.zipCode}
                 onChange={handleChange}
-                className={`w-full p-3 border ${formErrors.zipCode ? "border-red-500" : "border-gray-300"
-                  } rounded-lg focus:ring-2 focus:ring-blue-400`}
+                className={`w-full p-3 border ${
+                  formErrors.zipCode ? "border-red-500" : "border-gray-300"
+                } rounded-lg focus:ring-2 focus:ring-blue-400`}
               />
               {formErrors.zipCode && (
                 <p className="text-red-500 text-sm mt-1">
@@ -229,14 +236,14 @@ function OrderModal({
           <button
             onClick={closeModal}
             disabled={isSubmitting}
-            className="px-5 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition disabled:opacity-50"
+            className="px-5 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition disabled:opacity-50 cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="px-5 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-5 py-2 rounded-lg bg-orange-500 text-white font-semibold hover:bg-orange-500 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {isSubmitting ? "Processing..." : "Confirm Order"}
           </button>

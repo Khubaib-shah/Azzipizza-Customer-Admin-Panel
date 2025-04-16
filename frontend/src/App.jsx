@@ -9,23 +9,25 @@ function App() {
   const location = useLocation();
   return (
     <ContextProvider>
-      <Header />
-      <main className="bg-gray-100">
-        <div className="grid grid-cols-12">
-          {/* Main Content - Outlet */}
-          <div
-            className={`${location?.pathname === "/" ? "col-span-12" : "col-span-12"
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="bg-gray-100 flex-grow">
+          <div className="grid grid-cols-12">
+            {/* Main Content - Outlet */}
+            <div
+              className={`${
+                location?.pathname === "/" ? "col-span-12" : "col-span-12"
               }`}
-          >
-            <Outlet />
+            >
+              <Outlet />
+            </div>
+
+            {/* Sidebar only on Home Page */}
           </div>
-
-          {/* Sidebar only on Home Page */}
-        </div>
-      </main>
-      <ToastContainer />
-
-      <Footer />
+        </main>
+        <ToastContainer />
+        <Footer />
+      </div>
     </ContextProvider>
   );
 }

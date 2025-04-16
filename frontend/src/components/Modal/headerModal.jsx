@@ -1,6 +1,6 @@
 import { Dialog } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 // icons
 import { IoCloseOutline } from "react-icons/io5";
@@ -28,6 +28,8 @@ function HeaderModal({ open, setOpen }) {
     setOpen(false);
   };
 
+  const location = useLocation();
+
   return (
     <Dialog open={open} onClose={() => setOpen(false)} fullScreen={fullWidth}>
       <div className="bg-white p-3 sm:p-4 md:w-[400px] w-full flex flex-col gap-3 sm:gap-4">
@@ -52,7 +54,11 @@ function HeaderModal({ open, setOpen }) {
               <Link
                 to="/contact"
                 onClick={() => handleNavigate()}
-                className="flex items-center gap-2 text-[14px] sm:text-[16px] font-[500] cursor-pointer"
+                className={`flex items-center gap-2 text-[14px] sm:text-[16px] font-[500] cursor-pointer ${
+                  location.pathname === "/contact"
+                    ? "text-orange-500"
+                    : "text-gray-800"
+                }`}
               >
                 <CiCircleInfo className="text-[20px] sm:text-[22px] " />
                 Ti serve aiuto?
@@ -60,9 +66,13 @@ function HeaderModal({ open, setOpen }) {
             </li>
             <li className="p-2 hover:bg-gray-100">
               <Link
-                to="/orders"
+                to="/my-orders-history"
                 onClick={() => handleNavigate()}
-                className="flex items-center gap-2 text-[14px] sm:text-[16px] font-[500] cursor-pointer"
+                className={`flex items-center gap-2 text-[14px] sm:text-[16px] font-[500] cursor-pointer ${
+                  location.pathname === "/my-orders-history"
+                    ? "text-orange-500"
+                    : "text-gray-800"
+                }`}
               >
                 <MdHistory className="text-[20px] sm:text-[22px] " />
                 Order History
@@ -72,7 +82,11 @@ function HeaderModal({ open, setOpen }) {
               <Link
                 to="/about"
                 onClick={() => handleNavigate()}
-                className="flex items-center gap-2 text-[14px] sm:text-[16px] font-[500] cursor-pointer"
+                className={`flex items-center gap-2 text-[14px] sm:text-[16px] font-[500] cursor-pointer ${
+                  location.pathname === "/about"
+                    ? "text-orange-500"
+                    : "text-gray-800"
+                }`}
               >
                 <AiOutlineInfoCircle className="text-[20px] sm:text-[22px] " />
                 About Us

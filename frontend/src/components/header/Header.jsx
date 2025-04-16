@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   AiOutlineShoppingCart,
   AiOutlineHome,
@@ -66,6 +66,14 @@ function Header() {
     },
   ];
 
+  const location = useLocation();
+  useEffect(() => {
+    const current = navItems.find((item) => item.path === location.pathname);
+    if (current) {
+      setActivePage(current.label);
+    }
+  }, [location.pathname]);
+
   return (
     <>
       <header
@@ -84,7 +92,7 @@ function Header() {
                 src={logo}
                 alt="Pizza Logo"
                 className={`object-contain transition-all duration-300 ${
-                  scrolled ? "h-14 w-14" : "h-16 w-16"
+                  scrolled ? "h-16 w-16" : "h-20 w-20"
                 }`}
               />
             </Link>
@@ -100,7 +108,7 @@ function Header() {
                     onClick={() => handlePageChange(item.label)}
                     className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${
                       activePage === item.label
-                        ? "bg-orange-300 text-white shadow-md"
+                        ? "bg-orange-400 text-white shadow-md"
                         : "bg-gray-100 text-black hover:bg-gray-200 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
                     }`}
                   >
@@ -111,15 +119,26 @@ function Header() {
 
               {/* Mobile Icons */}
               <nav className="flex md:hidden items-center gap-4">
-                {navItems.slice(0, 3).map((item) => (
-                  <Link key={item.path} to={item.path} aria-label={item.label}>
-                    {React.cloneElement(item.icon, {
-                      className: `text-[24px] transition-colors duration-300 ${
-                        scrolled ? "text-black dark:text-white" : "text-black"
-                      }`,
-                    })}
-                  </Link>
-                ))}
+                {navItems.slice(0, 3).map((item) => {
+                  const isActive = location.pathname === item.path;
+
+                  return (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      aria-label={item.label}
+                      className={`p-2 rounded-full transition-all duration-300 ${
+                        isActive
+                          ? "bg-orange-400 text-white shadow-md"
+                          : "text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
+                      }`}
+                    >
+                      {React.cloneElement(item.icon, {
+                        className: "text-[24px]",
+                      })}
+                    </Link>
+                  );
+                })}
               </nav>
             </div>
 
@@ -137,8 +156,8 @@ function Header() {
                     isCartHovered
                       ? "text-amber-500"
                       : scrolled
-                      ? "text-black dark:text-white"
-                      : "text-black"
+                      ? "text-white dark:text-white"
+                      : "text-white"
                   }`}
                 />
                 {cartCount > 0 && (
@@ -147,21 +166,22 @@ function Header() {
                   </span>
                 )}
               </Link>
-
-              {/* Menu Button */}
-              <Button
-                onClick={() => setOpen(!open)}
-                variant="text"
-                className="!min-w-[40px] !h-[40px] !p-0 !rounded-full"
-              >
-                <div
-                  className={`w-[36px] h-[36px] rounded-full flex items-center justify-center transition-colors duration-300 ${
-                    scrolled ? "text-black dark:text-white" : "text-black"
-                  }`}
+              <div className="md:hidden">
+                {/* Menu Button */}
+                <Button
+                  onClick={() => setOpen(!open)}
+                  variant="text"
+                  className="!min-w-[40px] !h-[40px] !p-0 !rounded-full  md:hidden  hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300"
                 >
-                  <MdOutlineMenu className="text-[26px]" />
-                </div>
-              </Button>
+                  <div
+                    className={`w-[36px] h-[36px] rounded-full flex items-center justify-center transition-colors duration-300 ${
+                      scrolled ? "text-black dark:text-white" : "text-white"
+                    }`}
+                  >
+                    <MdOutlineMenu className="text-[26px]" />
+                  </div>
+                </Button>
+              </div>
             </div>
           </div>
         </div>

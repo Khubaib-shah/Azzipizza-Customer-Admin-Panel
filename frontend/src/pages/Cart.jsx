@@ -73,12 +73,7 @@ function Cart() {
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-sm border divide-y divide-gray-100">
               {cartItems.map((item) => {
-                const ingredientsTotal =
-                  item.selectedIngredients?.reduce(
-                    (sum, i) => sum + i.price,
-                    0
-                  ) || 0;
-                const itemTotal = item.total * item.quantity;
+                const itemTotal = item.price * item.quantity;
 
                 return (
                   <div key={item._id} className="p-4 flex gap-4">
@@ -126,7 +121,7 @@ function Cart() {
                             onClick={() =>
                               handleQuantityChange(item, "decrease")
                             }
-                            className="px-3 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                            className="px-3 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50 cursor-pointer"
                             disabled={item.quantity <= 1}
                           >
                             <Minus size={16} />
@@ -138,15 +133,15 @@ function Cart() {
                             onClick={() =>
                               handleQuantityChange(item, "increase")
                             }
-                            className="px-3 py-1 text-gray-600 hover:bg-gray-100"
+                            className="px-3 py-1 text-gray-600 hover:bg-gray-100 cursor-pointer"
                           >
                             <Plus size={16} />
                           </button>
                         </div>
                         <button
                           onClick={() => removeFromCart(item._id)}
-                          className="text-red-500 hover:text-red-700"
-                          aria-label="Remove item"
+                          className="text-red-500 cursor-pointer hover:text-red-700"
+                          aria-label="Remove item from cart"
                         >
                           <Trash2 size={18} />
                         </button>
@@ -177,7 +172,7 @@ function Cart() {
               </div>
               <button
                 onClick={openModal}
-                className="w-full bg-amber-500 hover:bg-amber-600 text-white py-3 rounded-lg transition-colors font-medium"
+                className="w-full bg-amber-500 hover:bg-amber-600 text-white py-3 rounded-lg transition-colors font-medium cursor-pointer"
               >
                 Checkout
               </button>
