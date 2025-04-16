@@ -106,32 +106,29 @@ const Orders = () => {
     }
   };
 
-  const notifiedOrderIds = useRef(new Set());
-
   useEffect(() => {
     fetchOrders();
 
     socket.on("latestOrders", (data) => {
       const reversedData = data.slice().reverse();
       setOrders(reversedData);
-
       const latestOrder = reversedData[0];
 
       if (!latestOrder || !latestOrder.items) return;
 
-      if (!notifiedOrderIds.current.has(latestOrder._id)) {
-        playNotificationSound();
-        notifiedOrderIds.current.add(latestOrder._id);
+      const isNew = !orders.some((o) => o._id === latestOrder._id);
+      if (!isNew) return;
 
-        setNotifications((prev) => [
-          ...prev,
-          {
-            id: latestOrder._id,
-            message: "New order received!",
-            items: latestOrder,
-          },
-        ]);
-      }
+      playNotificationSound();
+
+      setNotifications((prev) => [
+        ...prev,
+        {
+          id: latestOrder._id,
+          message: "New order received!",
+          items: latestOrder,
+        },
+      ]);
 
       setFilteredOrders(applyFilters(reversedData, searchTerm, statusFilter));
     });
@@ -551,6 +548,7 @@ const Orders = () => {
         handleUpdateOrder={handleUpdateOrder}
         handleStatusChange={handleStatusChange}
         handleDeleteOrder={handleDeleteOrder}
+        loading={loading}
       />
     </div>
   );

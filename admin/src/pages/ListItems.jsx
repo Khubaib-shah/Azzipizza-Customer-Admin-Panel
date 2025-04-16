@@ -1,19 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { baseUri } from "../config/config";
-import {
-  Trash2,
-  Search,
-  Filter,
-  AlertCircle,
-  Edit,
-  Edit3,
-  X,
-  Upload,
-} from "lucide-react";
+import { Trash2, Search, Filter, AlertCircle, Edit, Edit3 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -37,6 +27,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
+import EditProductDialog from "../components/EditProductDialog";
 
 const ListItems = () => {
   const [items, setItems] = useState([]);
@@ -161,6 +152,7 @@ const ListItems = () => {
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const formData = new FormData();
       formData.append("name", itemToEdit.name);
       formData.append("description", itemToEdit.description);
@@ -185,6 +177,7 @@ const ListItems = () => {
       setItems((prev) =>
         prev.map((item) => (item._id === data._id ? data : item))
       );
+      setLoading(false);
       setEditDialogOpen(false);
       setImagePreview(null);
     } catch (err) {
@@ -192,14 +185,6 @@ const ListItems = () => {
       setError("Failed to update item. Please try again.");
     }
   };
-  console.log("Sending data:", {
-    name: itemToEdit.name,
-    description: itemToEdit.description,
-    price: itemToEdit.price,
-    category: itemToEdit.category,
-    ingredients: itemToEdit.ingredients,
-    image: itemToEdit.image,
-  });
 
   const categories = [
     "pizze rosse",
@@ -389,234 +374,23 @@ const ListItems = () => {
       </Dialog>
 
       {/* Edit Dialog */}
-      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-2xl">Edit Menu Item</DialogTitle>
-            <DialogDescription>
-              Update the details of this menu item
-            </DialogDescription>
-          </DialogHeader>
-
-          <form onSubmit={handleEditSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Item Name</label>
-                  <Input
-                    placeholder="Item Name"
-                    value={itemToEdit.name}
-                    onChange={(e) => handleEditChange("name", e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Description</label>
-                  <Textarea
-                    placeholder="Description"
-                    value={itemToEdit.description}
-                    onChange={(e) =>
-                      handleEditChange("description", e.target.value)
-                    }
-                    rows={3}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Price</label>
-                  <Input
-                    type="number"
-                    placeholder="Price"
-                    value={itemToEdit.price}
-                    onChange={(e) => handleEditChange("price", e.target.value)}
-                    min="0"
-                    step="0.01"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Category</label>
-                  <Select
-                    value={itemToEdit.category}
-                    onValueChange={(value) =>
-                      handleEditChange("category", value)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem
-                          key={category}
-                          value={category}
-                          className="capitalize"
-                        >
-                          {category}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Ingredients</label>
-                  <div className="flex gap-2">
-                    <Input
-                      type="text"
-                      value={newIngredient}
-                      onChange={(e) => setNewIngredient(e.target.value)}
-                      placeholder="Ingredient name"
-                    />
-                    <Input
-                      type="number"
-                      value={newIngredientPrice}
-                      onChange={(e) => setNewIngredientPrice(e.target.value)}
-                      placeholder="Price"
-                      min="0"
-                      step="0.01"
-                    />
-                    <Button
-                      type="button"
-                      onClick={handleAddIngredient}
-                      variant="outline"
-                      size="sm"
-                      disabled={!newIngredient || !newIngredientPrice}
-                    >
-                      Add
-                    </Button>
-                  </div>
-
-                  {itemToEdit.ingredients?.length > 0 && (
-                    <div className="mt-2 space-y-2 max-h-40 overflow-y-auto">
-                      {itemToEdit.ingredients.map((ingredient, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between bg-gray-50 p-2 rounded"
-                        >
-                          <div className="flex-1">{ingredient.name}</div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium">
-                              ${ingredient.price.toFixed(2)}
-                            </span>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              className="text-red-500 hover:text-red-700 p-1 h-6 w-6"
-                              onClick={() => handleRemoveIngredient(index)}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Image</label>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
-                    {imagePreview || itemToEdit.image ? (
-                      <div className="space-y-3">
-                        <img
-                          src={
-                            imagePreview ||
-                            (typeof itemToEdit.image === "string"
-                              ? itemToEdit.image
-                              : URL.createObjectURL(itemToEdit.image))
-                          }
-                          alt="Preview"
-                          className="mx-auto h-40 object-contain rounded"
-                        />
-                        <div className="flex gap-2">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="w-full"
-                            onClick={() =>
-                              document.getElementById("editImageInput").click()
-                            }
-                          >
-                            Change Image
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="w-full text-red-600 border-red-200 hover:bg-red-50"
-                            onClick={() => {
-                              setImagePreview(null);
-                              handleEditChange("image", null);
-                            }}
-                          >
-                            Remove
-                          </Button>
-                        </div>
-                        <Input
-                          id="editImageInput"
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={handleFileChange}
-                        />
-                      </div>
-                    ) : (
-                      <div className="text-center">
-                        <div className="flex justify-center mb-2">
-                          <Upload className="h-8 w-8 text-gray-400" />
-                        </div>
-                        <p className="text-sm text-gray-500 mb-3">
-                          Upload an image
-                        </p>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          className="w-full"
-                          onClick={() =>
-                            document.getElementById("editImageInput").click()
-                          }
-                        >
-                          Select Image
-                        </Button>
-                        <Input
-                          id="editImageInput"
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={handleFileChange}
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <DialogFooter>
-              <Button
-                variant="outline"
-                type="button"
-                onClick={() => {
-                  setEditDialogOpen(false);
-                  setImagePreview(null);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button type="submit">Save Changes</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <EditProductDialog
+        editDialogOpen={editDialogOpen}
+        setEditDialogOpen={setEditDialogOpen}
+        itemToEdit={itemToEdit}
+        handleEditChange={handleEditChange}
+        handleEditSubmit={handleEditSubmit}
+        categories={categories}
+        newIngredient={newIngredient}
+        setNewIngredient={setNewIngredient}
+        newIngredientPrice={newIngredientPrice}
+        setNewIngredientPrice={setNewIngredientPrice}
+        handleAddIngredient={handleAddIngredient}
+        handleRemoveIngredient={handleRemoveIngredient}
+        handleFileChange={handleFileChange}
+        imagePreview={imagePreview}
+        loading={loading}
+      />
     </>
   );
 };
