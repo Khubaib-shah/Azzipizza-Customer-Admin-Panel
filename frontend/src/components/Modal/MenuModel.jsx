@@ -1,6 +1,6 @@
 function MenuModal({ menuItems, activeCategory, onClose, onSelectCategory }) {
   return (
-    <div className="fixed inset-0 flex justify-center items-center z-50 px-4">
+    <div className="fixed inset-0 flex justify-center items-center bg-black/40 z-50 px-4">
       <div className="bg-white text-black p-6 rounded-lg w-full max-w-xl shadow-xl overflow-y-auto max-h-[80vh]">
         <div className="flex justify-between items-center border-b pb-3">
           <h2 className="text-lg font-bold">Menu Items</h2>

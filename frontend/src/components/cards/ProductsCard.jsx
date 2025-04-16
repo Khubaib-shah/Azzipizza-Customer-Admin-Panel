@@ -16,16 +16,14 @@ function ProductCard({ products }) {
     const toppingsTotal = toppingPrices.reduce((acc, curr) => acc + curr, 0);
     const totalPrice = products.price + toppingsTotal;
 
-
     const cartItem = {
       ...products,
-      price: totalPrice
+      price: totalPrice,
     };
-  
-    console.log("Final cart item:", cartItem);  
-  
+
+    console.log("Final cart item:", cartItem);
+
     addToCart(cartItem, selectedToppings);
-  
 
     toast.success(`${products.name} added to cart!`, {
       position: "bottom-right",
@@ -246,13 +244,13 @@ function ProductCard({ products }) {
                 <div className="mt-auto pt-4 border-t border-gray-200">
                   <div className="flex justify-between items-center">
                     <button
-                      className="px-6 py-3 bg-gray-200 hover:bg-gray-300 rounded-lg transition"
+                      className="px-6 py-3 bg-gray-200 hover:bg-gray-300 rounded-lg transition cursor-pointer"
                       onClick={closeModal}
                     >
                       Close
                     </button>
                     <button
-                      className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-lg transition flex items-center gap-2"
+                      className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-lg transition flex items-center gap-2  cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleAddToCart(e);
