@@ -48,7 +48,7 @@ function Header() {
       icon: <AiOutlineHome className="text-[24px]" />,
     },
     {
-      path: "/orders",
+      path: "/my-orders-history",
       label: "My Orders",
       icon: <MdHistory className="text-[24px]" />,
     },

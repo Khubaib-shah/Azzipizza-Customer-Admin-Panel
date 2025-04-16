@@ -248,29 +248,9 @@ function OrderHistory() {
                             <p className="text-sm text-gray-500">
                               Qty: {item.quantity}
                             </p>
-                            {item.selectedIngredients?.length > 0 && (
-                              <div className="mt-1 text-sm text-gray-600">
-                                <p className="font-medium">Extras:</p>
-                                <ul className="list-disc pl-4">
-                                  {item.selectedIngredients.map((ing, i) => (
-                                    <li key={i} className="text-sm">
-                                      {ing.name} (+€{ing.price.toFixed(2)})
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
                           </div>
                           <p className="font-medium">
-                            €
-                            {(
-                              (item.menuItem.price +
-                                item.selectedIngredients?.reduce(
-                                  (sum, ing) => sum + ing.price,
-                                  0
-                                )) *
-                              item.quantity
-                            ).toFixed(2)}
+                            €{(item.menuItem.price * item.quantity).toFixed(2)}
                           </p>
                         </div>
                       ))}

@@ -29,7 +29,7 @@ const router = createBrowserRouter([
         element: <Cart />,
       },
       {
-        path: "orders",
+        path: "my-orders-history",
         element: <OrderHistory />,
       },
     ],
