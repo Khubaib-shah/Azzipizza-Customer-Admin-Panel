@@ -53,7 +53,6 @@ const OrderSideBar = ({
         return "bg-gray-400 text-white";
     }
   };
-  console.log(selectedOrder);
 
   return (
     <div className="fixed top-0 right-0 w-80 h-full bg-white shadow-lg border-l border-gray-200 pt-16 transition-transform duration-300 flex flex-col z-10">
@@ -129,8 +128,11 @@ const OrderSideBar = ({
             <Card>
               <CardContent className="p-3 space-y-2">
                 {selectedOrder.items.map((item, index) => (
-                  <div key={index}>
-                    <div className="flex justify-between items-start py-2 border-b border-gray-100 last:border-0">
+                  <div
+                    key={index}
+                    className="border-b border-gray-200 pb-2 last:border-0"
+                  >
+                    <div className="flex justify-between items-start border-gray-100 last:border-0">
                       <div>
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-medium">
@@ -145,29 +147,23 @@ const OrderSideBar = ({
                     </div>
                     {item.selectedIngredients &&
                       item.selectedIngredients.length > 0 && (
-                        <div className="my-2 flex justify-between">
+                        <div className="ms-3 flex justify-between">
                           <div className="flex items-center gap-2">
-                            {item.selectedIngredients.map(
-                              (name, index) => (
-                                console.log(name),
-                                (
-                                  <>
-                                    <span className="text-sm font-medium">
-                                      {item.quantity}x
-                                    </span>
-                                    <span
-                                      key={index}
-                                      className="text-sm font-medium"
-                                    >
-                                      {name.name}
-                                    </span>
-                                  </>
-                                )
-                              )
-                            )}
+                            {item.selectedIngredients.map((ing, index) => {
+                              return (
+                                <>
+                                  <span className="text-xs ">
+                                    {item.quantity}x
+                                  </span>
+                                  <span key={index} className="text-xs">
+                                    {ing.name}
+                                  </span>
+                                </>
+                              );
+                            })}
                           </div>
 
-                          <span className="text-sm font-medium">
+                          <span className="text-xs">
                             €
                             {item.selectedIngredients
                               ?.reduce(
@@ -175,7 +171,7 @@ const OrderSideBar = ({
                                   acc + selectedIngredient.price,
                                 0
                               )
-                              .toFixed(2)}
+                              .toFixed(2) * item.quantity || 0}
                           </span>
                         </div>
                       )}
