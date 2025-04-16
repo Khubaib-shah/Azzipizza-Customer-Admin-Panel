@@ -125,7 +125,7 @@ function OrderHistory() {
                 className="absolute right-4 top-4"
                 onClick={() => handleDelete(order._id)}
               >
-                X
+                &times;
               </button>
               <button
                 onClick={() => toggleOrder(order._id)}

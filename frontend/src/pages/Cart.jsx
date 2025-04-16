@@ -1,27 +1,15 @@
 import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Context from "../context/dataContext";
 import OrderModal from "../components/Modal/OrderModel";
-import OrderConfirmModal from "../components/Modal/OrderConfirmModal";
 
 function Cart() {
   const { cartItems, addToCart, removeFromCart, CartDecrement, clearCart } =
     useContext(Context);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isOrderConfirmed, setIsOrderConfirmed] = useState(false);
   const [orderedItem, setOrderedItem] = useState(null);
-
-  // Calculate total price correctly with ingredients
-  // const totalPrice = cartItems.reduce((total, item) => {
-  //   const ingredientsTotal =
-  //     item.selectedIngredients?.reduce((sum, ing) => sum + ing.price, 0) || 0;
-  //   return total + (item.price + ingredientsTotal) * item.quantity;
-  // }, 0);
-
-  // console.log("v", totalPrice)
 
   // Save order to localStorage
   const saveOrderToLocalStorage = (order) => {
@@ -40,16 +28,12 @@ function Cart() {
       ...orderData,
       orderId: orderData._id || Math.random().toString(36).substr(2, 9),
     });
-    setIsOrderConfirmed(true);
     saveOrderToLocalStorage(orderData);
     clearCart();
   };
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => {
     setIsModalOpen(false);
-    if (isOrderConfirmed) {
-      clearCart();
-    }
   };
 
   const handleQuantityChange = (item, action) => {
@@ -66,17 +50,6 @@ function Cart() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
-      {isOrderConfirmed && orderedItem && (
-        <OrderConfirmModal
-          isOpen={isOrderConfirmed}
-          onClose={() => {
-            setIsOrderConfirmed(false);
-            setOrderedItem(null);
-          }}
-          orderDetails={orderedItem}
-        />
-      )}
-
       <div className="flex items-center gap-3 mb-8">
         <ShoppingBag size={28} className="text-amber-600" />
         <h1 className="text-3xl font-bold text-gray-800">Your Cart</h1>
@@ -105,8 +78,7 @@ function Cart() {
                     (sum, i) => sum + i.price,
                     0
                   ) || 0;
-                const itemTotal =
-                item.total * item.quantity;
+                const itemTotal = item.total * item.quantity;
 
                 return (
                   <div key={item._id} className="p-4 flex gap-4">
