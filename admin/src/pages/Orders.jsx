@@ -34,6 +34,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNotifications } from "../hooks/useNotifications";
 import NotificationSound from "/notification-sound.wav";
+import { useRef } from "react";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -53,7 +54,6 @@ const Orders = () => {
     return storedValue ? JSON.parse(storedValue) : false;
   });
 
-  console.log(orders);
   const socket = io(URL);
 
   // Fetch Orders from API
@@ -106,35 +106,32 @@ const Orders = () => {
     }
   };
 
-  // Handle real-time order updates
+  const notifiedOrderIds = useRef(new Set());
+
   useEffect(() => {
     fetchOrders();
 
     socket.on("latestOrders", (data) => {
       const reversedData = data.slice().reverse();
       setOrders(reversedData);
-      console.log("Latest Orders:", reversedData);
 
       const latestOrder = reversedData[0];
 
       if (!latestOrder || !latestOrder.items) return;
 
-      setNotifications((prev) => {
-        const alreadyExists = prev.some((n) => n.id === latestOrder.id);
-        if (alreadyExists) return prev;
-
-        // Play notification sound
+      if (!notifiedOrderIds.current.has(latestOrder._id)) {
         playNotificationSound();
+        notifiedOrderIds.current.add(latestOrder._id);
 
-        return [
+        setNotifications((prev) => [
           ...prev,
           {
             id: latestOrder._id,
             message: "New order received!",
             items: latestOrder,
           },
-        ];
-      });
+        ]);
+      }
 
       setFilteredOrders(applyFilters(reversedData, searchTerm, statusFilter));
     });
@@ -142,7 +139,7 @@ const Orders = () => {
     return () => {
       socket.off("latestOrders");
     };
-  }, [fetchOrders, searchTerm, statusFilter, isUserInteracted]);
+  }, [fetchOrders, searchTerm, statusFilter]);
 
   useEffect(() => {
     setFilteredOrders(applyFilters(orders, searchTerm, statusFilter));
