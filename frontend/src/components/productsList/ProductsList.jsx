@@ -71,88 +71,89 @@ function ProductsList() {
   return (
     <div className="container  mx-auto px-4 pt-5 mt-3">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-center">
-        <h1 className="text-xl sm:text-xl font-bold text-center sm:text-left lg:text-3xl md:text-[18px] flex-1">
-          Azzipizza Mica Pizza e Fichi
-        </h1>
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-2">
-            <MdStarOutline size={22} className="text-amber-500" />
-            <p className="text-sm">0 Recensioni</p>
-          </div>
-          <div className="flex items-center gap-2 bg-amber-600 text-white px-3 py-1 rounded-md">
-            <FaBicycle size={18} />
-            <p>Gratis</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Search Bar */}
-      <div className="relative mt-5">
-        <FaSearch
-          size={18}
-          className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-500"
-        />
-        <input
-          type="text"
-          placeholder="Cerca il prodotto..."
-          className="pl-10 pr-3 py-2 w-full border border-amber-500 rounded-3xl focus:ring-0 focus:ring-sky-500 text-sm sm:text-base "
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            // Reset active category when searching
-            if (e.target.value) {
-              setActiveCategory("");
-            }
-          }}
-        />
-      </div>
-
       {isLoading ? (
         <ProductsListSkeleton />
       ) : (
-        //  Menu Items (Scrollable on Mobile)
-        !searchQuery && (
-          <div className="flex items-center justify-between sticky top-16 bg-white z-10 py-2 px-4 shadow-md rounded-md w-full mt-4">
-            <div
-              ref={categoriesContainerRef} // Add this ref
-              className="flex overflow-x-auto gap-2 w-full hide-scrollbar whitespace-nowrap"
-            >
-              {menuItems?.map((item) => (
-                <button
-                  key={item}
-                  className={`px-5 py-1 font-semibold text-sm sm:text-base transition rounded-md uppercase ${
-                    activeCategory === item
-                      ? "bg-orange-400 text-white"
-                      : "text-black hover:bg-orange-400 cursor-pointer hover:text-white"
-                  }`}
-                  onClick={(e) => {
-                    handleCategoryClick(item);
-                    // Scroll to center the clicked button
-                    const container = categoriesContainerRef.current;
-                    const button = e.target;
-                    const containerWidth = container.offsetWidth;
-                    const buttonLeft = button.offsetLeft;
-                    const buttonWidth = button.offsetWidth;
-
-                    container.scrollTo({
-                      left: buttonLeft - containerWidth / 2 + buttonWidth / 2,
-                      behavior: "smooth",
-                    });
-                  }}
-                >
-                  {item}
-                </button>
-              ))}
+        <>
+          <div className="flex flex-col sm:flex-row justify-between items-center">
+            <h1 className="text-xl sm:text-xl font-bold text-center sm:text-left lg:text-3xl md:text-[18px] flex-1">
+              Azzipizza Mica Pizza e Fichi
+            </h1>
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-2">
+                <MdStarOutline size={22} className="text-amber-500" />
+                <p className="text-sm">0 Recensioni</p>
+              </div>
+              <div className="flex items-center gap-2 bg-amber-600 text-white px-3 py-1 rounded-md">
+                <FaBicycle size={18} />
+                <p>Gratis</p>
+              </div>
             </div>
-            <button
-              className="w-20 h-10 flex items-center justify-center bg-white-200 hover:bg-white-300 rounded-md transition ml-2 cursor-pointer"
-              onClick={() => setIsModalOpen(true)}
-            >
-              <PiListBulletsBold size={22} />
-            </button>
           </div>
-        )
+          {/* Search Bar */}
+          <div className="relative mt-5">
+            <FaSearch
+              size={18}
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-500"
+            />
+            <input
+              type="text"
+              placeholder="Cerca il prodotto..."
+              className="pl-10 pr-3 py-2 w-full border border-amber-500 rounded-3xl focus:ring-0 focus:ring-sky-500 text-sm sm:text-base "
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                // Reset active category when searching
+                if (e.target.value) {
+                  setActiveCategory("");
+                }
+              }}
+            />
+          </div>
+
+          {/*  Menu Items (Scrollable on Mobile) */}
+          {!searchQuery && (
+            <div className="flex items-center justify-between sticky top-16 bg-white z-10 py-2 px-4 shadow-md rounded-md w-full mt-4">
+              <div
+                ref={categoriesContainerRef} // Add this ref
+                className="flex overflow-x-auto gap-2 w-full hide-scrollbar whitespace-nowrap"
+              >
+                {menuItems?.map((item) => (
+                  <button
+                    key={item}
+                    className={`px-5 py-1 font-semibold text-sm sm:text-base transition rounded-md uppercase ${
+                      activeCategory === item
+                        ? "bg-orange-400 text-white"
+                        : "text-black hover:bg-orange-400 cursor-pointer hover:text-white"
+                    }`}
+                    onClick={(e) => {
+                      handleCategoryClick(item);
+                      // Scroll to center the clicked button
+                      const container = categoriesContainerRef.current;
+                      const button = e.target;
+                      const containerWidth = container.offsetWidth;
+                      const buttonLeft = button.offsetLeft;
+                      const buttonWidth = button.offsetWidth;
+
+                      container.scrollTo({
+                        left: buttonLeft - containerWidth / 2 + buttonWidth / 2,
+                        behavior: "smooth",
+                      });
+                    }}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+              <button
+                className="w-20 h-10 flex items-center justify-center bg-white-200 hover:bg-white-300 rounded-md transition ml-2 cursor-pointer"
+                onClick={() => setIsModalOpen(true)}
+              >
+                <PiListBulletsBold size={22} />
+              </button>
+            </div>
+          )}
+        </>
       )}
       {/* Product Categories & Listing */}
       {searchQuery ? (
