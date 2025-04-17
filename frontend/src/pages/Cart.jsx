@@ -73,10 +73,13 @@ function Cart() {
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-sm border divide-y divide-gray-100">
               {cartItems.map((item) => {
+                const uniqueKey = `${item._id}-${JSON.stringify(
+                  item.selectedIngredients.map((ing) => ing.name).sort()
+                )}-${item.customizations || ""}`;
                 const itemTotal = item.price * item.quantity;
 
                 return (
-                  <div key={item._id} className="p-4 flex gap-4">
+                  <div key={uniqueKey} className="p-4 flex gap-4">
                     <div className="w-24 h-24 flex-shrink-0">
                       <img
                         src={item.image}

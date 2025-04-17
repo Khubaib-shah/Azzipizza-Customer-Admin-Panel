@@ -2,6 +2,7 @@ import { Dialog } from "@headlessui/react";
 import axios from "axios";
 import { X } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 function OrderModal({
@@ -21,6 +22,7 @@ function OrderModal({
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isOpen) {
@@ -118,6 +120,59 @@ function OrderModal({
     }
   };
 
+  const handleCashSubmit = async () => {
+    if (!validateForm()) return;
+    if (!cartItems?.length) {
+      toast.error("Your cart is empty!", { position: "top-center" });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const formattedItems = cartItems.map((item) => ({
+        menuItem: item._id,
+        item_name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+        selectedIngredients: item.selectedIngredients?.map((ing) => ing) || [],
+      }));
+
+      const orderData = {
+        items: formattedItems,
+        name: formData.name,
+        phoneNumber: formData.phoneNumber,
+        customizations: formData.customizations || "",
+        deliveryAddress: {
+          street: formData.street,
+          city: formData.city,
+          zipCode: formData.zipCode,
+        },
+        total: totalPrice,
+      };
+
+      const response = await axios.post(
+        "https://pizzeria-backend-production.up.railway.app/api/orders",
+        orderData
+      );
+
+      setIsSubmitting(false);
+      toast.success("🎉 Ordine effettuato! Lo stiamo preparando per te.", {
+        position: "top-center",
+      });
+
+      // Call the success handler from parent
+      onOrderSuccess(response.data);
+      closeModal();
+    } catch (error) {
+      console.error("Order error:", error.response?.data || error);
+      toast.error(error.response?.data?.message || "Failed to process order", {
+        position: "top-center",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   return (
     <Dialog
       open={isOpen}
@@ -246,11 +301,18 @@ function OrderModal({
             Cancel
           </button>
           <button
+            onClick={handleCashSubmit}
+            disabled={isSubmitting}
+            className="px-5 py-2 rounded-lg bg-orange-500 text-white font-semibold hover:bg-orange-500 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm"
+          >
+            {isSubmitting ? "Processing..." : "Paga in contanti"}
+          </button>
+          <button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="px-5 py-2 rounded-lg bg-orange-500 text-white font-semibold hover:bg-orange-500 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            className="px-5 py-2 rounded-lg bg-blue-500 text-white font-semibold hover:bg-blue-500 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm"
           >
-            {isSubmitting ? "Processing..." : "Confirm Order"}
+            {isSubmitting ? "Processing..." : "Paga con la carta"}
           </button>
         </div>
       </div>
