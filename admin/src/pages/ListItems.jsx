@@ -28,6 +28,7 @@ import {
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 import EditProductDialog from "../components/EditProductDialog";
+import DeleteProductDialog from "../components/DeleteProductDialog";
 
 const ListItems = () => {
   const [items, setItems] = useState([]);
@@ -93,10 +94,15 @@ const ListItems = () => {
   }, [searchTerm, categoryFilter, items]);
 
   const handleDelete = async (id) => {
+    if (!id) return;
+    setLoading(true);
+    setError("");
     try {
       await baseUri.delete(`/api/menu/${id}`);
       setItems((prevItems) => prevItems.filter((item) => item._id !== id));
       setDeleteDialogOpen(false);
+      setLoading(false);
+      setItemToDelete(null);
     } catch (error) {
       console.error("Error deleting item:", error);
       setError("Failed to delete item. Please try again.");
@@ -347,31 +353,14 @@ const ListItems = () => {
         )}
       </div>
 
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirm Deletion</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete "{itemToDelete?.name}"? This
-              action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0">
-            <Button
-              variant="outline"
-              onClick={() => setDeleteDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={() => handleDelete(itemToDelete?._id)}
-            >
-              Delete Item
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Delete Dialog */}
+      <DeleteProductDialog
+        deleteDialogOpen={deleteDialogOpen}
+        setDeleteDialogOpen={setDeleteDialogOpen}
+        itemToDelete={itemToDelete}
+        handleDelete={handleDelete}
+        loading={loading}
+      />
 
       {/* Edit Dialog */}
       <EditProductDialog
