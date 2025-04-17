@@ -4,7 +4,6 @@ import Home from "../pages/Home";
 import About from "../pages/About";
 import Contact from "../pages/ContactUs";
 import Cart from "../pages/Cart";
-import OrderHistory from "../pages/OrderHistory";
 import PaymentSuccess from "../components/paymentPages/PaymentSuccess";
 import PaymentError from "../components/paymentPages/PaymentError";
 import PaymentCancelled from "../components/paymentPages/PaymentCancelled";
@@ -31,10 +30,7 @@ const router = createBrowserRouter([
         path: "cart",
         element: <Cart />,
       },
-      {
-        path: "my-orders-history",
-        element: <OrderHistory />,
-      },
+
       {
         path: "order-success",
         element: <PaymentSuccess />,

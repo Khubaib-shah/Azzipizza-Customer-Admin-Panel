@@ -64,20 +64,7 @@ function HeaderModal({ open, setOpen }) {
                 Ti serve aiuto?
               </Link>
             </li>
-            <li className="p-2 hover:bg-gray-100">
-              <Link
-                to="/my-orders-history"
-                onClick={() => handleNavigate()}
-                className={`flex items-center gap-2 text-[14px] sm:text-[16px] font-[500] cursor-pointer ${
-                  location.pathname === "/my-orders-history"
-                    ? "text-orange-500"
-                    : "text-gray-800"
-                }`}
-              >
-                <MdHistory className="text-[20px] sm:text-[22px] " />
-                Order History
-              </Link>
-            </li>
+
             <li className="p-2 hover:bg-gray-100">
               <Link
                 to="/about"

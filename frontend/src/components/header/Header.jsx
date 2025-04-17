@@ -6,7 +6,7 @@ import {
   AiOutlineInfoCircle,
   AiOutlinePhone,
 } from "react-icons/ai";
-import { MdOutlineMenu, MdHistory } from "react-icons/md";
+import { MdOutlineMenu } from "react-icons/md";
 import { Button } from "@mui/material";
 import Context from "../../context/dataContext";
 import HeaderModal from "../Modal/headerModal";
@@ -47,12 +47,6 @@ function Header() {
       label: "Home",
       icon: <AiOutlineHome className="text-[24px]" />,
     },
-    {
-      path: "/my-orders-history",
-      label: "My Orders",
-      icon: <MdHistory className="text-[24px]" />,
-    },
-
     {
       path: "/contact",
       label: "Contact Us",
@@ -115,30 +109,6 @@ function Header() {
                     {item.label}
                   </Link>
                 ))}
-              </nav>
-
-              {/* Mobile Icons */}
-              <nav className="flex md:hidden items-center gap-4">
-                {navItems.slice(0, 3).map((item) => {
-                  const isActive = location.pathname === item.path;
-
-                  return (
-                    <Link
-                      key={item.path}
-                      to={item.path}
-                      aria-label={item.label}
-                      className={`p-2 rounded-full transition-all duration-300 ${
-                        isActive
-                          ? "bg-orange-400 text-white shadow-md"
-                          : "text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
-                      }`}
-                    >
-                      {React.cloneElement(item.icon, {
-                        className: "text-[24px]",
-                      })}
-                    </Link>
-                  );
-                })}
               </nav>
             </div>
 
