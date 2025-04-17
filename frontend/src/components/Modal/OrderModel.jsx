@@ -39,7 +39,10 @@ function OrderModal({
   const validateForm = () => {
     const errors = {};
     const phoneRegex = /^(?:\+39)?\s?(?:0\d{1,4}|3\d{2})\s?\d{5,8}$/;
-    const zipRegex = /^\d{5}(-\d{4})?$/;
+    const zipRegex = [
+      40122, 40123, 40124, 40125, 40126, 40127, 40128, 40129, 40132, 40133,
+      40134, 40135, 40136, 40137,
+    ];
 
     if (!formData.name.trim()) errors.name = "Name is required";
     if (!phoneRegex.test(formData.phoneNumber)) {
@@ -47,7 +50,10 @@ function OrderModal({
     }
     if (!formData.street.trim()) errors.street = "Street address is required";
     if (!formData.city.trim()) errors.city = "City is required";
-    if (!zipRegex.test(formData.zipCode)) errors.zipCode = "Invalid ZIP code";
+    if (!zipRegex.includes(Number(formData.zipCode)))
+      errors.zipCode = "Invalid ZIP code";
+    console.log(zipRegex.includes(Number(formData.zipCode)));
+    console.log(formData.zipCode);
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
