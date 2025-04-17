@@ -53,6 +53,7 @@ const OrderSideBar = ({
         return "bg-gray-400 text-white";
     }
   };
+  console.log(selectedOrder.items[0].customizations);
 
   return (
     <div className="fixed top-0 right-0 w-80 h-full bg-white shadow-lg border-l border-gray-200 pt-16 transition-transform duration-300 flex flex-col z-10">
@@ -152,9 +153,7 @@ const OrderSideBar = ({
                             {item.selectedIngredients.map((ing, index) => {
                               return (
                                 <>
-                                  <span className="text-xs ">
-                                    {item.quantity}x
-                                  </span>
+                                  <span className="text-xs">x</span>
                                   <span key={index} className="text-xs">
                                     {ing.name}
                                   </span>
@@ -175,11 +174,13 @@ const OrderSideBar = ({
                           </span>
                         </div>
                       )}
-                    {item.customizations && (
-                      <u className="text-sm">Note : {item.customizations}</u>
-                    )}
                   </div>
                 ))}
+                {selectedOrder.items[0].customizations && (
+                  <u className="text-sm">
+                    Note : {selectedOrder.items[0].customizations}
+                  </u>
+                )}
               </CardContent>
             </Card>
           </div>
