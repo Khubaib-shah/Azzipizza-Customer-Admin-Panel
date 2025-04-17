@@ -21,8 +21,8 @@ const NotFound = () => {
         {/* Button */}
         <button
           onClick={() => navigate("/")}
-          className="mt-8 px-6 py-3 bg-blue-600 text-white rounded-lg 
-          text-lg font-medium hover:bg-blue-700 transition-colors"
+          className="mt-8 px-6 py-3 bg-gray-800 text-white rounded-lg 
+          text-lg font-medium hover:bg-gray-700 transition-colors cursor-pointer"
         >
           Return to Home
         </button>

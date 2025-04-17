@@ -77,13 +77,13 @@ const Sidebar = () => {
               {menuItems.map((item, index) => (
                 <li key={index}>
                   {item.submenu ? (
-                    <div className="mb-1">
+                    <div className="mb-1  cursor-pointer">
                       <button
                         onClick={(e) => {
                           e.stopPropagation(); // Prevent event propagation
                           toggleSubmenu(item.title);
                         }}
-                        className={`flex items-center justify-between w-full p-2.5 rounded-md text-sm font-medium transition-colors ${
+                        className={`flex items-center justify-between w-full p-2.5 rounded-md text-sm font-medium transition-colors cursor-pointer ${
                           openSubmenu === item.title
                             ? "bg-primary/10 text-primary"
                             : "text-gray-700 hover:bg-gray-100"
