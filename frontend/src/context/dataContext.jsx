@@ -36,21 +36,31 @@ export const ContextProvider = ({ children }) => {
   // Add item to cart with selected ingredients
   const addToCart = (item, selectedIngredients = [], customizations = "") => {
     console.log("Adding to cart:", item, selectedIngredients, customizations);
+
     setCartItems((prevCart) => {
-      const existingItemIndex = prevCart.findIndex(
-        (cartItem) => cartItem._id === item._id
+      // Convert ingredients to a comparable string
+      const ingredientsKey = JSON.stringify(
+        [...selectedIngredients].sort((a, b) => a.name.localeCompare(b.name))
       );
 
+      const existingItemIndex = prevCart.findIndex((cartItem) => {
+        const existingIngredientsKey = JSON.stringify(
+          [...cartItem.selectedIngredients].sort((a, b) =>
+            a.name.localeCompare(b.name)
+          )
+        );
+        return (
+          cartItem._id === item._id &&
+          existingIngredientsKey === ingredientsKey &&
+          cartItem.customizations === customizations
+        );
+      });
+
       if (existingItemIndex >= 0) {
-        // If exists, increment quantity AND ingredients
         const updatedCart = [...prevCart];
         updatedCart[existingItemIndex] = {
           ...updatedCart[existingItemIndex],
           quantity: updatedCart[existingItemIndex].quantity + 1,
-          selectedIngredients: [
-            ...updatedCart[existingItemIndex].selectedIngredients,
-            ...selectedIngredients,
-          ],
         };
         return updatedCart;
       } else {
