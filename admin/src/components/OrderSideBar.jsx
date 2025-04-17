@@ -53,7 +53,6 @@ const OrderSideBar = ({
         return "bg-gray-400 text-white";
     }
   };
-  console.log(selectedOrder.items[0].customizations);
 
   return (
     <div className="fixed top-0 right-0 w-80 h-full bg-white shadow-lg border-l border-gray-200 pt-16 transition-transform duration-300 flex flex-col z-10">

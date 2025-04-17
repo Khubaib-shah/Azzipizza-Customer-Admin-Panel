@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { List, ShoppingBag, ChevronDown, Menu, X } from "lucide-react";
+import { List, ShoppingBag, ChevronDown, Menu, X, LogOut } from "lucide-react";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -13,7 +13,6 @@ const Sidebar = () => {
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
-    // Reset submenu state when sidebar is closed
     if (isSidebarOpen) {
       setOpenSubmenu(null);
     }
@@ -21,7 +20,6 @@ const Sidebar = () => {
 
   const closeSidebar = () => {
     setIsSidebarOpen(false);
-    // Reset submenu state when sidebar is closed
     setOpenSubmenu(null);
   };
 
@@ -38,6 +36,10 @@ const Sidebar = () => {
       ],
     },
   ];
+  const logoutHandle = () => {
+    localStorage.removeItem("isLoggedIn");
+    window.location.href = "/login";
+  };
 
   return (
     <>
@@ -77,10 +79,10 @@ const Sidebar = () => {
               {menuItems.map((item, index) => (
                 <li key={index}>
                   {item.submenu ? (
-                    <div className="mb-1  cursor-pointer">
+                    <div className="mb-1 cursor-pointer">
                       <button
                         onClick={(e) => {
-                          e.stopPropagation(); // Prevent event propagation
+                          e.stopPropagation();
                           toggleSubmenu(item.title);
                         }}
                         className={`flex items-center justify-between w-full p-2.5 rounded-md text-sm font-medium transition-colors cursor-pointer ${
@@ -122,7 +124,7 @@ const Sidebar = () => {
                   ) : (
                     <Link
                       to={item.path}
-                      onClick={closeSidebar} // Close sidebar on click (mobile)
+                      onClick={closeSidebar}
                       className={`flex items-center gap-3 p-2.5 rounded-md text-sm font-medium transition-colors ${
                         isActive(item.path)
                           ? "bg-primary/10 text-primary"
@@ -137,6 +139,21 @@ const Sidebar = () => {
               ))}
             </ul>
           </nav>
+          <button
+            className="flex items-center  w-full p-2.5 rounded-md text-sm font-medium transition-colors cursor-pointer text-gray-700 hover:bg-gray-100 gap-3"
+            onClick={logoutHandle}
+          >
+            <LogOut /> LogOut
+          </button>
+
+          <div className="flex items-center justify-center p-4 border-t border-gray-200 bg-gray-50">
+            <span className="text-sm text-gray-500">
+              © 2023{" "}
+              <a href="https://khubaib-portfolio-seven.vercel.app">
+                Khubaib Shah
+              </a>
+            </span>
+          </div>
         </div>
       </aside>
     </>
