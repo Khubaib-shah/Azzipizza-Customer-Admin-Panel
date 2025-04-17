@@ -7,10 +7,20 @@ import { ToastContainer } from "react-toastify";
 
 function App() {
   const location = useLocation();
+
+  const hideHeaderFooterRoutes = [
+    "/order-success",
+    "/payment-error",
+    "/payment-cancelled",
+  ];
+
+  const shouldHideHeaderFooter = hideHeaderFooterRoutes.includes(
+    location.pathname
+  );
   return (
     <ContextProvider>
       <div className="min-h-screen flex flex-col">
-        <Header />
+        {!shouldHideHeaderFooter && <Header />}
         <main className="bg-gray-100 flex-grow">
           <div className="grid grid-cols-12">
             {/* Main Content - Outlet */}
@@ -26,7 +36,8 @@ function App() {
           </div>
         </main>
         <ToastContainer />
-        <Footer />
+
+        {!shouldHideHeaderFooter && <Footer />}
       </div>
     </ContextProvider>
   );
