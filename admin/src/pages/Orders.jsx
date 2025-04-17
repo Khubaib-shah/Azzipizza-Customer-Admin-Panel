@@ -280,13 +280,17 @@ const Orders = () => {
             </div>
 
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full lg:w-40">
+              <SelectTrigger className="w-full lg:w-40 cursor-pointer">
                 <SelectValue placeholder="All Statuses" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem>All Statuses</SelectItem>
                 {statusOptions.map((status) => (
-                  <SelectItem key={status} value={status}>
+                  <SelectItem
+                    key={status}
+                    value={status}
+                    className="cursor-pointer"
+                  >
                     {status}
                   </SelectItem>
                 ))}
@@ -306,7 +310,7 @@ const Orders = () => {
             <Button
               variant="outline"
               onClick={toggleSoundNotifications}
-              className="mb-4"
+              className="mb-4 cursor-pointer"
             >
               {isUserInteracted ? <Volume2 /> : <VolumeOff />}
             </Button>
@@ -323,8 +327,12 @@ const Orders = () => {
 
         <Tabs defaultValue="active" className="w-full">
           <TabsList className="mb-4">
-            <TabsTrigger value="active">Active Orders</TabsTrigger>
-            <TabsTrigger value="completed">Completed Orders</TabsTrigger>
+            <TabsTrigger value="active" className="cursor-pointer">
+              Active Orders
+            </TabsTrigger>
+            <TabsTrigger value="completed" className="cursor-pointer">
+              Completed Orders
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="active">
