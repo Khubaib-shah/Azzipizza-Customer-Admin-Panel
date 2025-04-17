@@ -30,7 +30,7 @@ const Login = () => {
         className="p-8 bg-white rounded-lg shadow-xl w-96 border border-gray-100"
       >
         <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">
-          Welcome Hussain
+          Welcome Azzi Pizza
         </h2>
         {error && (
           <p className="text-red-500 mb-4 text-sm text-center">{error}</p>
