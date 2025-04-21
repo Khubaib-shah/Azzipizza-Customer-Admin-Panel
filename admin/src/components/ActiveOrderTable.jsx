@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "./ui/table";
 import { Button } from "./ui/button";
+import { Clock } from "lucide-react";
 const ActiveOrderTable = ({ filteredOrders, handleSelectOrder }) => {
   const getStatusColor = (status) => {
     switch (status) {
