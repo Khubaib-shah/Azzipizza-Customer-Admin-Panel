@@ -9,6 +9,7 @@ import {
   User,
   ChevronUp,
   ChevronDown,
+  Printer,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +20,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
+import { PDFDownloadLink, pdf } from "@react-pdf/renderer";
+import { saveAs } from "file-saver";
+import ReceiptDocument from "./ReceiptDocument";
 
 const statusOptions = [
   "Pending",
@@ -52,6 +56,11 @@ const OrderSideBar = ({
       default:
         return "bg-gray-400 text-white";
     }
+  };
+
+  const handlePrinterAnOrder = async () => {
+    const blob = await pdf(<ReceiptDocument order={selectedOrder} />).toBlob();
+    saveAs(blob, "receipt.pdf");
   };
 
   return (
@@ -152,7 +161,9 @@ const OrderSideBar = ({
                             {item.selectedIngredients.map((ing, index) => {
                               return (
                                 <>
-                                  <span className="text-xs">x</span>
+                                  <span key={index} className="text-xs">
+                                    x
+                                  </span>
                                   <span key={index} className="text-xs">
                                     {ing.name}
                                   </span>
@@ -242,6 +253,15 @@ const OrderSideBar = ({
           <Save className="h-4 w-4 mr-2" />
           Update Order
         </Button>
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={handlePrinterAnOrder}
+        >
+          <Printer className="h-4 w-4 mr-2" />
+          Punch Order
+        </Button>
+
         <Button
           variant="destructive"
           className="w-full"
