@@ -64,23 +64,26 @@ const OrderSideBar = ({
     const blob = await pdf(<ReceiptDocument order={selectedOrder} />).toBlob();
 
     const url = URL.createObjectURL(blob);
-    // window.open(url, "_blank");
 
-    const iframe = document.createElement("iframe");
+    const newWindow = window.open(url);
 
-    iframe.style.display = "none";
-    iframe.src = url;
-    document.body.appendChild(iframe);
+    if (newWindow) {
+      // Try to auto print after a delay (may still be blocked)
+      const tryPrint = () => {
+        newWindow.focus();
+        newWindow.print();
+      };
 
-    iframe.onload = () => {
-      iframe.contentWindow.focus();
-      iframe.contentWindow.print();
+      setTimeout(tryPrint, 1000);
+    } else {
+      alert("Pop-up blocked! Please allow pop-ups for this site.");
+    }
 
-      setTimeout(() => {
-        document.body.removeChild(iframe);
-        URL.revokeObjectURL(url);
-      }, 1000);
-    };
+    setTimeout(() => {
+      // document.body.removeChild(iframe);
+      URL.revokeObjectURL(url);
+    }, 1000);
+
     dispatch({ type: "SET_PUNCH_LOADING", payload: false });
   };
 
@@ -179,13 +182,12 @@ const OrderSideBar = ({
                       item.selectedIngredients.length > 0 && (
                         <div className="flex flex-col gap-1 w-full">
                           {item.selectedIngredients.map((ing, index) => (
-                            <div className="flex justify-between ps-5">
-                              <span key={index} className="text-xs">
-                                x {ing.name}
-                              </span>
-                              <span key={index} className="text-xs">
-                                €{ing.price}
-                              </span>
+                            <div
+                              key={index}
+                              className="flex justify-between ps-5"
+                            >
+                              <span className="text-xs">x {ing.name}</span>
+                              <span className="text-xs">€{ing.price}</span>
                             </div>
                           ))}
                         </div>

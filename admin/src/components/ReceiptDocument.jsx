@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     marginVertical: 4,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.6,
     borderBottomColor: "#000",
   },
   bold: {
@@ -51,9 +51,9 @@ const styles = StyleSheet.create({
   },
 
   itemContainer: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    borderBottomWidth: 0.2,
     paddingBottom: 4,
+    borderBottomColor: "#000",
     marginBottom: 4,
   },
   itemHeader: {
@@ -77,13 +77,16 @@ const styles = StyleSheet.create({
   },
   ingredientContainer: {
     marginLeft: 12,
-    flexDirection: "row",
+    display: "flex",
+    flexDirection: "column",
     justifyContent: "space-between",
     marginTop: 2,
   },
   ingredientList: {
-    flexDirection: "column",
-    gap: 0,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 2,
   },
   ingredientText: {
     fontSize: 8,
@@ -122,43 +125,45 @@ const ReceiptDocument = ({ order }) => {
 
         <View style={styles.section}>
           <Text style={styles.bold}>Articoli:</Text>
-          {order.items.map((item, idx) => {
-            return (
-              <View key={idx} style={item.length > 1 && styles.itemContainer}>
-                {/* Item Header */}
-                <View style={styles.itemHeader}>
-                  <View style={styles.itemDetails}>
-                    <Text style={styles.itemQuantity}>{item.quantity}x</Text>
-                    <Text style={styles.itemName}>{item.menuItem.name}</Text>
-                  </View>
-                  <Text style={styles.itemPrice}>
-                    €{item.menuItem.price.toFixed(2)}
-                  </Text>
+          {order.items.map((item, idx) => (
+            <View
+              key={idx}
+              style={order.items.length > 1 ? styles.itemContainer : null}
+            >
+              {/* Item Header */}
+              <View style={styles.itemHeader}>
+                <View style={styles.itemDetails}>
+                  <Text style={styles.itemQuantity}>{item.quantity}x</Text>
+                  <Text style={styles.itemName}>{item.menuItem.name}</Text>
                 </View>
-
-                {/* Selected Ingredients */}
-                {item.selectedIngredients &&
-                  item.selectedIngredients.length > 0 && (
-                    <View style={styles.ingredientContainer}>
-                      <View style={styles.ingredientList}>
-                        {item.selectedIngredients.map((ing, index) => (
-                          <>
-                            <Text key={index} style={styles.ingredientText}>
-                              x {ing.name} €{ing.price}
-                            </Text>
-                          </>
-                        ))}
-                      </View>
-                    </View>
-                  )}
+                <Text style={styles.itemPrice}>
+                  €{item.menuItem.price.toFixed(2)}
+                </Text>
               </View>
-            );
-          })}
+
+              {/* Selected Ingredients */}
+              {item.selectedIngredients &&
+                item.selectedIngredients.length > 0 && (
+                  <View style={styles.ingredientContainer}>
+                    {item.selectedIngredients.map((ing, index) => (
+                      <View style={styles.ingredientList}>
+                        <Text key={index} style={styles.ingredientText}>
+                          x {ing.name}
+                        </Text>
+                        <Text key={index} style={styles.ingredientText}>
+                          €{ing.price}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+                )}
+            </View>
+          ))}
         </View>
 
         {order.items[0].customizations && (
           <View>
-            <View style={styles.divider} />
+            <View style={order.items.length < 2 ? styles.divider : null} />
             <Text style={{ textAlign: "center" }}>
               Note : {order.items[0].customizations}
             </Text>
