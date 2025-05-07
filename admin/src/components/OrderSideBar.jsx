@@ -22,7 +22,6 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { pdf } from "@react-pdf/renderer";
 import ReceiptDocument from "./ReceiptDocument";
-import { saveAs } from "file-saver";
 
 const statusOptions = [
   "Pending",
@@ -62,11 +61,29 @@ const OrderSideBar = ({
 
   const handlePrinterAnOrder = async () => {
     dispatch({ type: "SET_PUNCH_LOADING", payload: true });
-
     const blob = await pdf(<ReceiptDocument order={selectedOrder} />).toBlob();
-    saveAs(blob, "receipt.pdf");
+
+    const url = URL.createObjectURL(blob);
+    // window.open(url, "_blank");
+
+    const iframe = document.createElement("iframe");
+
+    iframe.style.display = "none";
+    iframe.src = url;
+    document.body.appendChild(iframe);
+
+    iframe.onload = () => {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+
+      setTimeout(() => {
+        document.body.removeChild(iframe);
+        URL.revokeObjectURL(url);
+      }, 1000);
+    };
     dispatch({ type: "SET_PUNCH_LOADING", payload: false });
   };
+
   return (
     <div className="fixed top-0 right-0 w-80 h-full bg-white shadow-lg border-l border-gray-200 pt-16 transition-transform duration-300 flex flex-col z-10">
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
