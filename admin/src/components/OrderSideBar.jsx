@@ -20,9 +20,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { PDFDownloadLink, pdf } from "@react-pdf/renderer";
-import { saveAs } from "file-saver";
+import { pdf } from "@react-pdf/renderer";
 import ReceiptDocument from "./ReceiptDocument";
+import { saveAs } from "file-saver";
 
 const statusOptions = [
   "Pending",
@@ -40,6 +40,8 @@ const OrderSideBar = ({
   handleUpdateOrder,
   handleDeleteOrder,
   handleStatusChange,
+  state,
+  dispatch,
 }) => {
   if (!selectedOrder) return null;
 
@@ -59,10 +61,12 @@ const OrderSideBar = ({
   };
 
   const handlePrinterAnOrder = async () => {
+    dispatch({ type: "SET_PUNCH_LOADING", payload: true });
+
     const blob = await pdf(<ReceiptDocument order={selectedOrder} />).toBlob();
     saveAs(blob, "receipt.pdf");
+    dispatch({ type: "SET_PUNCH_LOADING", payload: false });
   };
-
   return (
     <div className="fixed top-0 right-0 w-80 h-full bg-white shadow-lg border-l border-gray-200 pt-16 transition-transform duration-300 flex flex-col z-10">
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
@@ -151,37 +155,22 @@ const OrderSideBar = ({
                         </div>
                       </div>
                       <span className="text-sm font-medium">
-                        €{(item.quantity * item.menuItem?.price).toFixed(2)}
+                        €{(item.menuItem?.price).toFixed(2)}
                       </span>
                     </div>
                     {item.selectedIngredients &&
                       item.selectedIngredients.length > 0 && (
-                        <div className="ms-3 flex justify-between">
-                          <div className="flex items-center gap-2">
-                            {item.selectedIngredients.map((ing, index) => {
-                              return (
-                                <>
-                                  <span key={index} className="text-xs">
-                                    x
-                                  </span>
-                                  <span key={index} className="text-xs">
-                                    {ing.name}
-                                  </span>
-                                </>
-                              );
-                            })}
-                          </div>
-
-                          <span className="text-xs">
-                            €
-                            {item.selectedIngredients
-                              ?.reduce(
-                                (acc, selectedIngredient) =>
-                                  acc + selectedIngredient.price,
-                                0
-                              )
-                              .toFixed(2) * item.quantity || 0}
-                          </span>
+                        <div className="flex flex-col gap-1 w-full">
+                          {item.selectedIngredients.map((ing, index) => (
+                            <div className="flex justify-between ps-5">
+                              <span key={index} className="text-xs">
+                                x {ing.name}
+                              </span>
+                              <span key={index} className="text-xs">
+                                €{ing.price}
+                              </span>
+                            </div>
+                          ))}
                         </div>
                       )}
                   </div>
@@ -251,7 +240,8 @@ const OrderSideBar = ({
       <div className="p-4 border-t border-gray-200 space-y-3">
         <Button className="w-full" onClick={handleUpdateOrder}>
           <Save className="h-4 w-4 mr-2" />
-          Update Order
+
+          {state.upLoading ? "Updating...." : "Update Order"}
         </Button>
         <Button
           variant="outline"
@@ -259,7 +249,7 @@ const OrderSideBar = ({
           onClick={handlePrinterAnOrder}
         >
           <Printer className="h-4 w-4 mr-2" />
-          Punch Order
+          {state.punchLoading ? "Punching..." : "Punch Order"}
         </Button>
 
         <Button
@@ -268,7 +258,7 @@ const OrderSideBar = ({
           onClick={() => handleDeleteOrder(selectedOrder._id)}
         >
           <Trash2 className="h-4 w-4 mr-2" />
-          Delete Order
+          {state.delLoading ? "Deleting..." : "Delete Order"}
         </Button>
       </div>
     </div>

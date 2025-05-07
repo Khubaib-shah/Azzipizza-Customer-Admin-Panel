@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useReducer } from "react";
 import { baseUri, URL } from "../config/config";
 import io from "socket.io-client";
 import OrderSideBar from "../components/OrderSideBar";
@@ -29,17 +29,38 @@ import NotificationSound from "/notification-sound.wav";
 import CompletedOrderTable from "../components/CompletedOrderTable";
 import ActiveOrderTable from "../components/ActiveOrderTable";
 
+const initialState = {
+  loading: false,
+  delLoading: false,
+  upLoading: false,
+  punchLoading: false,
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "SET_LOADING":
+      return { ...state, loading: action.payload };
+    case "SET_DEL_LOADING":
+      return { ...state, delLoading: action.payload };
+    case "SET_UP_LOADING":
+      return { ...state, upLoading: action.payload };
+    case "SET_PUNCH_LOADING":
+      return { ...state, punchLoading: action.payload };
+    default:
+      return state;
+  }
+}
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [etaMinutes, setEtaMinutes] = useState(0);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const { setNotifications } = useNotifications();
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const [isUserInteracted, setIsUserInteracted] = useState(() => {
     // Initialize from localStorage
@@ -52,15 +73,15 @@ const Orders = () => {
   // Fetch Orders from API
   const fetchOrders = useCallback(async () => {
     try {
-      setLoading(true);
+      dispatch({ type: "SET_LOADING", payload: true });
       const { data } = await baseUri.get("/api/orders");
       setOrders(data);
       setFilteredOrders(data);
-      setLoading(false);
+      dispatch({ type: "SET_LOADING", payload: false });
     } catch (error) {
       console.error("Error fetching orders:", error);
       setError("Failed to load orders. Please try again.");
-      setLoading(false);
+      dispatch({ type: "SET_LOADING", payload: false });
     }
   }, []);
 
@@ -162,6 +183,8 @@ const Orders = () => {
   const handleUpdateOrder = async () => {
     if (!selectedOrder) return;
 
+    dispatch({ type: "SET_UP_LOADING", payload: true });
+
     try {
       const etaTime = new Date(Date.now() + etaMinutes * 60000);
       const { data } = await baseUri.put(`/api/orders/${selectedOrder._id}`, {
@@ -174,6 +197,7 @@ const Orders = () => {
           order._id === selectedOrder._id ? { ...order, eta: etaTime } : order
         )
       );
+      dispatch({ type: "SET_UP_LOADING", payload: false });
 
       console.log("Updated ETA:", data.updatedOrder.eta);
     } catch (error) {
@@ -184,6 +208,7 @@ const Orders = () => {
 
   // Handle Order Status Update
   const handleStatusChange = async (orderId, newStatus) => {
+    dispatch({ type: "SET_UP_LOADING", payload: true });
     try {
       await baseUri.put(`/api/orders/${orderId}`, { orderStatus: newStatus });
 
@@ -196,7 +221,10 @@ const Orders = () => {
       if (selectedOrder && selectedOrder._id === orderId) {
         setSelectedOrder((prev) => ({ ...prev, orderStatus: newStatus }));
       }
+      dispatch({ type: "SET_UP_LOADING", payload: false });
     } catch (error) {
+      dispatch({ type: "SET_UP_LOADING", payload: false });
+
       console.error("Failed to update order status:", error);
       setError("Failed to update order status. Please try again.");
     }
@@ -204,6 +232,8 @@ const Orders = () => {
 
   // Handle Order Deletion
   const handleDeleteOrder = async (orderId) => {
+    dispatch({ type: "SET_DEL_LOADING", payload: true });
+
     try {
       await baseUri.delete(`/api/orders/${orderId}`);
       setOrders((prev) => prev.filter((order) => order._id !== orderId));
@@ -211,7 +241,10 @@ const Orders = () => {
       if (selectedOrder && selectedOrder._id === orderId) {
         setSelectedOrder(null);
       }
+      dispatch({ type: "SET_DEL_LOADING", payload: false });
     } catch (error) {
+      dispatch({ type: "SET_DEL_LOADING", payload: false });
+
       console.error("Failed to delete order:", error);
       setError("Failed to delete order. Please try again.");
     }
@@ -316,7 +349,7 @@ const Orders = () => {
                 <CardTitle>Active Orders</CardTitle>
               </CardHeader>
               <CardContent>
-                {loading ? (
+                {state.loading ? (
                   <div className="flex justify-center items-center h-64">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
                   </div>
@@ -354,7 +387,7 @@ const Orders = () => {
                 <CardTitle>Completed Orders</CardTitle>
               </CardHeader>
               <CardContent>
-                {loading ? (
+                {state.loading ? (
                   <div className="flex justify-center items-center h-64">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
                   </div>
@@ -397,7 +430,8 @@ const Orders = () => {
         handleUpdateOrder={handleUpdateOrder}
         handleStatusChange={handleStatusChange}
         handleDeleteOrder={handleDeleteOrder}
-        loading={loading}
+        state={state}
+        dispatch={dispatch}
       />
     </div>
   );
