@@ -1,15 +1,15 @@
-import React, { useEffect, useState, useCallback, useReducer } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useReducer,
+  useMemo,
+  useRef,
+} from "react";
 import { baseUri, URL } from "../config/config";
 import io from "socket.io-client";
 import OrderSideBar from "../components/OrderSideBar";
-import {
-  Search,
-  Filter,
-  AlertCircle,
-  RefreshCw,
-  Volume2,
-  VolumeOff,
-} from "lucide-react";
+import { Search, Filter, AlertCircle, RefreshCw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -62,15 +62,8 @@ const Orders = () => {
   const { setNotifications } = useNotifications();
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const [isUserInteracted, setIsUserInteracted] = useState(() => {
-    // Initialize from localStorage
-    const storedValue = localStorage.getItem("isUserInteracted");
-    return storedValue ? JSON.parse(storedValue) : false;
-  });
+  const socket = useMemo(() => io(URL));
 
-  const socket = io(URL);
-
-  // Fetch Orders from API
   const fetchOrders = useCallback(async () => {
     try {
       dispatch({ type: "SET_LOADING", payload: true });
@@ -91,63 +84,47 @@ const Orders = () => {
     setTimeout(() => setRefreshing(false), 500);
   };
 
-  // Save isUserInteracted to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem("isUserInteracted", JSON.stringify(isUserInteracted));
-  }, [isUserInteracted]);
-
-  // Toggle sound notifications
-  const toggleSoundNotifications = () => {
-    const newValue = !isUserInteracted;
-    localStorage.setItem("isUserInteracted", JSON.stringify(newValue));
-    setIsUserInteracted(newValue);
-  };
-
-  // Play notification sound
-  const playNotificationSound = async () => {
-    if (!isUserInteracted) {
-      alert("User has not interacted with the page yet. Sound is disabled.");
-      return;
-    }
-
-    try {
-      const audio = new Audio(NotificationSound);
-      await audio.play();
-    } catch (error) {
-      console.error("Failed to play notification sound:", error);
-    }
+  const playNotificationSound = () => {
+    const audio = new Audio(NotificationSound);
+    audio.play().catch((err) => {
+      console.error("Notification sound failed:", err);
+    });
   };
 
   useEffect(() => {
     fetchOrders();
 
-    socket.on("latestOrders", (data) => {
+    const handleLatestOrders = (data) => {
       const reversedData = data.slice().reverse();
-      setOrders(reversedData);
       const latestOrder = reversedData[0];
 
-      if (!latestOrder || !latestOrder.items) return;
+      setOrders((prevOrders) => {
+        const isNew = !prevOrders.some((o) => o._id === latestOrder._id);
 
-      const isNew = !orders.some((o) => o._id === latestOrder._id);
-      if (!isNew) return;
+        if (isNew && latestOrder && latestOrder.items) {
+          setNotifications((prev) => [
+            ...prev,
+            {
+              id: latestOrder._id,
+              message: "New order received!",
+              items: latestOrder,
+            },
+          ]);
+          playNotificationSound();
+        }
 
-      setNotifications((prev) => [
-        ...prev,
-        {
-          id: latestOrder._id,
-          message: "New order received!",
-          items: latestOrder,
-        },
-      ]);
+        return reversedData;
+      });
 
-      playNotificationSound();
       setFilteredOrders(applyFilters(reversedData, searchTerm, statusFilter));
-    });
+    };
+
+    socket.on("latestOrders", handleLatestOrders);
 
     return () => {
-      socket.off("latestOrders");
+      socket.off("latestOrders", handleLatestOrders);
     };
-  }, [fetchOrders, searchTerm, statusFilter]);
+  }, []);
 
   useEffect(() => {
     setFilteredOrders(applyFilters(orders, searchTerm, statusFilter));
@@ -314,13 +291,6 @@ const Orders = () => {
               } hidden lg:flex items-center justify-center`}
             >
               <RefreshCw className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              onClick={toggleSoundNotifications}
-              className="mb-4 cursor-pointer"
-            >
-              {isUserInteracted ? <Volume2 /> : <VolumeOff />}
             </Button>
           </div>
         </div>

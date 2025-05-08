@@ -146,13 +146,9 @@ const ReceiptDocument = ({ order }) => {
                 item.selectedIngredients.length > 0 && (
                   <View style={styles.ingredientContainer}>
                     {item.selectedIngredients.map((ing, index) => (
-                      <View style={styles.ingredientList}>
-                        <Text key={index} style={styles.ingredientText}>
-                          x {ing.name}
-                        </Text>
-                        <Text key={index} style={styles.ingredientText}>
-                          €{ing.price}
-                        </Text>
+                      <View key={index} style={styles.ingredientList}>
+                        <Text style={styles.ingredientText}>x {ing.name}</Text>
+                        <Text style={styles.ingredientText}>€{ing.price}</Text>
                       </View>
                     ))}
                   </View>
