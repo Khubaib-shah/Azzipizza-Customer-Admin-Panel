@@ -2,7 +2,7 @@ import { FaPlus } from "react-icons/fa";
 import { useContext, useState } from "react";
 import Context from "../../context/dataContext";
 import { toast } from "react-toastify";
-import Modal from "../Modal/ProductDetailModal";
+import Modal from "../Modal/Modal";
 
 function ProductCard({ products }) {
   const { addToCart } = useContext(Context);
@@ -140,7 +140,7 @@ function ProductCard({ products }) {
 
       {/* Product Details Modal */}
       {isModalOpen && (
-        <Modal onClose={closeModal}>
+        <Modal isOpen={isModalOpen} onClose={closeModal}>
           <div className="max-w-4xl w-full bg-white rounded-lg overflow-hidden max-h-[90vh] flex flex-col">
             <div className="grid md:grid-cols-2 gap-6 overflow-y-auto">
               {/* Product Image */}
@@ -200,14 +200,13 @@ function ProductCard({ products }) {
                   </span>
                 </div>
 
-                {/* Description Section */}
                 <div className="mb-6 overflow-y-auto max-h-[200px]">
                   <p className="text-gray-600 whitespace-pre-line">
                     {products.description}
                   </p>
                 </div>
 
-                {products.ingredients && products.ingredients.length != 0 && (
+                {products.ingredients && products.ingredients.length !== 0 && (
                   <div className="mb-6 overflow-y-auto max-h-[200px]">
                     <h3 className="font-semibold text-gray-800 mb-2">
                       Toppings
@@ -230,7 +229,7 @@ function ProductCard({ products }) {
                               </span>
                             </div>
                             <span className="text-sm font-medium">
-                              +${ingredient.price.toFixed(2)}
+                              +€{ingredient.price.toFixed(2)}
                             </span>
                           </label>
                         </li>
@@ -248,7 +247,7 @@ function ProductCard({ products }) {
                       Close
                     </button>
                     <button
-                      className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-lg transition flex items-center gap-2  cursor-pointer"
+                      className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-lg transition flex items-center gap-2 cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleAddToCart(e);

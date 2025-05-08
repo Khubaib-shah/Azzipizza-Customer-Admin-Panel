@@ -3,7 +3,6 @@ import React from "react";
 const ProductsListSkeleton = () => {
   return (
     <div className="container mx-auto px-4 pt-5 mt-3">
-      {/* Header Skeleton */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
         <div className="h-8 bg-gray-200 rounded w-3/4 sm:w-1/2 animate-pulse"></div>
         <div className="flex gap-4 mt-4 sm:mt-0">

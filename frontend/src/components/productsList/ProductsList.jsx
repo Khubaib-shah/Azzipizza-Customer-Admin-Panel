@@ -90,6 +90,7 @@ function ProductsList() {
               </div>
             </div>
           </div>
+
           {/* Search Bar */}
           <div className="relative mt-5">
             <FaSearch
@@ -103,7 +104,6 @@ function ProductsList() {
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
-                // Reset active category when searching
                 if (e.target.value) {
                   setActiveCategory("");
                 }
@@ -128,7 +128,6 @@ function ProductsList() {
                     }`}
                     onClick={(e) => {
                       handleCategoryClick(item);
-                      // Scroll to center the clicked button
                       const container = categoriesContainerRef.current;
                       const button = e.target;
                       const containerWidth = container.offsetWidth;
@@ -157,7 +156,6 @@ function ProductsList() {
       )}
       {/* Product Categories & Listing */}
       {searchQuery ? (
-        // Show all filtered items in one section when searching
         <div className="mt-6">
           <h2 className="text-lg sm:text-xl font-semibold capitalize">
             Risultati della ricerca
@@ -175,7 +173,6 @@ function ProductsList() {
           )}
         </div>
       ) : (
-        // Show items grouped by category when not searching
         visibleCategories.map((category) => (
           <div
             key={category}
@@ -187,7 +184,6 @@ function ProductsList() {
             </h2>
             {listing[category]?.length > 0 ? (
               <div className="relative mt-4">
-                {/* Scrollable container for product cards */}
                 <div className="flex gap-4 overflow-x-auto whitespace-nowrap scroll-smooth styled-scrollbar pb-4">
                   {listing[category].map((item) => (
                     <div
