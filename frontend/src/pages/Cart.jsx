@@ -9,7 +9,6 @@ function Cart() {
   const { cartItems, addToCart, removeFromCart, CartDecrement, clearCart } =
     useContext(Context);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [orderedItem, setOrderedItem] = useState(null);
 
   // Save order to localStorage
   const saveOrderToLocalStorage = (order) => {
@@ -24,10 +23,6 @@ function Cart() {
   };
 
   const handleOrderSuccess = (orderData) => {
-    setOrderedItem({
-      ...orderData,
-      orderId: orderData._id || Math.random().toString(36).substr(2, 9),
-    });
     saveOrderToLocalStorage(orderData);
     clearCart();
   };

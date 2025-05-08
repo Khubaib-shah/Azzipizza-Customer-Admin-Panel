@@ -35,8 +35,6 @@ export const ContextProvider = ({ children }) => {
 
   // Add item to cart with selected ingredients
   const addToCart = (item, selectedIngredients = [], customizations = "") => {
-    console.log("Adding to cart:", item, selectedIngredients, customizations);
-
     setCartItems((prevCart) => {
       // Convert ingredients to a comparable string
       const ingredientsKey = JSON.stringify(

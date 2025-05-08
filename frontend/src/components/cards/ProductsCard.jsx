@@ -21,8 +21,6 @@ function ProductCard({ products }) {
       price: totalPrice,
     };
 
-    console.log("Final cart item:", cartItem);
-
     addToCart(cartItem, selectedToppings);
 
     toast.success(`${products.name} added to cart!`, {
