@@ -39,7 +39,7 @@ function OrderModal({
         customizations: "",
       });
       setFormErrors({});
-      // setShopTime(!isWithinOrderingHours());
+      setShopTime(!isWithinOrderingHours());
     }
   }, [isOpen]);
 
@@ -276,13 +276,13 @@ function OrderModal({
               {isSubmitting ? "Processing..." : "Paga in contanti"}
             </Button>
 
-            <Button
+            {/* <Button
               onClick={() => handleOrderSubmit("paypal")}
               disabled={isSubmitting}
               className="bg-blue-500 text-white hover:bg-blue-500"
             >
               {isSubmitting ? "Processing..." : "Paga con la carta"}
-            </Button>
+            </Button> */}
           </div>
         </>
       )}
