@@ -7,7 +7,6 @@ import {
   TableRow,
 } from "./ui/table";
 import { Button } from "./ui/button";
-import React from "react";
 
 const CompletedOrderTable = ({ filteredOrders, handleSelectOrder }) => {
   const getStatusColor = (status) => {
@@ -58,7 +57,7 @@ const CompletedOrderTable = ({ filteredOrders, handleSelectOrder }) => {
                 <TableCell>
                   {order.items.reduce((acc, item) => acc + item.quantity, 0)}
                 </TableCell>
-                <TableCell>${order.totalPrice.toFixed(2)}</TableCell>
+                <TableCell>€{order.totalPrice.toFixed(2)}</TableCell>
                 <TableCell>
                   <span
                     className={`px-2 py-1 text-xs rounded-full ${getStatusColor(

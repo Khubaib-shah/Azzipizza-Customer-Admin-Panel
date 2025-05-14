@@ -58,7 +58,7 @@ const ActiveOrderTable = ({ filteredOrders, handleSelectOrder }) => {
                 <TableCell>
                   {order.items.reduce((acc, item) => acc + item.quantity, 0)}
                 </TableCell>
-                <TableCell>${order.totalPrice.toFixed(2)}</TableCell>
+                <TableCell>€{order.totalPrice.toFixed(2)}</TableCell>
                 <TableCell>
                   {order.eta ? (
                     <div className="flex items-center">

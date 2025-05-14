@@ -61,8 +61,21 @@ const Orders = () => {
   const [refreshing, setRefreshing] = useState(false);
   const { setNotifications } = useNotifications();
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [editButton, setEditButton] = useState(false);
+  const buttonRef = useRef(null);
+  const audio = useRef(new Audio(NotificationSound)).current;
 
   const socket = useMemo(() => io(URL));
+
+  useEffect(() => {
+    if (editButton && buttonRef.current) {
+      buttonRef.current.click();
+    }
+  }, [editButton]);
+
+  const onShowNotificationClicked = () => {
+    audio.play();
+  };
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -84,12 +97,12 @@ const Orders = () => {
     setTimeout(() => setRefreshing(false), 500);
   };
 
-  const playNotificationSound = () => {
-    const audio = new Audio(NotificationSound);
-    audio.play().catch((err) => {
-      console.error("Notification sound failed:", err);
-    });
-  };
+  // const playNotificationSound = () => {
+  //   const audio = new Audio(NotificationSound);
+  //   audio.play().catch((err) => {
+  //     console.error("Notification sound failed:", err);
+  //   });
+  // };
 
   useEffect(() => {
     fetchOrders();
@@ -110,7 +123,9 @@ const Orders = () => {
               items: latestOrder,
             },
           ]);
-          playNotificationSound();
+
+          onShowNotificationClicked();
+          // playNotificationSound();
         }
 
         return reversedData;
@@ -241,6 +256,19 @@ const Orders = () => {
         selectedOrder ? "mr-80" : ""
       }overflow-hidden`}
     >
+      <>
+        <button
+          ref={buttonRef}
+          onClick={onShowNotificationClicked}
+          className="invisible"
+        >
+          Test
+        </button>
+        {/* Example trigger */}
+        <button onClick={() => setEditButton(true)}>
+          Trigger Notification
+        </button>
+      </>
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
           <div>
