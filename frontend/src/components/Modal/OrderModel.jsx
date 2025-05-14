@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { isWithinOrderingHours } from "../../utils/isWithinOrderingHours";
 import Button from "../ui/Button";
 import Modal from "./Modal";
+import { useNavigate } from "react-router-dom";
 
 function OrderModal({
   isOpen,
@@ -26,6 +27,7 @@ function OrderModal({
   const [shopTime, setShopTime] = useState(false);
   const [formErrors, setFormErrors] = useState({});
 
+  const navigate = useNavigate();
   useEffect(() => {
     if (isOpen) {
       setFormData({
@@ -37,7 +39,7 @@ function OrderModal({
         customizations: "",
       });
       setFormErrors({});
-      setShopTime(!isWithinOrderingHours());
+      // setShopTime(!isWithinOrderingHours());
     }
   }, [isOpen]);
 
@@ -57,8 +59,8 @@ function OrderModal({
     if (!formData.city.trim()) errors.city = "City is required";
     if (!zipRegex.includes(Number(formData.zipCode)))
       errors.zipCode = "Invalid ZIP code";
-    console.log(zipRegex.includes(Number(formData.zipCode)));
-    console.log(formData.zipCode);
+    // console.log(zipRegex.includes(Number(formData.zipCode)));
+    // console.log(formData.zipCode);
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -70,13 +72,13 @@ function OrderModal({
     if (formErrors[name]) setFormErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  const handleSubmit = async () => {
+  const handleOrderSubmit = async (method = "paypal") => {
     if (!validateForm()) return;
     if (!cartItems?.length) {
       toast.error("Your cart is empty!", { position: "top-center" });
       return;
     }
-
+    // console.log(method);
     setIsSubmitting(true);
 
     try {
@@ -101,71 +103,29 @@ function OrderModal({
         total: totalPrice,
       };
 
-      const response = await axios.post(
-        "https://pizzeria-backend-production.up.railway.app/api/payments/pay-for-order",
-        orderData
-      );
-
-      if (response.status === 200) {
-        window.open(response.data.approvalUrl, "_self");
+      // Store in localStorage if PayPal to finalize after redirect
+      if (method === "paypal") {
+        localStorage.setItem("orderData", JSON.stringify(orderData));
       }
 
-      onOrderSuccess(response.data);
-      closeModal();
-    } catch (error) {
-      console.error("Order error:", error.response?.data || error);
-      toast.error(error.response?.data?.message || "Failed to process order", {
-        position: "top-center",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+      const endpoint =
+        method === "paypal"
+          ? "https://pizzeria-backend-production.up.railway.app/api/payments/pay-for-order"
+          : "https://pizzeria-backend-production.up.railway.app/api/orders";
 
-  const handleCashSubmit = async () => {
-    if (!validateForm()) return;
-    if (!cartItems?.length) {
-      toast.error("Your cart is empty!", { position: "top-center" });
-      return;
-    }
+      const response = await axios.post(endpoint, orderData);
 
-    setIsSubmitting(true);
+      if (method === "paypal" && response.status === 200) {
+        window.open(response.data.approvalUrl, "_self");
+      } else {
+        toast.success("🎉 Ordine effettuato! Lo stiamo preparando per te.", {
+          position: "top-center",
+        });
 
-    try {
-      const formattedItems = cartItems.map((item) => ({
-        menuItem: item._id,
-        item_name: item.name,
-        quantity: item.quantity,
-        price: item.price,
-        selectedIngredients: item.selectedIngredients?.map((ing) => ing) || [],
-      }));
-
-      const orderData = {
-        items: formattedItems,
-        name: formData.name,
-        phoneNumber: formData.phoneNumber,
-        customizations: formData.customizations || "",
-        deliveryAddress: {
-          street: formData.street,
-          city: formData.city,
-          zipCode: formData.zipCode,
-        },
-        total: totalPrice,
-      };
-
-      const response = await axios.post(
-        "https://pizzeria-backend-production.up.railway.app/api/orders",
-        orderData
-      );
-
-      setIsSubmitting(false);
-      toast.success("🎉 Ordine effettuato! Lo stiamo preparando per te.", {
-        position: "top-center",
-      });
-
-      // Call the success handler from parent
-      onOrderSuccess(response.data);
-      closeModal();
+        onOrderSuccess(response.data);
+        closeModal();
+        navigate("/paypal-success");
+      }
     } catch (error) {
       console.error("Order error:", error.response?.data || error);
       toast.error(error.response?.data?.message || "Failed to process order", {
@@ -309,7 +269,7 @@ function OrderModal({
             </Button>
 
             <Button
-              onClick={handleCashSubmit}
+              onClick={() => handleOrderSubmit("cash")}
               disabled={isSubmitting}
               className="bg-orange-500 text-white hover:bg-orange-500 text-xs"
             >
@@ -317,7 +277,7 @@ function OrderModal({
             </Button>
 
             <Button
-              onClick={handleSubmit}
+              onClick={() => handleOrderSubmit("paypal")}
               disabled={isSubmitting}
               className="bg-blue-500 text-white hover:bg-blue-500"
             >

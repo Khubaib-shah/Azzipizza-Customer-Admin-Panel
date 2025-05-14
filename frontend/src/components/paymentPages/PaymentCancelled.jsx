@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const PaymentCancelled = () => {
@@ -14,7 +13,7 @@ const PaymentCancelled = () => {
         again.
       </p>
       <button
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/cart")}
         className="px-6 py-3 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition cursor-pointer"
       >
         Return to Home

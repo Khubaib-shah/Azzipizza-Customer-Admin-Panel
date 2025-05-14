@@ -122,7 +122,7 @@ export const ContextProvider = ({ children }) => {
       items: cartItems.map((item) => ({
         menuItem: item._id,
         quantity: item.quantity,
-        // Group ingredients by name and count
+
         selectedIngredients: item.selectedIngredients.reduce((acc, ing) => {
           const existing = acc.find((i) => i.name === ing.name);
           if (existing) {

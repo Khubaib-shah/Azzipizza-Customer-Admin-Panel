@@ -9,7 +9,7 @@ function App() {
   const location = useLocation();
 
   const hideHeaderFooterRoutes = [
-    "/order-success",
+    "/paypal-success",
     "/payment-error",
     "/payment-cancelled",
   ];

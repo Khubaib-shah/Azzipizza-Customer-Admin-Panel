@@ -6,7 +6,7 @@ import Context from "../context/dataContext";
 import OrderModal from "../components/Modal/OrderModel";
 
 function Cart() {
-  const { cartItems, addToCart, removeFromCart, CartDecrement, clearCart } =
+  const { cartItems, addToCart, removeFromCart, CartDecrement } =
     useContext(Context);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -24,7 +24,6 @@ function Cart() {
 
   const handleOrderSuccess = (orderData) => {
     saveOrderToLocalStorage(orderData);
-    clearCart();
   };
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => {
