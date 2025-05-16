@@ -85,7 +85,6 @@ const AddItems = () => {
       formDataToSend.append("category", formData.category.toLowerCase());
       formDataToSend.append("image", formData.image);
 
-      // Append ingredients as JSON string
       formDataToSend.append(
         "ingredients",
         JSON.stringify(formData.ingredients)
@@ -108,7 +107,7 @@ const AddItems = () => {
         setImagePreview(null);
       }
       if (imageInputRef.current) {
-        imageInputRef.current.value = ""; // Reset the input field
+        imageInputRef.current.value = "";
       }
     } catch (err) {
       setError(err.response?.data?.message || "Failed to add item");
@@ -128,7 +127,6 @@ const AddItems = () => {
     if (file) {
       setFormData((prev) => ({ ...prev, image: file }));
 
-      // Create image preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
