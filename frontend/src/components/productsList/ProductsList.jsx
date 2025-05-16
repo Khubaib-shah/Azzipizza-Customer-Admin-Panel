@@ -8,6 +8,7 @@ import Context from "../../context/dataContext";
 import MenuModal from "../Modal/MenuModel";
 import CompDetails from "../CompDetails";
 import ProductsListSkeleton from "../ProductsListSkeleton";
+import TrackOrder from "../TrackOrder";
 
 // Main Products List Component
 function ProductsList() {
@@ -111,7 +112,6 @@ function ProductsList() {
             />
           </div>
 
-          {/*  Menu Items (Scrollable on Mobile) */}
           {!searchQuery && (
             <div className="flex items-center justify-between sticky top-16 bg-white z-10 py-2 px-4 shadow-md rounded-md w-full mt-4">
               <div
@@ -154,6 +154,7 @@ function ProductsList() {
           )}
         </>
       )}
+
       {/* Product Categories & Listing */}
       {searchQuery ? (
         <div className="mt-6">
@@ -204,6 +205,8 @@ function ProductsList() {
         ))
       )}
       <CompDetails />
+
+      <TrackOrder />
 
       {isModalOpen && (
         <MenuModal

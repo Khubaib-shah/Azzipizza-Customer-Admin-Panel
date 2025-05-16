@@ -26,6 +26,8 @@ const PaymentSuccess = () => {
       // ✅ Handle PayPal flow
       const orderData = JSON.parse(localStorage.getItem("orderData"));
 
+      console.log(orderData);
+
       if (!orderData) {
         setStatus("No order data found.");
         setLoading(false);
@@ -80,7 +82,16 @@ const PaymentSuccess = () => {
               ? "Order Successful"
               : "Payment Status"}
           </h1>
-          <p className="text-lg text-gray-700 mb-6">{status}</p>
+          <p className="text-lg text-gray-700 mb-2">{status}</p>
+
+          {status.includes("successful") || status.includes("placed") ? (
+            <p className="text-md text-gray-600 mb-6">
+              Your order will be delivered in 35 to 40 minutes.
+            </p>
+          ) : (
+            <div className="mb-6" />
+          )}
+
           <button
             onClick={() => {
               clearCart();

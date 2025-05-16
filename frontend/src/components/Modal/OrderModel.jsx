@@ -1,6 +1,4 @@
-import { Dialog } from "@headlessui/react";
 import axios from "axios";
-import { X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { isWithinOrderingHours } from "../../utils/isWithinOrderingHours";
@@ -59,8 +57,6 @@ function OrderModal({
     if (!formData.city.trim()) errors.city = "City is required";
     if (!zipRegex.includes(Number(formData.zipCode)))
       errors.zipCode = "Invalid ZIP code";
-    // console.log(zipRegex.includes(Number(formData.zipCode)));
-    // console.log(formData.zipCode);
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -107,6 +103,8 @@ function OrderModal({
       if (method === "paypal") {
         localStorage.setItem("orderData", JSON.stringify(orderData));
       }
+
+      console.log("order saved in local storage", orderData);
 
       const endpoint =
         method === "paypal"
