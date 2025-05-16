@@ -26,6 +26,7 @@ const AddItems = () => {
     name: "",
     description: "",
     price: "",
+    discount: "",
     category: "",
     ingredients: [],
     image: null,
@@ -82,6 +83,7 @@ const AddItems = () => {
       formDataToSend.append("name", formData.name);
       formDataToSend.append("description", formData.description);
       formDataToSend.append("price", formData.price);
+      formDataToSend.append("discount", formData.discount);
       formDataToSend.append("category", formData.category.toLowerCase());
       formDataToSend.append("image", formData.image);
 
@@ -89,6 +91,12 @@ const AddItems = () => {
         "ingredients",
         JSON.stringify(formData.ingredients)
       );
+
+      if (parseFloat(formData.discount) > parseFloat(formData.price)) {
+        setError("Discount cannot be greater than the original price.");
+        setLoading(false);
+        return;
+      }
 
       const response = await baseUri.post("/api/menu", formDataToSend, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -100,6 +108,7 @@ const AddItems = () => {
           name: "",
           description: "",
           price: "",
+          discount: "",
           category: "",
           ingredients: [],
           image: null,
@@ -136,7 +145,7 @@ const AddItems = () => {
   };
 
   return (
-    <div className="">
+    <>
       <div className="max-w-3xl mx-auto">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Add Menu Item</h1>
@@ -190,25 +199,44 @@ const AddItems = () => {
                     required
                   />
                 </div>
-
-                <div className="space-y-2">
-                  <label
-                    className="text-sm font-medium text-gray-700"
-                    htmlFor="price"
-                  >
-                    Price ($)
-                  </label>
-                  <Input
-                    id="price"
-                    type="number"
-                    name="price"
-                    value={formData.price}
-                    onChange={handleInputChange}
-                    placeholder="0.00"
-                    min="0"
-                    step="0.01"
-                    required
-                  />
+                <div className="space-y-2 flex justify-between gap-2">
+                  <div className="w-full">
+                    <label
+                      className="text-sm font-medium text-gray-700"
+                      htmlFor="price"
+                    >
+                      Price (€)
+                    </label>
+                    <Input
+                      id="price"
+                      type="number"
+                      name="price"
+                      value={formData.price}
+                      onChange={handleInputChange}
+                      placeholder="0.00"
+                      min="0"
+                      step="0.01"
+                      required
+                    />
+                  </div>
+                  <div className="w-full">
+                    <label
+                      className="text-sm font-medium text-gray-700"
+                      htmlFor="discount"
+                    >
+                      Discount (€)
+                    </label>
+                    <Input
+                      id="discount"
+                      type="number"
+                      name="discount"
+                      value={formData.discount}
+                      onChange={handleInputChange}
+                      placeholder="0.00"
+                      min="0"
+                      step="0.01"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -383,6 +411,7 @@ const AddItems = () => {
                     name: "",
                     description: "",
                     price: "",
+                    discount: "",
                     category: "",
                     ingredients: [],
                     image: null,
@@ -400,7 +429,7 @@ const AddItems = () => {
           </form>
         </Card>
       </div>
-    </div>
+    </>
   );
 };
 
