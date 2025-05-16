@@ -4,6 +4,7 @@ import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
 import "./index.css";
 import { ToastContainer } from "react-toastify";
+import TrackOrder from "./components/TrackOrder";
 
 function App() {
   const location = useLocation();
@@ -21,7 +22,7 @@ function App() {
     <ContextProvider>
       <div className="min-h-screen flex flex-col">
         {!shouldHideHeaderFooter && <Header />}
-        <main className="bg-gray-100 flex-grow">
+        <main className="bg-gray-100 flex-grow relative">
           <div className="grid grid-cols-12">
             {/* Main Content - Outlet */}
             <div
@@ -31,8 +32,6 @@ function App() {
             >
               <Outlet />
             </div>
-
-            {/* Sidebar only on Home Page */}
           </div>
         </main>
         <ToastContainer />
