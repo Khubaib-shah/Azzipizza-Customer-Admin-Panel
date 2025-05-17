@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { isWithinOrderingHours } from "../../utils/isWithinOrderingHours";
+import { useNavigate } from "react-router-dom";
 import Button from "../ui/Button";
 import Modal from "./Modal";
-import { useNavigate } from "react-router-dom";
+import { isWithinOrderingHours } from "../../utils/isWithinOrderingHours";
 
 function OrderModal({
   isOpen,
@@ -21,11 +21,12 @@ function OrderModal({
     zipCode: "",
     customizations: "",
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [shopTime, setShopTime] = useState(false);
-  const [formErrors, setFormErrors] = useState({});
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
+  const [isTime, setIsTime] = useState(false);
   const navigate = useNavigate();
+
   useEffect(() => {
     if (isOpen) {
       setFormData({
@@ -38,7 +39,7 @@ function OrderModal({
       });
       setFormErrors({});
 
-      setShopTime(!isWithinOrderingHours());
+      setIsTime(!isWithinOrderingHours());
     }
   }, [isOpen]);
 
@@ -51,9 +52,8 @@ function OrderModal({
     ];
 
     if (!formData.name.trim()) errors.name = "Name is required";
-    if (!phoneRegex.test(formData.phoneNumber)) {
+    if (!phoneRegex.test(formData.phoneNumber))
       errors.phoneNumber = "Invalid phone number";
-    }
     if (!formData.street.trim()) errors.street = "Street address is required";
     if (!formData.city.trim()) errors.city = "City is required";
     if (!zipRegex.includes(Number(formData.zipCode)))
@@ -66,46 +66,43 @@ function OrderModal({
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (formErrors[name]) setFormErrors((prev) => ({ ...prev, [name]: "" }));
+    if (formErrors[name]) {
+      setFormErrors((prev) => ({ ...prev, [name]: "" }));
+    }
   };
 
-  const handleOrderSubmit = async (method = "paypal") => {
+  const handleOrderSubmit = async (method = "cash") => {
     if (!validateForm()) return;
     if (!cartItems?.length) {
       toast.error("Your cart is empty!", { position: "top-center" });
       return;
     }
-    // console.log(method);
+
     setIsSubmitting(true);
 
     try {
       const formattedItems = cartItems.map((item) => ({
         menuItem: item._id,
-        item_name: item.name,
         quantity: item.quantity,
-        price: item.price,
-        selectedIngredients: item.selectedIngredients?.map((ing) => ing) || [],
+        selectedIngredients: item.selectedIngredients || [],
       }));
 
       const orderData = {
         items: formattedItems,
         name: formData.name,
         phoneNumber: formData.phoneNumber,
-        customizations: formData.customizations || "",
         deliveryAddress: {
           street: formData.street,
           city: formData.city,
           zipCode: formData.zipCode,
         },
         total: totalPrice,
+        customizations: formData.customizations || "",
       };
 
-      // Store in localStorage if PayPal to finalize after redirect
       if (method === "paypal") {
         localStorage.setItem("orderData", JSON.stringify(orderData));
       }
-
-      console.log("order saved in local storage", orderData);
 
       const endpoint =
         method === "paypal"
@@ -120,7 +117,6 @@ function OrderModal({
         toast.success("🎉 Ordine effettuato! Lo stiamo preparando per te.", {
           position: "top-center",
         });
-
         onOrderSuccess(response.data);
         closeModal();
         navigate("/paypal-success");
@@ -136,8 +132,12 @@ function OrderModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={closeModal}>
-      {shopTime ? (
+    <Modal
+      isOpen={isOpen}
+      onClose={closeModal}
+      className={"text-black hover:text-black/40 cursor-pointer"}
+    >
+      {isTime ? (
         <div className="text-center text-gray-700 py-10">
           <h2 className="text-2xl font-semibold mb-4">😴 We’re Closed!</h2>
           <p>
@@ -252,12 +252,14 @@ function OrderModal({
               rows="3"
             />
           </div>
+
           <div className="mt-6 flex justify-between items-center">
             <h3 className="text-lg font-semibold">
               Total:{" "}
               <span className="text-green-600">€{totalPrice.toFixed(2)}</span>
             </h3>
-          </div>{" "}
+          </div>
+
           <div className="mt-6 flex justify-end gap-3">
             <Button
               onClick={closeModal}
@@ -266,22 +268,17 @@ function OrderModal({
             >
               Cancel
             </Button>
-
             <Button
               onClick={() => handleOrderSubmit("cash")}
               disabled={isSubmitting}
-              className="bg-orange-500 text-white hover:bg-orange-500 text-xs"
+              className="bg-orange-500 text-white hover:bg-orange-600 text-xs"
             >
               {isSubmitting ? "Processing..." : "Paga in contanti"}
             </Button>
-
-            {/* <Button
-              onClick={() => handleOrderSubmit("paypal")}
-              disabled={isSubmitting}
-              className="bg-blue-500 text-white hover:bg-blue-500"
-            >
-              {isSubmitting ? "Processing..." : "Paga con la carta"}
-            </Button> */}
+            {/* Uncomment for PayPal support */}
+            {/* <Button onClick={() => handleOrderSubmit("paypal")} disabled={isSubmitting} className="bg-blue-500 text-white hover:bg-blue-600">
+          {isSubmitting ? "Processing..." : "Paga con la carta"}
+        </Button> */}
           </div>
         </>
       )}

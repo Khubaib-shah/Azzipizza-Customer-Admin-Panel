@@ -191,7 +191,7 @@ function ProductsList() {
                       key={item._id}
                       className="inline-block flex-shrink-0 w-[250px]"
                     >
-                      <ProductCard products={item} />
+                      <ProductCard product={item} />
                     </div>
                   ))}
                 </div>

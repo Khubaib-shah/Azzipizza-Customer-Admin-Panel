@@ -99,7 +99,7 @@ const TrackOrder = () => {
                     </ul>
                   </div>
                   <p className="font-medium text-gray-800">
-                    Total: €{order.totalPrice}
+                    Total: €{order.totalPrice.toFixed(2)}
                   </p>
                 </div>
               )}

@@ -138,16 +138,13 @@ export const ContextProvider = ({ children }) => {
   };
 
   const cartTotal = cartItems.reduce((total, item) => {
-    const ingredientsTotal =
-      item.selectedIngredients?.reduce((sum, ing) => sum + ing.price, 0) || 0;
-
     const discountedPrice =
       item.price - (item.discount ? (item.price * item.discount) / 100 : 0);
 
-    return (
-      total +
-      (discountedPrice + ingredientsTotal / item.quantity) * item.quantity
-    );
+    const ingredientsTotal =
+      item.selectedIngredients?.reduce((sum, ing) => sum + ing.price, 0) || 0;
+
+    return total + (discountedPrice + ingredientsTotal) * item.quantity;
   }, 0);
 
   // Refresh menu function

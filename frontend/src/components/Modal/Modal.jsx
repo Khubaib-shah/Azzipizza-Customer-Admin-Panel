@@ -1,7 +1,7 @@
 import { Dialog } from "@headlessui/react";
 import { X } from "lucide-react";
 
-export default function Modal({ isOpen, onClose, children }) {
+export default function Modal({ isOpen, onClose, children, className }) {
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
       <div
@@ -12,7 +12,9 @@ export default function Modal({ isOpen, onClose, children }) {
         <Dialog.Panel className="bg-orange-50 p-6 rounded-md max-w-full w-full relative">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-gray-500 hover:text-black z-40"
+            className={`absolute top-4 right-4 z-40
+             ${className}
+            `}
           >
             <X />
           </button>
