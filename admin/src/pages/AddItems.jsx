@@ -232,6 +232,16 @@ const AddItems = () => {
                     />
                   </div>
                 </div>
+                {formData.price && formData.discount && (
+                  <p className="text-sm text-green-600">
+                    Discounted Price: €
+                    {(
+                      formData.price -
+                      (formData.price * formData.discount) / 100
+                    ).toFixed(2)}{" "}
+                    ({formData.discount}% OFF)
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
