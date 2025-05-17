@@ -87,14 +87,32 @@ function Cart() {
                         <h3 className="font-medium text-gray-900">
                           {item.name}
                         </h3>
-                        <p className="font-semibold">€{itemTotal.toFixed(2)}</p>
+                        <div className="text-right">
+                          {item.originalPrice &&
+                            item.originalPrice > item.price && (
+                              <p className="text-sm text-gray-400 line-through">
+                                €
+                                {(item.originalPrice * item.quantity).toFixed(
+                                  2
+                                )}
+                              </p>
+                            )}
+                          <p className="font-semibold text-amber-600">
+                            €{itemTotal.toFixed(2)}
+                          </p>
+                        </div>
                       </div>
 
                       <div className="mt-1 text-sm text-gray-600">
                         <p>
                           €{item.price.toFixed(2)} × {item.quantity} = €
-                          {(item.price * item.quantity).toFixed(2)}
+                          {itemTotal.toFixed(2)}
                         </p>
+                        {item.discount > 0 && (
+                          <p className="text-sm text-green-600">
+                            ({item.discount}% off)
+                          </p>
+                        )}
                       </div>
 
                       {item.selectedIngredients?.length > 0 && (
