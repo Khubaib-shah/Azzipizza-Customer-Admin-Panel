@@ -37,6 +37,7 @@ function OrderModal({
         customizations: "",
       });
       setFormErrors({});
+
       setShopTime(!isWithinOrderingHours());
     }
   }, [isOpen]);
