@@ -9,12 +9,15 @@ function ProductCard({ products }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedToppings, setSelectedToppings] = useState([]);
 
+  const discount = products.discount || 0;
+  const discountedPrice = products.price - (products.price * discount) / 100;
+
   const handleAddToCart = (e) => {
     e.stopPropagation();
 
     const toppingPrices = selectedToppings.map((i) => i.price);
     const toppingsTotal = toppingPrices.reduce((acc, curr) => acc + curr, 0);
-    const totalPrice = products.price + toppingsTotal;
+    const totalPrice = discountedPrice + toppingsTotal;
 
     const cartItem = {
       ...products,
@@ -59,12 +62,10 @@ function ProductCard({ products }) {
 
   return (
     <>
-      {/* Product Card */}
       <div
         className="bg-white rounded-lg shadow-md hover:shadow-lg overflow-hidden relative transition-transform hover:-translate-y-1 flex flex-col h-full w-full cursor-pointer"
         onClick={openModal}
       >
-        {/* Product Image */}
         <div className="relative w-full aspect-square overflow-hidden">
           <img
             className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
@@ -73,6 +74,12 @@ function ProductCard({ products }) {
             loading="lazy"
           />
 
+          {discount > 0 && (
+            <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded shadow z-10">
+              -{discount}% OFF
+            </div>
+          )}
+
           {products.category !== "bibite" && (
             <span className="absolute top-2 left-2 bg-amber-500 text-white text-xs font-bold px-2 py-1 rounded truncate max-w-[80%]">
               Popular
@@ -80,14 +87,20 @@ function ProductCard({ products }) {
           )}
         </div>
 
-        {/* Product Info */}
         <div className="p-4 flex flex-col flex-grow">
           <div className="flex justify-between items-start gap-2 mb-2">
             <h1 className="text-lg font-bold text-gray-800 truncate flex-1 capitalize">
               {products.name}
             </h1>
-            <span className="bg-amber-100 text-amber-800 text-sm font-semibold px-2 py-1 rounded whitespace-nowrap shrink-0">
-              €{products.price.toFixed(2)}
+            <span className="flex flex-col items-end text-sm font-semibold whitespace-nowrap shrink-0">
+              {discount > 0 && (
+                <span className="line-through text-gray-400">
+                  €{products.price.toFixed(2)}
+                </span>
+              )}
+              <span className="text-amber-800">
+                €{discountedPrice.toFixed(2)}
+              </span>
             </span>
           </div>
 
@@ -96,7 +109,6 @@ function ProductCard({ products }) {
           </p>
 
           <div className="flex justify-between items-center mt-auto">
-            {/* Rating */}
             <div className="flex items-center min-w-0">
               <div className="flex shrink-0">
                 {[...Array(5)].map((_, i) => (
@@ -126,7 +138,6 @@ function ProductCard({ products }) {
               </div>
             </div>
 
-            {/* Add to Cart Button */}
             <button
               className="bg-amber-500 hover:bg-amber-600 text-white p-2 rounded-full transition-colors shadow-md hover:shadow-lg active:scale-95 shrink-0"
               onClick={openModal}
@@ -138,12 +149,10 @@ function ProductCard({ products }) {
         </div>
       </div>
 
-      {/* Product Details Modal */}
       {isModalOpen && (
         <Modal isOpen={isModalOpen} onClose={closeModal}>
           <div className="max-w-4xl w-full bg-white rounded-lg overflow-hidden max-h-[90vh] flex flex-col">
             <div className="grid md:grid-cols-2 gap-6 overflow-y-auto">
-              {/* Product Image */}
               <div className="relative w-full aspect-square">
                 <img
                   className="w-full h-full object-cover"
@@ -155,17 +164,26 @@ function ProductCard({ products }) {
                     Popular
                   </span>
                 )}
+                {discount > 0 && (
+                  <div className="absolute top-4 right-0 bg-red-600 text-white text-sm font-bold px-3 py-1 rounded shadow z-10">
+                    -{discount}% OFF
+                  </div>
+                )}
               </div>
 
-              {/* Product Details */}
               <div className="p-6 flex flex-col">
                 <h1 className="text-2xl font-bold text-gray-800 mb-2 capitalize">
                   {products.name}
                 </h1>
 
                 <div className="flex items-center mb-4">
+                  {discount > 0 && (
+                    <span className="text-lg text-gray-400 line-through mr-2">
+                      €{products.price.toFixed(2)}
+                    </span>
+                  )}
                   <span className="text-xl font-bold text-amber-600">
-                    €{products.price.toFixed(2)}
+                    €{discountedPrice.toFixed(2)}
                   </span>
                   {selectedToppings.length > 0 && (
                     <span className="text-sm text-gray-500 ml-2">

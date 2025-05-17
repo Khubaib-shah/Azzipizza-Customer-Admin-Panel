@@ -33,10 +33,8 @@ export const ContextProvider = ({ children }) => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  // Add item to cart with selected ingredients
   const addToCart = (item, selectedIngredients = [], customizations = "") => {
     setCartItems((prevCart) => {
-      // Convert ingredients to a comparable string
       const ingredientsKey = JSON.stringify(
         [...selectedIngredients].sort((a, b) => a.name.localeCompare(b.name))
       );
@@ -139,12 +137,16 @@ export const ContextProvider = ({ children }) => {
     };
   };
 
-  // Calculate cart total (ingredients included)
   const cartTotal = cartItems.reduce((total, item) => {
     const ingredientsTotal =
       item.selectedIngredients?.reduce((sum, ing) => sum + ing.price, 0) || 0;
+
+    const discountedPrice =
+      item.price - (item.discount ? (item.price * item.discount) / 100 : 0);
+
     return (
-      total + (item.price + ingredientsTotal / item.quantity) * item.quantity
+      total +
+      (discountedPrice + ingredientsTotal / item.quantity) * item.quantity
     );
   }, 0);
 
