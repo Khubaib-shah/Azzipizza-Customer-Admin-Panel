@@ -35,6 +35,7 @@ const EditProductDialog = ({
   imagePreview,
   loading,
 }) => {
+  console.log(itemToEdit);
   return (
     <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
       <DialogContent className="max-w-2xl max-h-96 overflow-y-auto">
@@ -83,6 +84,28 @@ const EditProductDialog = ({
                   required
                 />
               </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Discount (%)</label>
+                <Input
+                  type="number"
+                  placeholder="Enter discount %"
+                  value={itemToEdit.discount || ""}
+                  onChange={(e) => handleEditChange("discount", e.target.value)}
+                  min="0"
+                  max="100"
+                  step="0.01"
+                />
+              </div>
+              {itemToEdit.price && itemToEdit.discount && (
+                <p className="text-sm text-green-600">
+                  Discounted Price: €
+                  {(
+                    itemToEdit.price -
+                    (itemToEdit.price * itemToEdit.discount) / 100
+                  ).toFixed(2)}{" "}
+                  ({itemToEdit.discount}% OFF)
+                </p>
+              )}
 
               <div className="space-y-2">
                 <label className="text-sm font-medium">Category</label>

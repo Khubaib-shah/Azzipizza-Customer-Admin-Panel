@@ -163,6 +163,7 @@ const ListItems = () => {
       formData.append("name", itemToEdit.name);
       formData.append("description", itemToEdit.description);
       formData.append("price", itemToEdit.price);
+      formData.append("discount", itemToEdit.discount);
       formData.append("category", itemToEdit.category);
       formData.append("ingredients", JSON.stringify(itemToEdit.ingredients));
 
