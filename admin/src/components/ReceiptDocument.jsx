@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
 });
 
 const ReceiptDocument = ({ order }) => {
+  console.log(order);
   const formatDate = (dateStr) =>
     new Date(dateStr).toLocaleString("it-IT", {
       hour12: false,
@@ -136,9 +137,36 @@ const ReceiptDocument = ({ order }) => {
                   <Text style={styles.itemQuantity}>{item.quantity}x</Text>
                   <Text style={styles.itemName}>{item.menuItem.name}</Text>
                 </View>
-                <Text style={styles.itemPrice}>
-                  €{item.menuItem.price.toFixed(2)}
-                </Text>
+
+                {(() => {
+                  const original = item.originalPrice || item.menuItem.price;
+                  const actual = item.price ?? original;
+
+                  return original !== actual ? (
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                        gap: 4,
+                      }}
+                    >
+                      <Text
+                        style={[
+                          styles.itemPrice,
+                          { textDecoration: "line-through", color: "#999" },
+                        ]}
+                      >
+                        €{original.toFixed(2)}
+                      </Text>
+                      <Text style={[styles.itemPrice, { color: "#e60000" }]}>
+                        €{actual.toFixed(2)}
+                      </Text>
+                    </View>
+                  ) : (
+                    <Text style={styles.itemPrice}>€{actual.toFixed(2)}</Text>
+                  );
+                })()}
               </View>
 
               {/* Selected Ingredients */}
@@ -182,10 +210,33 @@ const ReceiptDocument = ({ order }) => {
 
         {/* Total and Payment */}
         <View style={styles.section}>
-          <View style={styles.line}>
-            <Text style={styles.bold}>Totale:</Text>
-            <Text style={styles.bold}>€{order.totalPrice.toFixed(2)}</Text>
-          </View>
+          {(() => {
+            const originalTotal = order.items.reduce(
+              (sum, item) =>
+                sum +
+                (item.originalPrice || item.menuItem.price || 0) *
+                  item.quantity,
+              0
+            );
+            const finalTotal = order.totalPrice;
+            const discount = originalTotal - finalTotal;
+
+            return (
+              <>
+                {discount > 0 && (
+                  <View style={styles.line}>
+                    <Text>Sconto:</Text>
+                    <Text>-€{discount.toFixed(2)}</Text>
+                  </View>
+                )}
+                <View style={styles.line}>
+                  <Text style={styles.bold}>Totale:</Text>
+                  <Text style={styles.bold}>€{finalTotal.toFixed(2)}</Text>
+                </View>
+              </>
+            );
+          })()}
+
           <Text
             style={{
               fontWeight: 600,
