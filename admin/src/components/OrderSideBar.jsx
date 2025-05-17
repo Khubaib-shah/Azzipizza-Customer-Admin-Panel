@@ -59,8 +59,10 @@ const OrderSideBar = ({
     }
   };
 
+  console.log(selectedOrder);
   const handlePrinterAnOrder = async () => {
     dispatch({ type: "SET_PUNCH_LOADING", payload: true });
+
     const blob = await pdf(<ReceiptDocument order={selectedOrder} />).toBlob();
 
     const url = URL.createObjectURL(blob);
@@ -120,12 +122,46 @@ const OrderSideBar = ({
                 {selectedOrder.orderStatus}
               </span>
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-500">Total</span>
-              <span className="font-medium">
-                ${selectedOrder.totalPrice.toFixed(2)}
-              </span>
-            </div>
+            {/* Calculate original total and discount */}
+            {(() => {
+              const originalTotal = selectedOrder.items.reduce(
+                (sum, item) =>
+                  sum +
+                  (item.originalPrice || item.menuItem?.price || 0) *
+                    item.quantity,
+                0
+              );
+
+              const finalTotal = selectedOrder.totalPrice;
+              const discount = originalTotal - finalTotal;
+
+              return (
+                <>
+                  {discount > 0 && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-500">Original</span>
+                      <span className="text-sm line-through text-gray-400">
+                        €{originalTotal.toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+                  {discount > 0 && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-500">Discount</span>
+                      <span className="text-sm text-green-600">
+                        -€{discount.toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500">Total</span>
+                    <span className="font-medium text-black">
+                      €{finalTotal.toFixed(2)}
+                    </span>
+                  </div>
+                </>
+              );
+            })()}
           </div>
 
           <div className="space-y-2">
@@ -175,7 +211,9 @@ const OrderSideBar = ({
                         </div>
                       </div>
                       <span className="text-sm font-medium">
-                        €{(item.menuItem?.price).toFixed(2)}
+                        €
+                        {item.price.toFixed(2) ||
+                          item.menuItem?.price.toFixed(2)}
                       </span>
                     </div>
                     {item.selectedIngredients &&
