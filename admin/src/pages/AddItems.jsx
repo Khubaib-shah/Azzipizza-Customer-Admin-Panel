@@ -92,12 +92,6 @@ const AddItems = () => {
         JSON.stringify(formData.ingredients)
       );
 
-      if (parseFloat(formData.discount) > parseFloat(formData.price)) {
-        setError("Discount cannot be greater than the original price.");
-        setLoading(false);
-        return;
-      }
-
       const response = await baseUri.post("/api/menu", formDataToSend, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -224,7 +218,7 @@ const AddItems = () => {
                       className="text-sm font-medium text-gray-700"
                       htmlFor="discount"
                     >
-                      Discount (€)
+                      Discount (%)
                     </label>
                     <Input
                       id="discount"

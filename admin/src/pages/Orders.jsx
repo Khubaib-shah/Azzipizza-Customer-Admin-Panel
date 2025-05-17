@@ -81,6 +81,8 @@ const Orders = () => {
     try {
       dispatch({ type: "SET_LOADING", payload: true });
       const { data } = await baseUri.get("/api/orders");
+
+      console.log(data);
       setOrders(data);
       setFilteredOrders(data);
       dispatch({ type: "SET_LOADING", payload: false });
@@ -96,13 +98,6 @@ const Orders = () => {
     await fetchOrders();
     setTimeout(() => setRefreshing(false), 500);
   };
-
-  // const playNotificationSound = () => {
-  //   const audio = new Audio(NotificationSound);
-  //   audio.play().catch((err) => {
-  //     console.error("Notification sound failed:", err);
-  //   });
-  // };
 
   useEffect(() => {
     fetchOrders();
@@ -125,7 +120,6 @@ const Orders = () => {
           ]);
 
           onShowNotificationClicked();
-          // playNotificationSound();
         }
 
         return reversedData;
