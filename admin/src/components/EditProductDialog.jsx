@@ -96,7 +96,7 @@ const EditProductDialog = ({
                   step="0.01"
                 />
               </div>
-              {itemToEdit.price && itemToEdit.discount && (
+              {itemToEdit.price && itemToEdit.discount > 0 && (
                 <p className="text-sm text-green-600">
                   Discounted Price: €
                   {(
