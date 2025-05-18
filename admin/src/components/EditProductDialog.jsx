@@ -35,7 +35,6 @@ const EditProductDialog = ({
   imagePreview,
   loading,
 }) => {
-  console.log(itemToEdit);
   return (
     <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
       <DialogContent className="max-w-2xl max-h-96 overflow-y-auto">

@@ -275,10 +275,13 @@ function OrderModal({
             >
               {isSubmitting ? "Processing..." : "Paga in contanti"}
             </Button>
-            {/* Uncomment for PayPal support */}
-            {/* <Button onClick={() => handleOrderSubmit("paypal")} disabled={isSubmitting} className="bg-blue-500 text-white hover:bg-blue-600">
-          {isSubmitting ? "Processing..." : "Paga con la carta"}
-        </Button> */}
+            <Button
+              onClick={() => handleOrderSubmit("paypal")}
+              disabled={isSubmitting}
+              className="bg-blue-500 text-white hover:bg-blue-600"
+            >
+              {isSubmitting ? "Processing..." : "Paga con la carta"}
+            </Button>
           </div>
         </>
       )}
