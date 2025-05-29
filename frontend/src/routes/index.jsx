@@ -32,7 +32,7 @@ const router = createBrowserRouter([
       },
 
       {
-        path: "paypal-success",
+        path: "order-success",
         element: <PaymentSuccess />,
       },
       {

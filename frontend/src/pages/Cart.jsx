@@ -10,7 +10,6 @@ function Cart() {
     useContext(Context);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Save order to localStorage
   const saveOrderToLocalStorage = (order) => {
     try {
       const existingOrders =
