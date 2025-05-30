@@ -112,9 +112,9 @@ function ProductsList() {
             />
           </div>
           {!searchQuery && (
-            <div className="flex items-center justify-between sticky top-16 bg-white z-10 py-2 px-4 shadow-md rounded-md w-full mt-4">
+            <div className="flex items-center justify-between sticky top-16 bg-white z-5 py-2 px-4 shadow-md rounded-md w-full mt-4">
               <div
-                ref={categoriesContainerRef} // Add this ref
+                ref={categoriesContainerRef}
                 className="flex overflow-x-auto gap-2 w-full hide-scrollbar whitespace-nowrap"
               >
                 {menuItems?.map((item) => (
