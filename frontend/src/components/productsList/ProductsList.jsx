@@ -1,5 +1,5 @@
 import { useState, useRef, useContext, useMemo } from "react";
-import ProductCard from "../cards/ProductsCard"; // Ensure correct path
+import ProductCard from "../cards/ProductsCard";
 import { MdStarOutline } from "react-icons/md";
 import { PiListBulletsBold } from "react-icons/pi";
 import { FaBicycle, FaSearch } from "react-icons/fa";
@@ -12,14 +12,17 @@ import TrackOrder from "../TrackOrder";
 
 // Main Products List Component
 function ProductsList() {
-  const { items, isLoading, error } = useContext(Context);
+  const { items, isLoading } = useContext(Context);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const categoryRefs = useRef({});
   const [searchQuery, setSearchQuery] = useState("");
 
   const [activeCategory, setActiveCategory] = useState("pizze rosse");
 
-  const menuItems = [...new Set(items.map((item) => item.category))];
+  const menuItems = useMemo(() => {
+    if (!Array.isArray(items)) return [];
+    return [...new Set(items.map((item) => item.category))];
+  }, [items]);
 
   smoothscroll.polyfill();
 
@@ -34,7 +37,6 @@ function ProductsList() {
     );
   }, [items, searchQuery]);
 
-  // Group filtered items by category
   const listing = useMemo(() => {
     const result = {};
 
