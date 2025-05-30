@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   AiOutlineShoppingCart,
@@ -19,18 +19,14 @@ function Header() {
   const [isCartHovered, setIsCartHovered] = useState(false);
   const [activePage, setActivePage] = useState("Home");
 
-  // Calculate total items in cart
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
-  // Handle page change
   const handlePageChange = (page) => {
     setActivePage(page);
     console.log("Current page:", page);
-    // Close the menu after selecting a page
     setOpen(false);
   };
 
-  // Detect Scroll Event
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
@@ -40,7 +36,6 @@ function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Navigation items for DRY code
   const navItems = [
     {
       path: "/",
@@ -72,91 +67,82 @@ function Header() {
     <>
       <header
         className={`sticky top-0 z-50 backdrop-blur-lg dark:bg-gray-900/70 shadow-md transition-all duration-300 ${
-          scrolled ? "py-1" : "py-3"
+          scrolled ? "py-0" : "py-1"
         }`}
       >
-        <div className="px-4 md:px-6">
-          <div className="container mx-auto flex items-center justify-between">
-            {/* Logo */}
+        <div className="container mx-auto flex items-center justify-between">
+          <Link
+            to="/"
+            className="flex items-center transition-transform hover:scale-105"
+          >
+            <img
+              src={logo}
+              alt="Pizza Logo"
+              className={`object-contain transition-all duration-300 ${
+                scrolled ? "h-16 w-16" : "h-20 w-20"
+              }`}
+            />
+          </Link>
+
+          <div className="flex flex-1 justify-center items-center gap-4 text-black dark:text-white">
+            <nav className="hidden md:flex gap-2">
+              {navItems.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => handlePageChange(item.label)}
+                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${
+                    activePage === item.label
+                      ? "bg-orange-400 text-white shadow-md"
+                      : "bg-gray-100 text-black hover:bg-gray-200 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          <div className="flex items-center gap-4">
             <Link
-              to="/"
-              className="flex items-center transition-transform hover:scale-105"
+              to="/cart"
+              className="relative hover:scale-110 transition-transform"
+              onMouseEnter={() => setIsCartHovered(true)}
+              onMouseLeave={() => setIsCartHovered(false)}
             >
-              <img
-                src={logo}
-                alt="Pizza Logo"
-                className={`object-contain transition-all duration-300 ${
-                  scrolled ? "h-16 w-16" : "h-20 w-20"
+              <AiOutlineShoppingCart
+                className={`text-[26px] transition duration-300 ${
+                  isCartHovered
+                    ? "text-amber-500"
+                    : scrolled
+                    ? "text-white dark:text-white"
+                    : "text-white"
                 }`}
               />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full animate-pulse">
+                  {cartCount}
+                </span>
+              )}
             </Link>
-
-            {/* Navigation */}
-            <div className="flex flex-1 justify-center items-center gap-4 text-black dark:text-white">
-              {/* Desktop */}
-              <nav className="hidden md:flex gap-2">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    onClick={() => handlePageChange(item.label)}
-                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${
-                      activePage === item.label
-                        ? "bg-orange-400 text-white shadow-md"
-                        : "bg-gray-100 text-black hover:bg-gray-200 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </nav>
-            </div>
-
-            {/* Right Side: Cart & Menu */}
-            <div className="flex items-center gap-4">
-              {/* Cart */}
-              <Link
-                to="/cart"
-                className="relative hover:scale-110 transition-transform"
-                onMouseEnter={() => setIsCartHovered(true)}
-                onMouseLeave={() => setIsCartHovered(false)}
+            <div className="md:hidden">
+              <Button
+                onClick={() => setOpen(!open)}
+                variant="text"
+                className="!min-w-[40px] !h-[40px] !p-0 !rounded-full  md:hidden  hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300"
               >
-                <AiOutlineShoppingCart
-                  className={`text-[26px] transition duration-300 ${
-                    isCartHovered
-                      ? "text-amber-500"
-                      : scrolled
-                      ? "text-white dark:text-white"
-                      : "text-white"
+                <div
+                  className={`w-[36px] h-[36px] rounded-full flex items-center justify-center transition-colors duration-300 ${
+                    scrolled ? "text-black dark:text-white" : "text-white"
                   }`}
-                />
-                {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full animate-pulse">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
-              <div className="md:hidden">
-                {/* Menu Button */}
-                <Button
-                  onClick={() => setOpen(!open)}
-                  variant="text"
-                  className="!min-w-[40px] !h-[40px] !p-0 !rounded-full  md:hidden  hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300"
                 >
-                  <div
-                    className={`w-[36px] h-[36px] rounded-full flex items-center justify-center transition-colors duration-300 ${
-                      scrolled ? "text-black dark:text-white" : "text-white"
-                    }`}
-                  >
-                    <MdOutlineMenu className="text-[26px]" />
-                  </div>
-                </Button>
-              </div>
+                  <MdOutlineMenu className="text-[26px]" />
+                </div>
+              </Button>
             </div>
           </div>
         </div>
       </header>
-      {/* Responsive Menu Modal */}
       <HeaderModal open={open} setOpen={setOpen} navItems={navItems} />
     </>
   );

@@ -10,7 +10,6 @@ import CompDetails from "../CompDetails";
 import ProductsListSkeleton from "../ProductsListSkeleton";
 import TrackOrder from "../TrackOrder";
 
-// Main Products List Component
 function ProductsList() {
   const { items, isLoading } = useContext(Context);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -77,22 +76,6 @@ function ProductsList() {
         <ProductsListSkeleton />
       ) : (
         <>
-          <div className="flex flex-col sm:flex-row justify-between items-center">
-            <h1 className="text-xl sm:text-xl font-bold text-center sm:text-left lg:text-3xl md:text-[18px] flex-1">
-              Azzipizza Mica Pizza e Fichi
-            </h1>
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="flex items-center gap-2">
-                <MdStarOutline size={22} className="text-amber-500" />
-                <p className="text-sm">0 Recensioni</p>
-              </div>
-              <div className="flex items-center gap-2 bg-amber-600 text-white px-3 py-1 rounded-md">
-                <FaBicycle size={18} />
-                <p>Gratis</p>
-              </div>
-            </div>
-          </div>
-
           <div className="relative mt-5">
             <FaSearch
               size={18}
@@ -112,7 +95,7 @@ function ProductsList() {
             />
           </div>
           {!searchQuery && (
-            <div className="flex items-center justify-between sticky top-16 bg-white z-5 py-2 px-4 shadow-md rounded-md w-full mt-4">
+            <div className="flex items-center justify-between sticky top-[65px] bg-white z-5 py-2 px-4 shadow-2xl rounded-md w-full mt-4">
               <div
                 ref={categoriesContainerRef}
                 className="flex overflow-x-auto gap-2 w-full hide-scrollbar whitespace-nowrap"
