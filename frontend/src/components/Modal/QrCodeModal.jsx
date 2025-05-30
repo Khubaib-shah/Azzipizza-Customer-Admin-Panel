@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom";
-import QrCodeImage from "../../assets/QrCode.jpeg";
+import QrCodeImage from "../../../public/QrCode.jpeg";
 import Button from "../ui/Button";
 
 export default function QrCodeModal({ setQrCodeModal, totalPrice }) {
