@@ -3,7 +3,6 @@ import { useContext, useState } from "react";
 import Context from "../../context/dataContext";
 import { toast } from "react-toastify";
 import Modal from "../Modal/Modal";
-
 function ProductCard({ product }) {
   const { addToCart } = useContext(Context);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -61,7 +60,7 @@ function ProductCard({ product }) {
               -{discount}% OFF
             </div>
           )}
-          {product.category !== "bibite" && (
+          {product?.category !== "bibite" && product?.category !== "birre" && (
             <span className="absolute top-2 left-2 bg-amber-500 text-white text-xs font-bold px-2 py-1 rounded">
               Popular
             </span>
@@ -133,11 +132,12 @@ function ProductCard({ product }) {
                   src={product.image}
                   alt={product.name}
                 />
-                {product.category !== "bibite" && (
-                  <span className="absolute top-4 left-4 bg-amber-500 text-white text-sm font-bold px-3 py-1 rounded">
-                    Popular
-                  </span>
-                )}
+                {product.category !== "bibite" &&
+                  product.category !== "birre" && (
+                    <span className="absolute top-4 left-4 bg-amber-500 text-white text-sm font-bold px-3 py-1 rounded">
+                      Popular
+                    </span>
+                  )}
                 {discount > 0 && (
                   <div className="absolute top-4 right-0 bg-red-600 text-white text-sm font-bold px-3 py-1 rounded shadow">
                     -{discount}% OFF

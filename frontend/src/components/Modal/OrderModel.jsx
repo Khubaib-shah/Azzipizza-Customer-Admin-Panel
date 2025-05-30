@@ -2,17 +2,12 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import Button from "../ui/Button";
 import Modal from "./Modal";
 import { isWithinOrderingHours } from "../../utils/isWithinOrderingHours";
+import { PaymentModal } from "../PaymentOptionButtons";
+import { baseUri } from "../../config/config";
 
-function OrderModal({
-  isOpen,
-  closeModal,
-  totalPrice,
-  cartItems,
-  onOrderSuccess,
-}) {
+function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
   const [formData, setFormData] = useState({
     name: "",
     phoneNumber: "",
@@ -25,6 +20,7 @@ function OrderModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [isTime, setIsTime] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,8 +34,7 @@ function OrderModal({
         customizations: "",
       });
       setFormErrors({});
-
-      setIsTime(!isWithinOrderingHours());
+      // setIsTime(!isWithinOrderingHours());
     }
   }, [isOpen]);
 
@@ -70,9 +65,9 @@ function OrderModal({
       setFormErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
-
-  const handleOrderSubmit = async (method = "cash") => {
+  const handleOrderSubmit = async (method) => {
     if (!validateForm()) return;
+
     if (!cartItems?.length) {
       toast.error("Your cart is empty!", { position: "top-center" });
       return;
@@ -81,6 +76,8 @@ function OrderModal({
     setIsSubmitting(true);
 
     try {
+      const paymentMethod = method;
+
       const formattedItems = cartItems.map((item) => ({
         menuItem: item._id,
         quantity: item.quantity,
@@ -96,47 +93,66 @@ function OrderModal({
           city: formData.city,
           zipCode: formData.zipCode,
         },
+        paymentMethod,
         total: totalPrice,
         customizations: formData.customizations || "",
       };
 
-      if (method === "paypal") {
-        localStorage.setItem("orderData", JSON.stringify(orderData));
+      if (paymentMethod === "scan") {
+        const response = await baseUri.post("/api/orders", orderData);
+        navigate("/order-success");
+        return;
       }
 
-      const endpoint =
-        method === "paypal"
-          ? "https://pizzeria-backend-production.up.railway.app/api/payments/pay-for-order"
-          : "https://pizzeria-backend-production.up.railway.app/api/orders";
+      if (paymentMethod === "satispay") {
+        const response = await baseUri.post(
+          "/api/payment/create-checkout",
+          orderData
+        );
 
-      const response = await axios.post(endpoint, orderData);
+        if (response.status === 200 && response.data.redirectUrl) {
+          window.location.href = response.data.redirectUrl;
+          return;
+        } else {
+          toast.error("Failed to start direct Satispay payment", {
+            position: "top-center",
+          });
+          setIsSubmitting(false);
+          return;
+        }
+      }
 
-      if (method === "paypal" && response.status === 200) {
-        window.open(response.data.approvalUrl, "_self");
-      } else {
-        toast.success("🎉 Ordine effettuato! Lo stiamo preparando per te.", {
-          position: "top-center",
-        });
-        onOrderSuccess(response.data);
-        closeModal();
-        navigate("/paypal-success");
+      if (paymentMethod === "cash") {
+        const response = await baseUri.post("/api/orders", orderData);
+
+        if (response.status === 200) {
+          toast.success("🎉 Ordine effettuato! Lo stiamo preparando per te.", {
+            position: "top-center",
+          });
+          onOrderSuccess(response.data);
+
+          setTimeout(() => {
+            closeModal();
+            setTimeout(() => {
+              navigate("/order-success");
+            }, 300);
+          }, 300);
+        }
       }
     } catch (error) {
-      console.error("Order error:", error.response?.data || error);
+      console.error("Order error:", error);
       toast.error(error.response?.data?.message || "Failed to process order", {
         position: "top-center",
       });
     } finally {
-      setIsSubmitting(false);
+      if (method !== "satispay") {
+        setIsSubmitting(false);
+      }
     }
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={closeModal}
-      className={"text-black hover:text-black/40 cursor-pointer"}
-    >
+    <Modal isOpen={isOpen} onClose={closeModal}>
       {isTime ? (
         <div className="text-center text-gray-700 py-10">
           <h2 className="text-2xl font-semibold mb-4">😴 We’re Closed!</h2>
@@ -261,27 +277,11 @@ function OrderModal({
           </div>
 
           <div className="mt-6 flex justify-end gap-3">
-            <Button
-              onClick={closeModal}
-              disabled={isSubmitting}
-              className="bg-gray-100 text-gray-700 hover:bg-gray-200"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={() => handleOrderSubmit("cash")}
-              disabled={isSubmitting}
-              className="bg-orange-500 text-white hover:bg-orange-600 text-xs"
-            >
-              {isSubmitting ? "Processing..." : "Paga in contanti"}
-            </Button>
-            <Button
-              onClick={() => handleOrderSubmit("paypal")}
-              disabled={isSubmitting}
-              className="bg-blue-500 text-white hover:bg-blue-600"
-            >
-              {isSubmitting ? "Processing..." : "Paga con la carta"}
-            </Button>
+            <PaymentModal
+              totalPrice={totalPrice}
+              isSubmitting={isSubmitting}
+              handleOrderSubmit={handleOrderSubmit}
+            />
           </div>
         </>
       )}

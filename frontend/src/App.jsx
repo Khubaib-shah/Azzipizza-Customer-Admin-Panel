@@ -10,7 +10,7 @@ function App() {
   const location = useLocation();
 
   const hideHeaderFooterRoutes = [
-    "/paypal-success",
+    "/order-success",
     "/payment-error",
     "/payment-cancelled",
   ];
@@ -33,6 +33,7 @@ function App() {
               <Outlet />
             </div>
           </div>
+          <TrackOrder />
         </main>
         <ToastContainer />
 
