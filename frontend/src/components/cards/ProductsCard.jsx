@@ -123,10 +123,10 @@ function ProductCard({ product }) {
       {/* Modal */}
       {isModalOpen && (
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-          <div className="max-w-4xl w-full bg-white rounded-lg overflow-hidden max-h-[90vh] flex flex-col">
+          <div className="max-w-4xl w-full  rounded-lg overflow-hidden max-h-[90vh] flex flex-col">
             <div className="grid md:grid-cols-2 gap-6 overflow-y-auto p-6">
               {/* Image */}
-              <div className="relative w-full aspect-square">
+              <div className="relative w-full h-28 md:h-auto">
                 <img
                   className="w-full h-full object-cover"
                   src={product.image}

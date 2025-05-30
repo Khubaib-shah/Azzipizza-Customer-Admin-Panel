@@ -10,21 +10,6 @@ function Cart() {
     useContext(Context);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const saveOrderToLocalStorage = (order) => {
-    try {
-      const existingOrders =
-        JSON.parse(localStorage.getItem("orderHistory")) || [];
-      const updatedOrders = [...existingOrders, order];
-
-      localStorage.setItem("orderHistory", JSON.stringify(updatedOrders));
-    } catch (error) {
-      console.error("Error saving order:", error);
-    }
-  };
-
-  const handleOrderSuccess = (orderData) => {
-    saveOrderToLocalStorage(orderData);
-  };
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => {
     setIsModalOpen(false);
@@ -201,7 +186,6 @@ function Cart() {
         closeModal={closeModal}
         totalPrice={cartTotal}
         cartItems={cartItems}
-        onOrderSuccess={handleOrderSuccess}
       />
     </div>
   );

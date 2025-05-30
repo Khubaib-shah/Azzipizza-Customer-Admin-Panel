@@ -10,7 +10,6 @@ const PaymentSuccess = () => {
 
   useEffect(() => {
     clearCart();
-    localStorage.removeItem("orderData");
     setStatus("Order placed successfully!");
     setLoading(false);
 

@@ -9,25 +9,23 @@ body {
   margin: auto;
 }
 
-/* Base hide-scrollbar class (completely hides scrollbar) */
 .hide-scrollbar {
   overflow-x: auto;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE 10+ */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 .hide-scrollbar::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+  display: none;
 }
 
-/* Alternative class for styled scrollbar */
 .styled-scrollbar {
   overflow-x: auto;
-  scrollbar-width: thin; /* Firefox */
-  scrollbar-color: #d1d5db #f3f4f6; /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #fb923c #f3f4f6;
 }
 .styled-scrollbar::-webkit-scrollbar {
   display: block;
-  height: 6px; /* Chrome, Safari */
+  height: 6px;
 }
 .styled-scrollbar::-webkit-scrollbar-thumb {
   background: #d1d5db;

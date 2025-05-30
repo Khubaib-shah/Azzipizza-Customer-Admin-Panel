@@ -6,6 +6,7 @@ import Modal from "./Modal";
 import { isWithinOrderingHours } from "../../utils/isWithinOrderingHours";
 import { PaymentModal } from "../PaymentOptionButtons";
 import { baseUri } from "../../config/config";
+import { saveOrderToLocalStorage } from "../../utils/SavedOrderSucces";
 
 function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
   const [formData, setFormData] = useState({
@@ -34,7 +35,7 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
         customizations: "",
       });
       setFormErrors({});
-      // setIsTime(!isWithinOrderingHours());
+      setIsTime(!isWithinOrderingHours());
     }
   }, [isOpen]);
 
@@ -100,6 +101,8 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
 
       if (paymentMethod === "scan") {
         const response = await baseUri.post("/api/orders", orderData);
+        saveOrderToLocalStorage(response.data);
+
         navigate("/order-success");
         return;
       }
@@ -112,6 +115,8 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
 
         if (response.status === 200 && response.data.redirectUrl) {
           window.location.href = response.data.redirectUrl;
+          saveOrderToLocalStorage(response.data);
+
           return;
         } else {
           toast.error("Failed to start direct Satispay payment", {
@@ -129,16 +134,17 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
           toast.success("🎉 Ordine effettuato! Lo stiamo preparando per te.", {
             position: "top-center",
           });
-          onOrderSuccess(response.data);
-
-          setTimeout(() => {
-            closeModal();
-            setTimeout(() => {
-              navigate("/order-success");
-            }, 300);
-          }, 300);
+          saveOrderToLocalStorage(response.data);
         }
       }
+
+      setTimeout(() => {
+        closeModal();
+
+        setTimeout(() => {
+          navigate("/order-success");
+        }, 300);
+      }, 300);
     } catch (error) {
       console.error("Order error:", error);
       toast.error(error.response?.data?.message || "Failed to process order", {

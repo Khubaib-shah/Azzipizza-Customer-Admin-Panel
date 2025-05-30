@@ -71,7 +71,6 @@ function ProductsList() {
 
   return (
     <div className="container  mx-auto px-4 pt-5 mt-3">
-      {/* Header */}
       {isLoading ? (
         <ProductsListSkeleton />
       ) : (
@@ -92,7 +91,6 @@ function ProductsList() {
             </div>
           </div>
 
-          {/* Search Bar */}
           <div className="relative mt-5">
             <FaSearch
               size={18}
@@ -111,7 +109,6 @@ function ProductsList() {
               }}
             />
           </div>
-
           {!searchQuery && (
             <div className="flex items-center justify-between sticky top-16 bg-white z-10 py-2 px-4 shadow-md rounded-md w-full mt-4">
               <div
@@ -155,7 +152,6 @@ function ProductsList() {
         </>
       )}
 
-      {/* Product Categories & Listing */}
       {searchQuery ? (
         <div className="mt-6">
           <h2 className="text-lg sm:text-xl font-semibold capitalize">
