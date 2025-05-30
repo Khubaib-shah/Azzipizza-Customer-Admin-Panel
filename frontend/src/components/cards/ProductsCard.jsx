@@ -147,11 +147,11 @@ function ProductCard({ product }) {
 
               {/* Details */}
               <div className="flex flex-col">
-                <h1 className="text-2xl font-bold text-gray-800 mb-2 capitalize">
+                <h1 className="text-2xl font-bold text-gray-800/90  capitalize mb-2">
                   {product.name}
                 </h1>
 
-                <div className="flex items-center mb-4">
+                <div className="flex items-center">
                   {discount > 0 && (
                     <span className="text-lg text-gray-400 line-through mr-2">
                       €{basePrice.toFixed(2)}
@@ -167,7 +167,7 @@ function ProductCard({ product }) {
                   )}
                 </div>
 
-                <div className="flex items-center mb-4">
+                {/* <div className="flex items-center mb-4">
                   {[...Array(5)].map((_, i) => (
                     <svg
                       key={i}
@@ -185,20 +185,25 @@ function ProductCard({ product }) {
                   <span className="text-gray-700 ml-2">
                     {rating} ({reviews})
                   </span>
-                </div>
+                </div> */}
 
-                <div className="mb-6 overflow-y-auto max-h-[200px]">
+                <div className="mb-2.5 overflow-y-auto max-h-[200px]">
                   <p className="text-gray-600 whitespace-pre-line">
                     {product.description}
                   </p>
                 </div>
 
                 {product.ingredients?.length > 0 && (
-                  <div className="mb-6 overflow-y-auto max-h-[200px]">
-                    <h3 className="font-semibold text-gray-800 mb-2">
-                      Toppings
-                    </h3>
-                    <ul className="space-y-2 text-gray-600">
+                  <h3 className="font-semibold text-gray-800 mb-2">Toppings</h3>
+                )}
+                {product.ingredients?.length > 0 && (
+                  <div className="relative mb-6 overflow-y-auto max-h-[200px]">
+                    <div
+                      className="fixed bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white
+  dark:from-gray-900 to-transparent pointer-events-none z-50"
+                    />
+
+                    <ul className="space-y-2 text-gray-600 relative z-20 px-1">
                       {product.ingredients.map((ingredient) => (
                         <li key={ingredient._id}>
                           <label className="flex justify-between items-center cursor-pointer">
@@ -227,13 +232,13 @@ function ProductCard({ product }) {
 
                 <div className="mt-auto pt-4 border-t border-gray-200 flex justify-between">
                   <button
-                    className="px-6 py-3 bg-gray-200 hover:bg-gray-300 rounded-lg"
+                    className="px-6 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg cursor-pointer text-orange-400 font-semibold"
                     onClick={() => setIsModalOpen(false)}
                   >
                     Close
                   </button>
                   <button
-                    className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-lg flex items-center gap-2"
+                    className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-lg flex items-center gap-2 cursor-pointer"
                     onClick={(e) => {
                       handleAddToCart(e);
                       setIsModalOpen(false);
