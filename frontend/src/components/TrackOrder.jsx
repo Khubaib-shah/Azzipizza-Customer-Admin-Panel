@@ -43,7 +43,7 @@ const TrackOrder = () => {
   if (!orders.length) return null;
 
   return (
-    <div className="sticky bottom-0 left-0 w-full z-2 pb-safe bg-orange-50 border-t-4 border-amber-500 shadow-lg rounded-tr-3xl rounded-tl-3xl">
+    <div className="sticky bottom-0 left-0 w-full z-5 pb-safe bg-orange-50 border-t-4 border-amber-500 shadow-lg rounded-tr-3xl rounded-tl-3xl">
       <div
         ref={wrapperRef}
         className="mx-auto max-w-screen-md rounded-tr-3xl rounded-tl-3xl overflow-hidden"

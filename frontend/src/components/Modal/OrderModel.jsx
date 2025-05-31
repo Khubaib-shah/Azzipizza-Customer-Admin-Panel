@@ -35,7 +35,7 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
         customizations: "",
       });
       setFormErrors({});
-      setIsTime(!isWithinOrderingHours());
+      // setIsTime(!isWithinOrderingHours());
     }
   }, [isOpen]);
 
@@ -66,6 +66,7 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
       setFormErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
+
   const handleOrderSubmit = async (method) => {
     if (!validateForm()) return;
 
@@ -76,78 +77,66 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
 
     setIsSubmitting(true);
 
+    const formattedItems = cartItems.map((item) => ({
+      menuItem: item._id,
+      quantity: item.quantity,
+      selectedIngredients: item.selectedIngredients || [],
+    }));
+
+    const orderData = {
+      items: formattedItems,
+      name: formData.name,
+      phoneNumber: formData.phoneNumber,
+      deliveryAddress: {
+        street: formData.street,
+        city: formData.city,
+        zipCode: formData.zipCode,
+      },
+      paymentMethod: method,
+      total: totalPrice,
+      customizations: formData.customizations || "",
+    };
+
     try {
-      const paymentMethod = method;
+      let response;
 
-      const formattedItems = cartItems.map((item) => ({
-        menuItem: item._id,
-        quantity: item.quantity,
-        selectedIngredients: item.selectedIngredients || [],
-      }));
-
-      const orderData = {
-        items: formattedItems,
-        name: formData.name,
-        phoneNumber: formData.phoneNumber,
-        deliveryAddress: {
-          street: formData.street,
-          city: formData.city,
-          zipCode: formData.zipCode,
-        },
-        paymentMethod,
-        total: totalPrice,
-        customizations: formData.customizations || "",
-      };
-
-      if (paymentMethod === "scan") {
-        const response = await baseUri.post("/api/orders", orderData);
-        saveOrderToLocalStorage(response.data);
-
-        navigate("/order-success");
-        return;
-      }
-
-      if (paymentMethod === "satispay") {
-        const response = await baseUri.post(
+      if (method === "satispay") {
+        response = await baseUri.post(
           "/api/payment/create-checkout",
           orderData
         );
-
         if (response.status === 200 && response.data.redirectUrl) {
-          window.location.href = response.data.redirectUrl;
           saveOrderToLocalStorage(response.data);
 
+          window.location.href = response.data.redirectUrl;
           return;
         } else {
           toast.error("Failed to start direct Satispay payment", {
             position: "top-center",
           });
-          setIsSubmitting(false);
           return;
         }
       }
 
-      if (paymentMethod === "cash") {
-        const response = await baseUri.post("/api/orders", orderData);
+      if (["scan", "bancomat", "cash"].includes(method)) {
+        response = await baseUri.post("/api/orders", orderData);
 
-        if (response.status === 200) {
+        if (response.status >= 200 && response.status < 300) {
+          saveOrderToLocalStorage(response.data);
+
           toast.success("🎉 Ordine effettuato! Lo stiamo preparando per te.", {
             position: "top-center",
           });
-          saveOrderToLocalStorage(response.data);
+
+          closeModal();
+
+          setTimeout(() => navigate("/order-success"), 50);
+          return;
         }
       }
-
-      setTimeout(() => {
-        closeModal();
-
-        setTimeout(() => {
-          navigate("/order-success");
-        }, 300);
-      }, 300);
     } catch (error) {
       console.error("Order error:", error);
-      toast.error(error.response?.data?.message || "Failed to process order", {
+      toast.error(error?.response?.data?.message || "Failed to process order", {
         position: "top-center",
       });
     } finally {

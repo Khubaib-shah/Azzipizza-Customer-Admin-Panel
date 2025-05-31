@@ -9,6 +9,7 @@ export function PaymentModal({ isSubmitting, handleOrderSubmit, totalPrice }) {
   const paymentOptions = [
     { value: "cash", label: "Paga in contanti" },
     { value: "scan", label: "Scan to Pay (QR)" },
+    { value: "bancomat", label: "Bancomat alla consegna" },
     { value: "satispay", label: "Paga con Satispay" },
   ];
 
