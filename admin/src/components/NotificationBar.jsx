@@ -13,8 +13,6 @@ const NotificationBar = () => {
   const { notifications, setNotifications } = useNotifications();
   const navigate = useNavigate();
 
-  console.log("Notifications:", notifications); // Debugging
-
   const handleClearNotifications = () => {
     setNotifications([]);
   };
@@ -36,8 +34,6 @@ const NotificationBar = () => {
             </p>
           ) : (
             notifications.map((notify) => {
-              console.log("Notification object:", notify); // Debugging
-
               return (
                 <DropdownMenuItem
                   key={notify.id}
@@ -46,7 +42,6 @@ const NotificationBar = () => {
                 >
                   <p className="font-semibold">{notify.message}</p>
 
-                  {/* Access items array correctly */}
                   {Array.isArray(notify.items?.items) ? (
                     notify.items.items.map((item, index) =>
                       item.menuItem ? (
