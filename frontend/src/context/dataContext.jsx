@@ -73,13 +73,11 @@ export const ContextProvider = ({ children }) => {
     });
   };
 
-  // Decrease item quantity (and remove corresponding ingredients)
   const CartDecrement = (itemId) => {
     setCartItems((prevCart) =>
       prevCart
         .map((cartItem) => {
           if (cartItem._id === itemId) {
-            // Get the ingredients for one portion
             const ingredientsPerPortion = cartItem.selectedIngredients.slice(
               0,
               cartItem.selectedIngredients.length / cartItem.quantity
@@ -88,7 +86,6 @@ export const ContextProvider = ({ children }) => {
             return {
               ...cartItem,
               quantity: cartItem.quantity - 1,
-              // Remove one portion's worth of ingredients
               selectedIngredients: cartItem.selectedIngredients.slice(
                 0,
                 cartItem.selectedIngredients.length -
@@ -102,18 +99,15 @@ export const ContextProvider = ({ children }) => {
     );
   };
 
-  // Remove item from cart
   const removeFromCart = (itemId) => {
     setCartItems((prevCart) => prevCart.filter((item) => item._id !== itemId));
   };
 
-  // Clear the cart
   const clearCart = () => {
     setCartItems([]);
     localStorage.removeItem("cartItems");
   };
 
-  // Prepare order data in the required format
   const prepareOrderData = (customerInfo) => {
     return {
       ...customerInfo,
@@ -147,7 +141,6 @@ export const ContextProvider = ({ children }) => {
     return total + (discountedPrice + ingredientsTotal) * item.quantity;
   }, 0);
 
-  // Refresh menu function
   const refreshMenu = async () => {
     await fetchMenu();
   };

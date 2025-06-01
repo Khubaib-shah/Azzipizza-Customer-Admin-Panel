@@ -8,7 +8,6 @@ import PaymentSuccess from "../components/paymentPages/PaymentSuccess";
 import PaymentError from "../components/paymentPages/PaymentError";
 import PaymentCancelled from "../components/paymentPages/PaymentCancelled";
 
-// components
 const router = createBrowserRouter([
   {
     path: "/",

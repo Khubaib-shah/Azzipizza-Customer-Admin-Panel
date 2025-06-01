@@ -2,10 +2,8 @@ import { Dialog } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-// icons
 import { IoCloseOutline } from "react-icons/io5";
 import { CiCircleInfo } from "react-icons/ci";
-import { MdHistory } from "react-icons/md";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 
 function HeaderModal({ open, setOpen }) {
@@ -33,7 +31,6 @@ function HeaderModal({ open, setOpen }) {
   return (
     <Dialog open={open} onClose={() => setOpen(false)} fullScreen={fullWidth}>
       <div className="bg-white p-3 sm:p-4 md:w-[400px] w-full flex flex-col gap-3 sm:gap-4">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <h2 className="text-[16px] sm:text-[18px] font-[500]">
             Il mio account
@@ -47,7 +44,6 @@ function HeaderModal({ open, setOpen }) {
           </span>
         </div>
 
-        {/* Navigation Links */}
         <div className="mt-2">
           <ul className="border-b pb-2 border-gray-200">
             <li className="p-2 hover:bg-gray-100">

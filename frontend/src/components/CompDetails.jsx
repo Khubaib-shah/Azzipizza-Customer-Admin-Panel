@@ -1,4 +1,3 @@
-import React from "react";
 import { FaCalendarAlt } from "react-icons/fa";
 
 const CompDetails = () => {

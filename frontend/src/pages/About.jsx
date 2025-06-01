@@ -7,7 +7,6 @@ const About = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
-        {/* Hero Section */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold text-red-600 mb-6">
             About Our Pizza
@@ -21,9 +20,7 @@ const About = () => {
           </div>
         </div>
 
-        {/* Main Content */}
         <div className="space-y-16">
-          {/* Our Story */}
           <section className="bg-white p-8 rounded-xl shadow-md">
             <h2 className="text-3xl font-bold text-center text-red-600 mb-6">
               Our Story
@@ -58,7 +55,6 @@ const About = () => {
             </article>
           </section>
 
-          {/* Mission & Vision */}
           <div className="grid md:grid-cols-2 gap-8">
             <div className="bg-yellow-50 p-8 rounded-xl shadow-md border-l-4 border-yellow-400">
               <h2 className="text-2xl font-bold text-yellow-800 mb-4">
@@ -113,7 +109,6 @@ const About = () => {
             </div>
           </section>
 
-          {/* Team Section */}
           <section className="bg-blue-50 p-8 rounded-xl shadow-md border-l-4 border-blue-400">
             <h2 className="text-3xl font-bold text-center text-blue-800 mb-6">
               Our Team
@@ -140,7 +135,6 @@ const About = () => {
             <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
               <div className="h-96 w-full">
                 {" "}
-                {/* Fixed height container */}
                 <iframe
                   className="w-full h-full"
                   src="https://corrieredibologna.corriere.it/notizie/cronaca/24_febbraio_04/bologna-hussain-e-hassan-la-fuga-dalla-guerra-poi-l-apertura-di-due-pizzerie-tutte-loro-ora-una-casa-64c290f4-b54a-43b8-9701-336586389xlk.shtml"

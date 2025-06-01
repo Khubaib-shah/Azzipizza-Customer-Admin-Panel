@@ -3,8 +3,6 @@ import {
   FaMapMarkerAlt,
   FaPhoneAlt,
   FaEnvelope,
-  FaFacebook,
-  FaTwitter,
   FaInstagram,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -26,16 +24,13 @@ const Contact = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Format the message for WhatsApp
     const whatsappMessage =
       `Name: ${formData.name}%0A` +
       `Email: ${formData.email}%0A` +
       `Message: ${formData.message}`;
 
-    // Open WhatsApp with the pre-filled message
-
     window.open(`https://wa.me/393713985810?text=${whatsappMessage}`, "_blank");
-    // Clear the form
+
     setFormData({
       name: "",
       email: "",
@@ -53,7 +48,6 @@ const Contact = () => {
           special requests, feel free to reach out to us.
         </p>
 
-        {/* Contact Form */}
         <div className="bg-gray-100 rounded-lg">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">
             Get in Touch
@@ -95,7 +89,6 @@ const Contact = () => {
           </form>
         </div>
 
-        {/* Contact Details */}
         <div className="grid md:grid-cols-2 gap-6 mt-6">
           <div className="p-4 bg-yellow-100 rounded-lg shadow-md text-center">
             <FaMapMarkerAlt className="text-yellow-800 text-4xl mx-auto mb-2" />
