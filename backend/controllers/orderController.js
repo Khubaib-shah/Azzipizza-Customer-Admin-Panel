@@ -1,93 +1,129 @@
-import { sendUpdatedOrders } from "../app.js";
+import { sendUpdatedOrders } from "../index.js";
 import Menu from "../models/MenuModel.js";
 import Order from "../models/OrderModel.js";
 
-// ************* HAMMAD UR REHMAN ************* //
-// this is a method of socket io for fetch real time updated
-
-// Create a new order
 export const createOrder = async (req, res) => {
   try {
     const {
       items,
-      paymentStatus,
-      orderStatus,
       deliveryAddress,
       phoneNumber,
       name,
+      total,
       customizations,
+      paymentMethod,
     } = req.body;
 
-    // Validate items
-    if (!items || items.length === 0) {
+    console.log("req.body =>", req.body);
+
+    if (!items?.length) {
       return res
         .status(400)
         .json({ message: "At least one item is required." });
     }
 
-    // Fetch menuItem details and calculate total price
-    let totalPriceOfItems = 0;
+    const orderItems = [];
+
     for (const item of items) {
-      if (!item.menuItem || !item.quantity) {
+      const { menuItem: menuItemId, quantity, selectedIngredients = [] } = item;
+
+      if (!menuItemId || !quantity) {
         return res.status(400).json({
-          message: "Each item must have a menuItem and a quantity.",
+          message: "Each item must have a menuItem and quantity.",
         });
       }
 
-      // Fetch the menuItem details from the database
-      const menuItem = await Menu.findById(item.menuItem);
+      const menuItem = await Menu.findById(menuItemId).populate("ingredients");
       if (!menuItem) {
         return res.status(404).json({
-          message: `Menu item with ID ${item.menuItem} not found.`,
+          message: `Menu item with ID ${menuItemId} not found.`,
         });
       }
 
-      // Calculate the total price for this item
-      const price = parseFloat(menuItem.price);
-      const quantity = parseInt(item.quantity);
-
-      if (isNaN(price) || isNaN(quantity)) {
-        throw new Error("Invalid price or quantity for an item.");
+      if (!Array.isArray(selectedIngredients)) {
+        return res.status(400).json({
+          message: "selectedIngredients must be an array of objects.",
+        });
       }
 
-      totalPriceOfItems += price * quantity;
+      const matchedIngredients = selectedIngredients.map((ing) => {
+        if (!ing._id || !ing.name || typeof ing.price !== "number") {
+          throw new Error(
+            "Each selected ingredient must include _id, name, and price."
+          );
+        }
+        return {
+          _id: ing._id,
+          name: ing.name,
+          price: ing.price,
+        };
+      });
+
+      const basePrice = menuItem.price;
+      const discountAmount =
+        menuItem.discount && menuItem.discount > 0
+          ? (menuItem.price * menuItem.discount) / 100
+          : 0;
+      const discountedPrice = parseFloat(
+        (basePrice - discountAmount).toFixed(2)
+      );
+
+      orderItems.push({
+        menuItem: menuItemId,
+        name: menuItem.name,
+        price: discountedPrice,
+        originalPrice: basePrice,
+        quantity,
+        selectedIngredients: matchedIngredients,
+        customizations: customizations || "",
+      });
     }
 
-    // Create new order
+    const validMethods = ["cash", "satispay", "scan", "bancomat"];
+
+    if (!validMethods.includes(paymentMethod)) {
+      return res.status(400).json({
+        message: "Invalid payment method selected.",
+      });
+    }
+
+    if (!deliveryAddress?.street || !deliveryAddress?.city) {
+      return res.status(400).json({
+        message: "Valid street and city in delivery address are required.",
+      });
+    }
+
     const newOrder = new Order({
-      items,
+      items: orderItems,
       name,
-      totalPrice: totalPriceOfItems,
-      paymentStatus,
-      orderStatus,
+      totalPrice: total,
       deliveryAddress,
       phoneNumber,
-      customizations,
+      paymentMethod,
     });
+    if (paymentMethod === "scan") {
+      newOrder.paymentStatus = "Completed";
+    }
 
-    // Save the order
     const savedOrder = await newOrder.save();
-
-    // Send real-time updates
+    console.log(savedOrder);
     await sendUpdatedOrders();
-    console.log("Order sent in real-time!");
 
-    // Return the saved order
     res.status(201).json(savedOrder);
   } catch (error) {
-    console.error("Error creating order:", error);
-    res
-      .status(500)
-      .json({ message: "Error creating order", error: error.message });
+    console.error("Order creation error:", error);
+    res.status(500).json({
+      message: "Error creating order",
+      error: error.message,
+    });
   }
 };
 
-// Get all orders with menu item details
 export const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find().populate(
       "items.menuItem",
-      "name price category image"
+      "name price category"
     );
     res.status(200).json(orders);
   } catch (error) {
@@ -95,7 +131,6 @@ export const getAllOrders = async (req, res) => {
   }
 };
 
-// Get a single order by ID
 export const getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id).populate(
@@ -110,7 +145,6 @@ export const getOrderById = async (req, res) => {
   }
 };
 
-// Update order
 export const updateOrderStatus = async (req, res) => {
   try {
     const { orderStatus, eta } = req.body;
@@ -130,6 +164,9 @@ export const updateOrderStatus = async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
+    await sendUpdatedOrders();
+    console.log("Order status updated in real-time!");
+
     res.status(200).json({
       message: "Order updated successfully",
       updatedOrder,
@@ -139,13 +176,16 @@ export const updateOrderStatus = async (req, res) => {
   }
 };
 
-// Delete an order safely
 export const deleteOrder = async (req, res) => {
   try {
     const deletedOrder = await Order.findByIdAndDelete(req.params.id);
     if (!deletedOrder) {
       return res.status(404).json({ message: "Order not found" });
     }
+
+    await sendUpdatedOrders();
+
+    console.log("Order deleted in real-time!");
     res.status(200).json({ message: "Order deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Error deleting order", error });

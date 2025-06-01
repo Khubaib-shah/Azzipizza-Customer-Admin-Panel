@@ -1,104 +1,92 @@
-import paypal from "paypal-rest-sdk";
-
-const { PAYPAL_MODE, PAYPAL_CLIENT_ID, PAYPAL_SECRET } = process.env;
-
-console.log(PAYPAL_MODE, PAYPAL_CLIENT_ID, PAYPAL_SECRET);
-
-paypal.configure({
-  mode: PAYPAL_MODE,
-  client_id: PAYPAL_CLIENT_ID,
-  client_secret: PAYPAL_SECRET,
-});
-
-export const payForOrder = async (req, res) => {
-  const { name, phoneNumber, street, city, zipCode, customizations } = req.body;
-
+import Order from "../models/OrderModel.js";
+import { satispayRequest } from "../utils/satispayRequest.js";
+import { io } from "../index.js";
+export const createCheckout = async (req, res) => {
   try {
-    const create_payment_json = {
-      intent: "sale",
-      payer: {
-        payment_method: "paypal",
+    const {
+      total,
+      description = "Order Payment for Azzipizza",
+      items,
+      name,
+      phoneNumber,
+      deliveryAddress,
+    } = req.body;
+
+    const body = {
+      amount_unit: Math.round(total * 100),
+      currency: "EUR",
+      callback_url: "https://azzipizza.it/api/webhook/satispay",
+      redirect_url: "https://azzipizza.it/payment-success",
+      metadata: {
+        items,
+        name,
+        phoneNumber,
+        deliveryAddress,
       },
-      redirect_urls: {
-        return_url: "http://localhost:5000/api/success",
-        cancel_url: "http://localhost:5000/api/cancel",
-      },
-      transactions: [
-        {
-          amount: {
-            currency: "USD",
-            total: "12", // No "$" sign
-          },
-          item_list: {
-            items: [
-              {
-                name: "Pizza",
-                sku: "001",
-                price: "12", // No "$" sign
-                currency: "USD",
-                quantity: 1,
-              },
-            ],
-          },
-          description: `Order for ${name}, Phone: ${phoneNumber}, Address: ${street}, ${city}, ${zipCode}. Customizations: ${customizations}`,
-        },
-      ],
+      description,
     };
 
-    paypal.payment.create(create_payment_json, (error, payment) => {
-      if (error) {
-        console.error("PayPal Error:", error);
-        return res.status(400).json({ error: error.response });
-      } else {
-        const approval_url = payment.links.find(
-          (link) => link.rel === "approval_url"
-        )?.href;
-        if (approval_url) {
-          return res.send({ approval_url });
-        }
-        return res.status(404).json({ message: "No approval URL found" });
-      }
-    });
-  } catch (error) {
-    console.error("Unexpected Error:", error);
-    return res.status(500).json({ message: "Something went wrong" });
-  }
-};
+    const data = await satispayRequest("/payment_requests", "POST", body);
+    console.log("Satispay response:", data);
 
-export const handleSuccess = async (req, res) => {
-  const { payerId, paymentId } = req.query;
-
-  const execute_payment_json = {
-    payer_id: payerId,
-    transactions: [
-      {
-        amount: {
-          currency: "USD",
-        },
-        total: "25:00",
-      },
-    ],
-  };
-
-  paypal.payment.execute(paymentId, execute_payment_json, (error, payment) => {
-    if (error) {
-      console.error(error);
-      throw error;
+    if (data.status === "CREATED" && data.checkout_url) {
+      res.json({ checkout_url: data.checkout_url });
     } else {
-      const response = JSON.stringify(payment);
-      const parsedResponse = JSON.parse(response);
-
-      console.log("parsedResponse ==>>", parsedResponse);
-
-      return res.redirect("http://localhost:3000/success");
+      throw new Error("Failed to create Satispay checkout");
     }
-  });
+  } catch (err) {
+    console.error("Satispay Checkout Error:", err);
+    res.status(500).json({ error: "Satispay checkout creation failed" });
+  }
 };
 
-export const handleFailure = async (req, res) => {
+export const satispayWebhook = async (req, res) => {
   try {
-    return res.redirect("http://localhost:3000/failure");
-  } catch (error) {
-    console.error(error);
+    const { id } = req.body;
+
+    const data = await satispayRequest(`/payment_requests/${id}`, "GET");
+
+    if (data.status !== "ACCEPTED") {
+      return res.status(200).send("Payment not accepted");
+    }
+
+    const existingOrder = await Order.findOne({ paymentId: id });
+    if (existingOrder) {
+      console.log("⚠️ Duplicate webhook call for:", id);
+      return res.status(200).send("Order already exists");
+    }
+
+    const { metadata } = data;
+
+    const newOrder = new Order({
+      paymentId: id,
+      items: metadata.items,
+      name: metadata.name,
+      phoneNumber: metadata.phoneNumber,
+      description,
+      totalPrice: data.amount_unit / 100,
+      deliveryAddress: metadata.deliveryAddress,
+      paymentStatus: "Completed",
+      orderStatus: "Pending",
+      paymentMethod: "satispay",
+    });
+
+    const savedOrder = await newOrder.save();
+    console.log("Order saved from Satispay:", savedOrder);
+
+    io.emit("order-paid", {
+      name: metadata.name,
+      phoneNumber: metadata.phoneNumber,
+      orderId: savedOrder._id,
+    });
+
+    res.status(200).send("Order saved");
+  } catch (err) {
+    console.error("Satispay webhook error:", err);
+    res.status(500).send("Error processing Satispay webhook");
   }
+};
+
+export const handleCancel = (req, res) => {
+  res.redirect("https://azzipizza.it/payment-cancelled");
 };
