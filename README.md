@@ -1,27 +1,40 @@
 # 🍕 Azzipizza – Online Pizza Ordering Website
 
-Azzipizza is a modern and user-friendly online pizza takeaway website where customers can easily browse a rich pizza menu, customize their orders, and securely pay online. Designed for speed, simplicity, and scalability, Azzipizza aims to bring the pizzeria experience right to your fingertips.
+**Azzipizza** is a modern, fast, and mobile-friendly online pizza ordering platform. Customers can browse a rich menu, customize pizzas, place orders, and securely pay online — all from the comfort of home. Designed for simplicity and scalability, it supports real-time order tracking and smooth kitchen management.
+
+---
+
+## 📌 Table of Contents
+- [Key Features](#-key-features)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Installation & Setup](#-installation--setup)
+- [Usage](#-usage)
+- [Prerequisites](#-prerequisites)
+- [Future Enhancements](#-future-enhancements)
+- [Author](#-author)
 
 ---
 
 ## 🚀 Key Features
 
-- 🧾 **Online Ordering System** – Customers can browse the menu, select items, and place orders instantly.
-- 🍕 **Pizza Customization** – Choose pizza size, crust, toppings, and extras before checkout.
-- 💳 **Secure Online Payments** – Integrated with payment gateway PayPal for fast and safe transactions.
-- 📦 **Real-Time Order Management** – Orders are sent to the backend for processing and can be managed by the kitchen.
-- 📱 **Responsive Design** – Mobile-friendly UI ensures a smooth experience across devices.
-- 🔔 **Live Order Notifications** – Kitchen/manager receives order alerts via sound and sockets (socket.io).
-- 📊 **Admin Features (Optional)** – Easily extendable to support admin dashboard, order history, and analytics.
+- 🧾 **Online Ordering** – Browse menu, customize pizzas, and checkout online.
+- 🍕 **Pizza Customization** – Choose size, crust, toppings, and extras.
+- 💳 **Secure Payments** – Integrated with **Satispay** or **Stripe**.
+- 📦 **Real-Time Order System** – Kitchen receives instant order notifications via **socket.io**.
+- 📱 **Responsive UI** – Works flawlessly on mobile, tablet, and desktop.
+- 🔔 **Live Order Notifications** – Sound alerts for new orders.
+- 📊 **Scalable Backend** – Easily expandable for admin dashboard, analytics, etc.
 
 ---
 
 ## 🧰 Tech Stack
 
 ### Frontend:
-- React
-- TailwindCss
-- ShadCn
+- React.js (Vite)
+- Tailwind CSS
+- ShadCN/UI
+- Zustand (or Context API for state)
 
 ### Backend:
 - Node.js
@@ -30,31 +43,22 @@ Azzipizza is a modern and user-friendly online pizza takeaway website where cust
 ### Database:
 - MongoDB (via Mongoose)
 
-### Other Tools:
-- Socket.io (for real-time order updates)
-- Satispay or Stripe (for payment integration)
-- dotenv (for environment variable management)
+### Others:
+- Socket.io (for real-time updates)
+- Satispay or Stripe (payment integration)
+- dotenv (environment config)
 
 ---
 
 ## 📦 Project Structure
+azzipizza/
+├── frontend/      # Customer web interface
+├── admin/         # Optional admin dashboard (for kitchen/staff)
+├── backend/       # REST API server
 
-
----
-
-## ✅ Prerequisites
-
-Make sure the following are installed:
-
-- [Node.js](https://nodejs.org/) (v14 or later)
-- [MongoDB](https://www.mongodb.com/) (local or Atlas)
-- (Optional) [Postman](https://www.postman.com/) – for API testing
-- (Optional) [Vercel](https://vercel.com/) – for frontend deployment
-- (Optional) [Render](https://render.com/) / [Railway](https://railway.app/) – for backend deployment
-
----
 
 ## ⚙️ Installation & Setup
+
 
 ```bash
 # 1. Clone the repository
