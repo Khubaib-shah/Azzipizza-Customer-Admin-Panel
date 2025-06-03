@@ -82,3 +82,8 @@ Browse the pizza menu on the homepage.
 Customize pizzas and add them to your cart.
 Place your order and pay securely.
 Kitchen receives order in real-time.
+
+🙌 Author
+Built with ❤️ by Khubaib Shah
+
+Feel free to star ⭐ the repo and contribute!
