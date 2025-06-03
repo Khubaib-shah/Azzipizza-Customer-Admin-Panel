@@ -8,7 +8,7 @@ Azzipizza is a modern and user-friendly online pizza takeaway website where cust
 
 - 🧾 **Online Ordering System** – Customers can browse the menu, select items, and place orders instantly.
 - 🍕 **Pizza Customization** – Choose pizza size, crust, toppings, and extras before checkout.
-- 💳 **Secure Online Payments** – Integrated with payment gateway (e.g., Stripe/Satispay) for fast and safe transactions.
+- 💳 **Secure Online Payments** – Integrated with payment gateway PayPal for fast and safe transactions.
 - 📦 **Real-Time Order Management** – Orders are sent to the backend for processing and can be managed by the kitchen.
 - 📱 **Responsive Design** – Mobile-friendly UI ensures a smooth experience across devices.
 - 🔔 **Live Order Notifications** – Kitchen/manager receives order alerts via sound and sockets (socket.io).
