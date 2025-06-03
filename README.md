@@ -38,3 +38,47 @@ Azzipizza is a modern and user-friendly online pizza takeaway website where cust
 ---
 
 ## 📦 Project Structure
+
+
+---
+
+## ✅ Prerequisites
+
+Make sure the following are installed:
+
+- [Node.js](https://nodejs.org/) (v14 or later)
+- [MongoDB](https://www.mongodb.com/) (local or Atlas)
+- (Optional) [Postman](https://www.postman.com/) – for API testing
+- (Optional) [Vercel](https://vercel.com/) – for frontend deployment
+- (Optional) [Render](https://render.com/) / [Railway](https://railway.app/) – for backend deployment
+
+---
+
+## ⚙️ Installation & Setup
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/Khubaib-shah/azzipizza.git
+
+# 2. Navigate into the project
+cd azzipizza/frontend pr cd azzipizza/admin 
+
+# 3. Install frontend or admin dependencies
+npm install
+
+# 4. Create a .env file at the root with the following:
+VITE_BASE_URL_PRO=your_backend_url
+VITE_BASE_URL_DEV=http://localhost:5000
+
+# 5. Start the server
+npm start
+
+Now open your browser and visit:
+👉 http://localhost:5173
+
+🧪 Usage
+
+Browse the pizza menu on the homepage.
+Customize pizzas and add them to your cart.
+Place your order and pay securely.
+Kitchen receives order in real-time.
