@@ -1,4 +1,3 @@
-import React from "react";
 import {
   X,
   Clock,
@@ -58,35 +57,46 @@ const OrderSideBar = ({
         return "bg-gray-400 text-white";
     }
   };
-
   console.log(selectedOrder);
+
   const handlePrinterAnOrder = async () => {
     dispatch({ type: "SET_PUNCH_LOADING", payload: true });
 
-    const blob = await pdf(<ReceiptDocument order={selectedOrder} />).toBlob();
+    try {
+      const blob = await pdf(
+        <ReceiptDocument order={selectedOrder} />
+      ).toBlob();
+      const blobUrl = URL.createObjectURL(blob);
 
-    const url = URL.createObjectURL(blob);
+      window.open(blobUrl, "_blank");
 
-    const newWindow = window.open(url);
+      const iframe = document.createElement("iframe");
+      iframe.style.position = "fixed";
+      iframe.style.right = "0";
+      iframe.style.bottom = "0";
+      iframe.style.width = "0";
+      iframe.style.height = "0";
+      iframe.style.border = "none";
+      iframe.src = blobUrl;
 
-    if (newWindow) {
-      // Try to auto print after a delay (may still be blocked)
-      const tryPrint = () => {
-        newWindow.focus();
-        newWindow.print();
+      iframe.onload = () => {
+        setTimeout(() => {
+          iframe.contentWindow?.focus();
+          iframe.contentWindow?.print();
+        }, 500);
       };
 
-      setTimeout(tryPrint, 1000);
-    } else {
-      alert("Pop-up blocked! Please allow pop-ups for this site.");
+      document.body.appendChild(iframe);
+
+      setTimeout(() => {
+        URL.revokeObjectURL(blobUrl);
+        document.body.removeChild(iframe);
+        dispatch({ type: "SET_PUNCH_LOADING", payload: false });
+      }, 3000);
+    } catch (error) {
+      console.error("Print error:", error);
+      dispatch({ type: "SET_PUNCH_LOADING", payload: false });
     }
-
-    setTimeout(() => {
-      // document.body.removeChild(iframe);
-      URL.revokeObjectURL(url);
-    }, 1000);
-
-    dispatch({ type: "SET_PUNCH_LOADING", payload: false });
   };
 
   return (
@@ -122,7 +132,6 @@ const OrderSideBar = ({
                 {selectedOrder.orderStatus}
               </span>
             </div>
-            {/* Calculate original total and discount */}
             {(() => {
               const originalTotal = selectedOrder.items.reduce(
                 (sum, item) =>

@@ -156,7 +156,7 @@ const Orders = () => {
 
     return result;
   };
-  // Handle Order Selection
+
   const handleSelectOrder = (order) => {
     setSelectedOrder(order);
     const remainingTime = order.eta
@@ -165,7 +165,6 @@ const Orders = () => {
     setEtaMinutes(remainingTime);
   };
 
-  // Handle ETA Update
   const handleUpdateOrder = async () => {
     if (!selectedOrder) return;
 
@@ -177,7 +176,6 @@ const Orders = () => {
         eta: etaTime,
       });
 
-      // Update local order list
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order._id === selectedOrder._id ? { ...order, eta: etaTime } : order
@@ -192,7 +190,6 @@ const Orders = () => {
     }
   };
 
-  // Handle Order Status Update
   const handleStatusChange = async (orderId, newStatus) => {
     dispatch({ type: "SET_UP_LOADING", payload: true });
     try {
@@ -216,7 +213,6 @@ const Orders = () => {
     }
   };
 
-  // Handle Order Deletion
   const handleDeleteOrder = async (orderId) => {
     dispatch({ type: "SET_DEL_LOADING", payload: true });
 
@@ -258,7 +254,6 @@ const Orders = () => {
         >
           Test
         </button>
-        {/* Example trigger */}
         <button onClick={() => setEditButton(true)}>
           Trigger Notification
         </button>

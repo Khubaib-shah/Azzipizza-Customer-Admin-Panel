@@ -107,7 +107,7 @@ const Sidebar = () => {
                             <li key={subIndex}>
                               <Link
                                 to={subItem.path}
-                                onClick={closeSidebar} // Close sidebar on click (mobile)
+                                onClick={closeSidebar}
                                 className={`block p-2 rounded-md text-sm transition-colors ${
                                   isActive(subItem.path)
                                     ? "bg-primary/10 text-primary font-medium"

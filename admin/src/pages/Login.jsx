@@ -1,4 +1,3 @@
-// Login.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -11,7 +10,6 @@ const Login = () => {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    // Hardcoded credentials
     const hardcodedEmail = "iosonokhan@gmail.com";
     const hardcodedPassword = "Frassinago16/b";
 
