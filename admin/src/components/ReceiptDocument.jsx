@@ -6,10 +6,7 @@ import {
   View,
   StyleSheet,
   Font,
-  // Image,
 } from "@react-pdf/renderer";
-
-// import BarCode from "../../public/barcode.png";
 
 Font.register({
   family: "Courier",
@@ -111,7 +108,6 @@ const ReceiptDocument = ({ order }) => {
   return (
     <Document>
       <Page size={[226.77, null]} wrap={false} style={styles.page}>
-        {/* Header */}
         <View style={styles.section}>
           <Text style={[styles.textCenter, styles.highlight]}>
             *** AzziPizza ***
@@ -131,7 +127,6 @@ const ReceiptDocument = ({ order }) => {
               key={idx}
               style={order.items.length > 1 ? styles.itemContainer : null}
             >
-              {/* Item Header */}
               <View style={styles.itemHeader}>
                 <View style={styles.itemDetails}>
                   <Text style={styles.itemQuantity}>{item.quantity}x</Text>
@@ -169,7 +164,6 @@ const ReceiptDocument = ({ order }) => {
                 })()}
               </View>
 
-              {/* Selected Ingredients */}
               {item.selectedIngredients &&
                 item.selectedIngredients.length > 0 && (
                   <View style={styles.ingredientContainer}>
@@ -195,7 +189,6 @@ const ReceiptDocument = ({ order }) => {
         )}
         <View style={styles.divider} />
 
-        {/* Order Details */}
         <View style={styles.section}>
           <Text style={styles.bold}>ID Ordine: {order._id.slice(-6)}</Text>
           <Text>Data: {formatDate(order.createdAt)}</Text>
@@ -207,8 +200,6 @@ const ReceiptDocument = ({ order }) => {
           </Text>
         </View>
         <View style={styles.divider} />
-
-        {/* Total and Payment */}
         <View style={styles.section}>
           {(() => {
             const originalTotal = order.items.reduce(
@@ -236,25 +227,39 @@ const ReceiptDocument = ({ order }) => {
               </>
             );
           })()}
+          {(() => {
+            const methodMap = {
+              cash: "in contanti alla consegna",
+              scan: "pagamento effettuato tramite QR code",
+              bancomat: "con Bancomat alla consegna",
+              paypal: "tramite PayPal",
+            };
 
-          <Text
-            style={{
-              fontWeight: 600,
-              fontSize: 10,
-              textAlign: "center",
-              marginTop: 5,
-            }}
-          >
-            Pagamento:{" "}
-            {order.paymentStatus === "Pending"
-              ? "Contanti alla consegna"
-              : "Pagato"}
-          </Text>
+            const methodLabel =
+              methodMap[order.paymentMethod] ||
+              "metodo di pagamento sconosciuto";
+
+            const paymentMessage =
+              order.paymentStatus === "Completed"
+                ? `Pagato con ${methodLabel}`
+                : `Pagare con ${methodLabel}`;
+
+            return (
+              <Text
+                style={{
+                  fontWeight: 600,
+                  fontSize: 10,
+                  textAlign: "center",
+                  marginTop: 5,
+                }}
+              >
+                {paymentMessage}
+              </Text>
+            );
+          })()}
         </View>
 
-        {/* Footer */}
         <View style={styles.section}>
-          {/* <Image style={styles.image} src={BarCode} /> */}
           <Text style={[styles.textCenter, { marginTop: 10 }]}>
             Grazie per aver ordinato da Azzi Pizza! 🍕
           </Text>
