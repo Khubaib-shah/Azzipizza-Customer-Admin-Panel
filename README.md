@@ -1,27 +1,93 @@
-# Azzipizza
+# 🍕 Azzipizza – Online Pizza Ordering Website
 
-Website Development Documentation for the Takeaway Azzipizza
+**Azzipizza** is a modern, fast, and mobile-friendly online pizza ordering platform. Customers can browse a rich menu, customize pizzas, place orders, and securely pay online — all from the comfort of home. Designed for simplicity and scalability, it supports real-time order tracking and smooth kitchen management.
 
-1.  Purpose of the Website
-    The goal is to create a website for our takeaway Azzipizza to improve customer service and
-    streamline the ordering process. The website will allow customers to place orders directly from their
-    homes, make online payments, and receive their orders efficiently.
-2.  Key Features- Online Ordering System: Customers can browse the menu, select items, and place orders directly
-    from the website.- Online Payment: The website will support online payments via credit and debit cards, allowing
-    customers to pay securely during the ordering process.- Detailed Menu: The menu will include:
+---
 
-- Item names
-- Prices
-- Photos of the dishes
-- Ingredients used in each item- Pizza Customization: Customers can customize their pizzas by adding extra ingredients. For
-  example, they can add sausage to a Margherita pizza or choose other toppings available in the
-  menu.
+## 📌 Table of Contents
+- [Key Features](#-key-features)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Installation & Setup](#-installation--setup)
+- [Usage](#-usage)
+- [Prerequisites](#-prerequisites)
+- [Future Enhancements](#-future-enhancements)
+- [Author](#-author)
 
-3.  Customer Information Collection
-    To ensure accurate deliveries, the website will collect the following customer details:- Full name (first and last name)- Delivery address (including street name and house number)- Contact phone number
-4.  Order Management- Preparation Time: The system will display the estimated preparation time for each order.- Delivery Details: All necessary information for the delivery process will be included, such as the
-    customer's address and contact number.
-5.  About Us Section
-    The website will include an "About Us" section with the following information:- Details about our Azzipizza, including our story and what makes our pizzas special- The location of our Azzipizza with the full address- Contact information for inquiries
-6.  Additional Considerations- The website will have a user-friendly design, making it easy for customers to navigate and place
-    orders.- Security measures will be implemented to protect customer data and payment information
+---
+
+## 🚀 Key Features
+
+- 🧾 **Online Ordering** – Browse menu, customize pizzas, and checkout online.
+- 🍕 **Pizza Customization** – Choose size, crust, toppings, and extras.
+- 💳 **Secure Payments** – Integrated with **Satispay** or **Stripe**.
+- 📦 **Real-Time Order System** – Kitchen receives instant order notifications via **socket.io**.
+- 📱 **Responsive UI** – Works flawlessly on mobile, tablet, and desktop.
+- 🔔 **Live Order Notifications** – Sound alerts for new orders.
+- 📊 **Scalable Backend** – Easily expandable for admin dashboard, analytics, etc.
+
+---
+
+## 🧰 Tech Stack
+
+### Frontend:
+- React.js (Vite)
+- Tailwind CSS
+- ShadCN/UI
+- Zustand (or Context API for state)
+
+### Backend:
+- Node.js
+- Express.js
+
+### Database:
+- MongoDB (via Mongoose)
+
+### Others:
+- Socket.io (for real-time updates)
+- Satispay or Stripe (payment integration)
+- dotenv (environment config)
+
+---
+
+## 📦 Project Structure
+azzipizza/
+├── frontend/      # Customer web interface
+├── admin/         # Optional admin dashboard (for kitchen/staff)
+├── backend/       # REST API server
+
+
+## ⚙️ Installation & Setup
+
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/Khubaib-shah/azzipizza.git
+
+# 2. Navigate into the project
+cd azzipizza/frontend pr cd azzipizza/admin 
+
+# 3. Install frontend or admin dependencies
+npm install
+
+# 4. Create a .env file at the root with the following:
+VITE_BASE_URL_PRO=your_backend_url
+VITE_BASE_URL_DEV=http://localhost:5000
+
+# 5. Start the server
+npm start
+
+Now open your browser and visit:
+👉 http://localhost:5173
+
+🧪 Usage
+
+Browse the pizza menu on the homepage.
+Customize pizzas and add them to your cart.
+Place your order and pay securely.
+Kitchen receives order in real-time.
+
+🙌 Author
+Built with ❤️ by Khubaib Shah
+
+Feel free to star ⭐ the repo and contribute!
