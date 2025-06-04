@@ -100,15 +100,15 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
     try {
       let response;
 
-      if (method === "satispay") {
-        response = await baseUri.post(
-          "/api/payment/create-checkout",
-          orderData
-        );
+      if (method === "paypal") {
+        response = await baseUri.post("/api/payment/create", orderData);
         if (response.status === 200 && response.data.redirectUrl) {
           saveOrderToLocalStorage(response.data);
 
           window.location.href = response.data.redirectUrl;
+          toast.success("🎉 Ordine effettuato! Lo stiamo preparando per te.", {
+            position: "top-center",
+          });
           return;
         } else {
           toast.error("Failed to start direct Satispay payment", {
@@ -140,7 +140,7 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
         position: "top-center",
       });
     } finally {
-      if (method !== "satispay") {
+      if (method !== "paypal") {
         setIsSubmitting(false);
       }
     }

@@ -10,7 +10,7 @@ export function PaymentModal({ isSubmitting, handleOrderSubmit, totalPrice }) {
     { value: "cash", label: "Paga in contanti" },
     { value: "scan", label: "Scan to Pay (QR)" },
     { value: "bancomat", label: "Bancomat alla consegna" },
-    { value: "satispay", label: "Paga con Satispay" },
+    { value: "paypal", label: "Paga con paypal" },
   ];
 
   useEffect(() => {
@@ -52,9 +52,7 @@ export function PaymentModal({ isSubmitting, handleOrderSubmit, totalPrice }) {
         </Button>
         <Button
           onClick={() => handleOrderSubmit(paymentMethod)}
-          disabled={
-            isSubmitting || !paymentMethod || paymentMethod === "satispay"
-          }
+          disabled={isSubmitting || !paymentMethod}
           className={`text-white ${
             isSubmitting || !paymentMethod || paymentMethod === "satispay"
               ? "bg-green-300 cursor-not-allowed"

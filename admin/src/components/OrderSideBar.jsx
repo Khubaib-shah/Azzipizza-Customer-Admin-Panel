@@ -58,7 +58,6 @@ const OrderSideBar = ({
     }
   };
   console.log(selectedOrder);
-
   const handlePrinterAnOrder = async () => {
     dispatch({ type: "SET_PUNCH_LOADING", payload: true });
 
@@ -68,7 +67,7 @@ const OrderSideBar = ({
       ).toBlob();
       const blobUrl = URL.createObjectURL(blob);
 
-      window.open(blobUrl, "_blank");
+      const manualWindow = window.open(blobUrl, "_blank");
 
       const iframe = document.createElement("iframe");
       iframe.style.position = "fixed";
@@ -80,14 +79,17 @@ const OrderSideBar = ({
       iframe.src = blobUrl;
 
       iframe.onload = () => {
-        setTimeout(() => {
+        try {
           iframe.contentWindow?.focus();
           iframe.contentWindow?.print();
-        }, 500);
+        } catch (printError) {
+          console.warn("Auto print failed, user can print manually.");
+        }
       };
 
       document.body.appendChild(iframe);
 
+      // Cleanup after a short delay
       setTimeout(() => {
         URL.revokeObjectURL(blobUrl);
         document.body.removeChild(iframe);
