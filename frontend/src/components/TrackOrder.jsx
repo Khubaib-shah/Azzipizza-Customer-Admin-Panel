@@ -158,7 +158,7 @@ const TrackOrder = () => {
 
   return (
     <div className="w-full fixed bottom-0 left-0 z-50 pb-safe bg-orange-50 border-t-4 border-amber-500 shadow-lg rounded-tr-3xl rounded-tl-3xl">
-      <div className="mx-auto max-w-screen-md">
+      <div>
         <div
           ref={wrapperRef}
           className="rounded-tr-3xl rounded-tl-3xl overflow-hidden"
