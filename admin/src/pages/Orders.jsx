@@ -181,6 +181,16 @@ const Orders = () => {
           order._id === selectedOrder._id ? { ...order, eta: etaTime } : order
         )
       );
+
+      if (selectedOrder._id === data.updatedOrder._id) {
+        setSelectedOrder((prev) => ({ ...prev, eta: etaTime }));
+      }
+
+      socket.emit("order:update", {
+        ...data.updatedOrder,
+        eta: etaTime,
+      });
+
       dispatch({ type: "SET_UP_LOADING", payload: false });
 
       console.log("Updated ETA:", data.updatedOrder.eta);
@@ -192,8 +202,11 @@ const Orders = () => {
 
   const handleStatusChange = async (orderId, newStatus) => {
     dispatch({ type: "SET_UP_LOADING", payload: true });
+
     try {
-      await baseUri.put(`/api/orders/${orderId}`, { orderStatus: newStatus });
+      const { data } = await baseUri.put(`/api/orders/${orderId}`, {
+        orderStatus: newStatus,
+      });
 
       setOrders((prev) =>
         prev.map((order) =>
@@ -204,6 +217,12 @@ const Orders = () => {
       if (selectedOrder && selectedOrder._id === orderId) {
         setSelectedOrder((prev) => ({ ...prev, orderStatus: newStatus }));
       }
+
+      socket.emit("order:update", {
+        ...data.updatedOrder,
+        orderStatus: newStatus,
+      });
+
       dispatch({ type: "SET_UP_LOADING", payload: false });
     } catch (error) {
       dispatch({ type: "SET_UP_LOADING", payload: false });
@@ -223,6 +242,9 @@ const Orders = () => {
       if (selectedOrder && selectedOrder._id === orderId) {
         setSelectedOrder(null);
       }
+
+      socket.emit("order:delete", orderId);
+
       dispatch({ type: "SET_DEL_LOADING", payload: false });
     } catch (error) {
       dispatch({ type: "SET_DEL_LOADING", payload: false });
@@ -408,7 +430,6 @@ const Orders = () => {
         </Tabs>
       </div>
 
-      {/* Order Sidebar */}
       <OrderSideBar
         selectedOrder={selectedOrder}
         etaMinutes={etaMinutes}
