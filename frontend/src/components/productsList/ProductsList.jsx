@@ -1,14 +1,13 @@
 import { useState, useRef, useContext, useMemo } from "react";
 import ProductCard from "../cards/ProductsCard";
-import { MdStarOutline } from "react-icons/md";
 import { PiListBulletsBold } from "react-icons/pi";
-import { FaBicycle, FaSearch } from "react-icons/fa";
 import smoothscroll from "smoothscroll-polyfill";
 import Context from "../../context/dataContext";
 import MenuModal from "../Modal/MenuModel";
 import CompDetails from "../CompDetails";
 import ProductsListSkeleton from "../ProductsListSkeleton";
 import TrackOrder from "../TrackOrder";
+import { FaSearch } from "react-icons/fa";
 
 function ProductsList() {
   const { items, isLoading } = useContext(Context);

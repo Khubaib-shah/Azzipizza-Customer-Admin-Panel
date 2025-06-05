@@ -3,6 +3,7 @@ import { io } from "socket.io-client";
 import { URL } from "../config/config";
 
 const SOCKET_URL = URL;
+
 const socket = io(SOCKET_URL, {
   transports: ["websocket"],
   reconnection: true,
@@ -11,32 +12,33 @@ const socket = io(SOCKET_URL, {
 });
 
 const isOrderActive = (order) => {
-  return order.orderStatus.toLowerCase() !== "delivered";
+  const status = order.orderStatus.toLowerCase();
+  return status !== "delivered" && status !== "cancelled";
 };
 
 const getTimeLeft = (order) => {
-  if (order.orderStatus.toLowerCase() === "delivered") {
-    return "Delivered";
-  }
+  const status = order.orderStatus.toLowerCase();
+  if (status === "delivered") return "Delivered";
+  if (status === "cancelled") return "Cancelled";
 
   const now = new Date();
+  let targetTime;
 
   if (order.eta) {
-    const eta = new Date(order.eta);
-    const remainingMs = eta - now;
-    const remainingMin = Math.ceil(remainingMs / 60000);
-    return remainingMin > 0
-      ? `${remainingMin} min remaining`
-      : "Less than 1 min remaining";
+    targetTime = new Date(order.eta);
+  } else {
+    const createdAt = new Date(order.createdAt);
+    targetTime = new Date(createdAt.getTime() + 20 * 60000);
   }
 
-  const created = new Date(order.createdAt);
-  const passed = Math.floor((now - created) / 60000);
-  const remaining = 20 - passed;
+  const remainingMs = targetTime - now;
 
-  return remaining > 0
-    ? `${remaining} min remaining`
-    : "Less than 1 min remaining";
+  if (remainingMs <= 0) {
+    return "Time expired";
+  }
+
+  const remainingMin = Math.ceil(remainingMs / 60000);
+  return `${remainingMin} min remaining`;
 };
 
 const getStatusColor = (status) => {
@@ -44,9 +46,12 @@ const getStatusColor = (status) => {
     case "preparing":
       return "text-yellow-600";
     case "on the way":
+    case "out for delivery":
       return "text-blue-600";
     case "delivered":
       return "text-green-600";
+    case "cancelled":
+      return "text-red-600";
     default:
       return "text-orange-600";
   }
@@ -62,23 +67,23 @@ const TrackOrder = () => {
     const stored = localStorage.getItem("orderHistory");
     if (stored) {
       const parsed = JSON.parse(stored);
-      const recent = parsed.filter((order) => isOrderActive(order));
-      setOrders(recent);
+      const activeOrders = parsed.filter(isOrderActive);
+      setOrders(activeOrders);
     }
-  }, []);
 
-  useEffect(() => {
-    socket.on("connect", () => {
+    const onConnect = () => {
       setSocketConnected(true);
       console.log("Connected to socket server");
-    });
+    };
 
-    socket.on("disconnect", () => {
+    const onDisconnect = () => {
       setSocketConnected(false);
       console.log("Disconnected from socket server");
-    });
+    };
 
-    socket.on("order:new", (newOrder) => {
+    const handleNewOrder = (newOrder) => {
+      if (!isOrderActive(newOrder)) return;
+
       setOrders((prev) => {
         const exists = prev.some((o) => o._id === newOrder._id);
         return exists ? prev : [newOrder, ...prev];
@@ -86,41 +91,50 @@ const TrackOrder = () => {
 
       const stored = localStorage.getItem("orderHistory") || "[]";
       const parsed = JSON.parse(stored);
-      localStorage.setItem(
-        "orderHistory",
-        JSON.stringify([newOrder, ...parsed])
-      );
-    });
+      const existsInStorage = parsed.some((o) => o._id === newOrder._id);
 
-    socket.on("order:update", (updatedOrder) => {
-      setOrders((prev) => {
-        const updated = prev.map((order) =>
-          order._id === updatedOrder._id ? updatedOrder : order
+      if (!existsInStorage) {
+        localStorage.setItem(
+          "orderHistory",
+          JSON.stringify([newOrder, ...parsed])
         );
+      }
+    };
 
-        return updated.filter(
-          (order) => order.orderStatus.toLowerCase() !== "delivered"
+    const handleOrderUpdate = (updatedOrder) => {
+      setOrders((prev) => {
+        if (!isOrderActive(updatedOrder)) {
+          return prev.filter((o) => o._id !== updatedOrder._id);
+        }
+
+        return prev.map((order) =>
+          order._id === updatedOrder._id ? updatedOrder : order
         );
       });
 
       const stored = localStorage.getItem("orderHistory") || "[]";
-      const parsed = JSON.parse(stored);
-      const updatedStorage = parsed.map((order) =>
+      let parsed = JSON.parse(stored);
+
+      parsed = parsed.map((order) =>
         order._id === updatedOrder._id ? updatedOrder : order
       );
-      localStorage.setItem("orderHistory", JSON.stringify(updatedStorage));
-    });
 
-    socket.on("order:delete", (deletedOrderId) => {
+      localStorage.setItem("orderHistory", JSON.stringify(parsed));
+    };
+
+    const handleOrderDelete = (deletedOrderId) => {
       setOrders((prev) => prev.filter((o) => o._id !== deletedOrderId));
 
       const stored = localStorage.getItem("orderHistory") || "[]";
-      const parsed = JSON.parse(stored);
-      localStorage.setItem(
-        "orderHistory",
-        JSON.stringify(parsed.filter((o) => o._id !== deletedOrderId))
-      );
-    });
+      const parsed = JSON.parse(stored).filter((o) => o._id !== deletedOrderId);
+      localStorage.setItem("orderHistory", JSON.stringify(parsed));
+    };
+
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+    socket.on("order:new", handleNewOrder);
+    socket.on("order:update", handleOrderUpdate);
+    socket.on("order:delete", handleOrderDelete);
 
     const handleClickOutside = (e) => {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
@@ -132,11 +146,11 @@ const TrackOrder = () => {
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
-      socket.off("connect");
-      socket.off("disconnect");
-      socket.off("order:new");
-      socket.off("order:update");
-      socket.off("order:delete");
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+      socket.off("order:new", handleNewOrder);
+      socket.off("order:update", handleOrderUpdate);
+      socket.off("order:delete", handleOrderDelete);
     };
   }, []);
 
@@ -224,7 +238,7 @@ const TrackOrder = () => {
                             <span className="text-xs sm:text-sm text-gray-500">
                               Ingredients:{" "}
                               {item.selectedIngredients
-                                .map((ing) => ing.name)
+                                ?.map((ing) => ing.name)
                                 .join(", ")}
                             </span>
                           </li>
