@@ -1,4 +1,4 @@
-import React, {
+import {
   useEffect,
   useState,
   useCallback,
@@ -28,6 +28,7 @@ import { useNotifications } from "../hooks/useNotifications";
 import NotificationSound from "/notification-sound.wav";
 import CompletedOrderTable from "../components/CompletedOrderTable";
 import ActiveOrderTable from "../components/ActiveOrderTable";
+import { reducer } from "../utils/reducer";
 
 const initialState = {
   loading: false,
@@ -36,23 +37,8 @@ const initialState = {
   punchLoading: false,
 };
 
-function reducer(state, action) {
-  switch (action.type) {
-    case "SET_LOADING":
-      return { ...state, loading: action.payload };
-    case "SET_DEL_LOADING":
-      return { ...state, delLoading: action.payload };
-    case "SET_UP_LOADING":
-      return { ...state, upLoading: action.payload };
-    case "SET_PUNCH_LOADING":
-      return { ...state, punchLoading: action.payload };
-    default:
-      return state;
-  }
-}
 const Orders = () => {
   const [orders, setOrders] = useState([]);
-  const [filteredOrders, setFilteredOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [etaMinutes, setEtaMinutes] = useState(0);
   const [error, setError] = useState("");
@@ -61,30 +47,20 @@ const Orders = () => {
   const [refreshing, setRefreshing] = useState(false);
   const { setNotifications } = useNotifications();
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [editButton, setEditButton] = useState(false);
-  const buttonRef = useRef(null);
   const audio = useRef(new Audio(NotificationSound)).current;
 
-  const socket = useMemo(() => io(URL));
-
-  useEffect(() => {
-    if (editButton && buttonRef.current) {
-      buttonRef.current.click();
-    }
-  }, [editButton]);
-
-  const onShowNotificationClicked = () => {
-    audio.play();
-  };
+  const socket = useMemo(() => io(URL, { transports: ["websocket"] }), []);
 
   const fetchOrders = useCallback(async () => {
     try {
       dispatch({ type: "SET_LOADING", payload: true });
       const { data } = await baseUri.get("/api/orders");
 
-      console.log(data);
-      setOrders(data);
-      setFilteredOrders(data);
+      const sortedData = [...data].sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+
+      setOrders(sortedData);
       dispatch({ type: "SET_LOADING", payload: false });
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -98,71 +74,117 @@ const Orders = () => {
     await fetchOrders();
     setTimeout(() => setRefreshing(false), 500);
   };
+  console.log("Socket connected:", socket.connected);
 
   useEffect(() => {
     fetchOrders();
 
-    const handleLatestOrders = (data) => {
-      const reversedData = data.slice().reverse();
-      const latestOrder = reversedData[0];
+    const handleNewOrder = (newOrder) => {
+      console.log("New order received via socket:", newOrder);
 
       setOrders((prevOrders) => {
-        const isNew = !prevOrders.some((o) => o._id === latestOrder._id);
+        const exists = prevOrders.some(
+          (order) => order._id.toString() === newOrder._id.toString()
+        );
+        if (!exists) {
+          console.log("Adding new order to state");
 
-        if (isNew && latestOrder && latestOrder.items) {
           setNotifications((prev) => [
             ...prev,
             {
-              id: latestOrder._id,
+              id: newOrder._id,
               message: "New order received!",
-              items: latestOrder,
+              items: newOrder,
             },
           ]);
 
-          onShowNotificationClicked();
+          audio.play();
+          return [newOrder, ...prevOrders];
+        } else {
+          console.log("Order already exists in state");
         }
 
-        return reversedData;
+        return prevOrders;
       });
-
-      setFilteredOrders(applyFilters(reversedData, searchTerm, statusFilter));
     };
 
-    socket.on("order:new", handleLatestOrders);
+    const handleOrderUpdate = (updatedOrder) => {
+      setOrders((prev) =>
+        prev.map((order) =>
+          order._id === updatedOrder._id ? updatedOrder : order
+        )
+      );
+
+      if (selectedOrder?._id === updatedOrder._id) {
+        setSelectedOrder(updatedOrder);
+      }
+    };
+
+    const handleOrderDelete = (deletedOrderId) => {
+      setOrders((prev) => prev.filter((order) => order._id !== deletedOrderId));
+
+      if (selectedOrder?._id === deletedOrderId) {
+        setSelectedOrder(null);
+      }
+    };
+
+    socket.on("order:new", handleNewOrder);
+    console.log("Socket connected:", socket.connected);
+    socket.on("connect", () => {
+      console.log("Socket connected");
+      setNotifications((prev) => [
+        ...prev,
+        {
+          id: "socket-connected",
+          message: "Connected to order updates",
+        },
+      ]);
+    });
+    socket.on("order:update", handleOrderUpdate);
+    socket.on("order:delete", handleOrderDelete);
 
     return () => {
-      socket.off("order:new", handleLatestOrders);
+      socket.off("order:new", handleNewOrder);
+      socket.off("order:update", handleOrderUpdate);
+      socket.off("order:delete", handleOrderDelete);
     };
-  }, []);
+  }, [fetchOrders, selectedOrder, setNotifications, socket, audio]);
 
-  useEffect(() => {
-    setFilteredOrders(applyFilters(orders, searchTerm, statusFilter));
-  }, [searchTerm, statusFilter, orders]);
-
-  const applyFilters = (orders, search, status) => {
+  const applyFilters = useCallback((orders, search, status) => {
     let result = [...orders];
 
     if (search) {
+      const searchLower = search.toLowerCase();
       result = result.filter(
         (order) =>
-          order.name.toLowerCase().includes(search.toLowerCase()) ||
-          order._id.toLowerCase().includes(search.toLowerCase())
+          order.name?.toLowerCase().includes(searchLower) ||
+          order._id.toLowerCase().includes(searchLower)
       );
     }
 
-    if (status) {
+    if (status && status !== "All Statuses") {
       result = result.filter((order) => order.orderStatus === status);
     }
 
     return result;
-  };
+  }, []);
+
+  const filteredOrders = useMemo(() => {
+    return applyFilters(orders, searchTerm, statusFilter);
+  }, [orders, searchTerm, statusFilter, applyFilters]);
 
   const handleSelectOrder = (order) => {
     setSelectedOrder(order);
-    const remainingTime = order.eta
-      ? Math.max(0, Math.floor((new Date(order.eta) - Date.now()) / 60000))
-      : 0;
-    setEtaMinutes(remainingTime);
+
+    if (order.eta) {
+      const remainingTime = Math.max(
+        0,
+        Math.floor((new Date(order.eta) - Date.now()) / 60000)
+      );
+      setEtaMinutes(remainingTime);
+    } else {
+      setEtaMinutes(20);
+    }
   };
 
   const handleUpdateOrder = async () => {
@@ -172,12 +194,13 @@ const Orders = () => {
 
     try {
       const etaTime = new Date(Date.now() + etaMinutes * 60000);
+
       const { data } = await baseUri.put(`/api/orders/${selectedOrder._id}`, {
         eta: etaTime,
       });
 
-      setOrders((prevOrders) =>
-        prevOrders.map((order) =>
+      setOrders((prev) =>
+        prev.map((order) =>
           order._id === selectedOrder._id ? { ...order, eta: etaTime } : order
         )
       );
@@ -192,11 +215,10 @@ const Orders = () => {
       });
 
       dispatch({ type: "SET_UP_LOADING", payload: false });
-
-      console.log("Updated ETA:", data.updatedOrder.eta);
     } catch (error) {
       console.error("Failed to update order:", error);
       setError("Failed to update order ETA. Please try again.");
+      dispatch({ type: "SET_UP_LOADING", payload: false });
     }
   };
 
@@ -225,10 +247,9 @@ const Orders = () => {
 
       dispatch({ type: "SET_UP_LOADING", payload: false });
     } catch (error) {
-      dispatch({ type: "SET_UP_LOADING", payload: false });
-
       console.error("Failed to update order status:", error);
       setError("Failed to update order status. Please try again.");
+      dispatch({ type: "SET_UP_LOADING", payload: false });
     }
   };
 
@@ -237,6 +258,7 @@ const Orders = () => {
 
     try {
       await baseUri.delete(`/api/orders/${orderId}`);
+
       setOrders((prev) => prev.filter((order) => order._id !== orderId));
 
       if (selectedOrder && selectedOrder._id === orderId) {
@@ -247,10 +269,9 @@ const Orders = () => {
 
       dispatch({ type: "SET_DEL_LOADING", payload: false });
     } catch (error) {
-      dispatch({ type: "SET_DEL_LOADING", payload: false });
-
       console.error("Failed to delete order:", error);
       setError("Failed to delete order. Please try again.");
+      dispatch({ type: "SET_DEL_LOADING", payload: false });
     }
   };
 
@@ -266,20 +287,8 @@ const Orders = () => {
     <div
       className={`transition-all duration-300 ${
         selectedOrder ? "mr-80" : ""
-      }overflow-hidden`}
+      } overflow-hidden`}
     >
-      <>
-        <button
-          ref={buttonRef}
-          onClick={onShowNotificationClicked}
-          className="invisible"
-        >
-          Test
-        </button>
-        <button onClick={() => setEditButton(true)}>
-          Trigger Notification
-        </button>
-      </>
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
           <div>
@@ -308,7 +317,7 @@ const Orders = () => {
                 <SelectValue placeholder="All Statuses" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem>All Statuses</SelectItem>
+                <SelectItem value="All Statuses">All Statuses</SelectItem>
                 {statusOptions.map((status) => (
                   <SelectItem
                     key={status}
@@ -362,7 +371,7 @@ const Orders = () => {
                   <div className="flex justify-center items-center h-64">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
                   </div>
-                ) : filteredOrders?.filter(
+                ) : filteredOrders.filter(
                     (order) =>
                       order.orderStatus !== "Delivered" &&
                       order.orderStatus !== "Cancelled"
