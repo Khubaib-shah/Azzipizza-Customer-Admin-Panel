@@ -128,10 +128,10 @@ const Orders = () => {
       setFilteredOrders(applyFilters(reversedData, searchTerm, statusFilter));
     };
 
-    socket.on("latestOrders", handleLatestOrders);
+    socket.on("order:new", handleLatestOrders);
 
     return () => {
-      socket.off("latestOrders", handleLatestOrders);
+      socket.off("order:new", handleLatestOrders);
     };
   }, []);
 
