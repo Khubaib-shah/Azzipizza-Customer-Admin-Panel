@@ -130,16 +130,6 @@ const Orders = () => {
 
     socket.on("order:new", handleNewOrder);
     console.log("Socket connected:", socket.connected);
-    socket.on("connect", () => {
-      console.log("Socket connected");
-      setNotifications((prev) => [
-        ...prev,
-        {
-          id: "socket-connected",
-          message: "Connected to order updates",
-        },
-      ]);
-    });
     socket.on("order:update", handleOrderUpdate);
     socket.on("order:delete", handleOrderDelete);
 
