@@ -57,6 +57,15 @@ const OrderSideBar = ({
         return "bg-gray-400 text-white";
     }
   };
+  const getPaymentStatusColor = (status) => {
+    switch (status) {
+      case "Completed":
+        return "bg-green-500 text-white";
+      case "Pending":
+        return "bg-blue-500 text-white";
+    }
+  };
+
   console.log(selectedOrder);
   const handlePrinterAnOrder = async () => {
     dispatch({ type: "SET_PUNCH_LOADING", payload: true });
@@ -89,7 +98,6 @@ const OrderSideBar = ({
 
       document.body.appendChild(iframe);
 
-      // Cleanup after a short delay
       setTimeout(() => {
         URL.revokeObjectURL(blobUrl);
         document.body.removeChild(iframe);
@@ -100,7 +108,7 @@ const OrderSideBar = ({
       dispatch({ type: "SET_PUNCH_LOADING", payload: false });
     }
   };
-
+  console.log(selectedOrder);
   return (
     <div className="fixed top-0 right-0 w-80 h-full bg-white shadow-lg border-l border-gray-200 pt-16 transition-transform duration-300 flex flex-col z-10">
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
@@ -125,13 +133,19 @@ const OrderSideBar = ({
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-500">Status</span>
+              <span className="text-sm text-gray-500">Method</span>
+              <span className={"px-2 py-1 text-xs rounded-full"}>
+                {selectedOrder.paymentMethod.toUpperCase()}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-500">Payment</span>
               <span
-                className={`px-2 py-1 text-xs rounded-full ${getStatusColor(
-                  selectedOrder.orderStatus
+                className={`px-2 py-1 text-xs rounded-full ${getPaymentStatusColor(
+                  selectedOrder.paymentStatus
                 )}`}
               >
-                {selectedOrder.orderStatus}
+                {selectedOrder.paymentStatus}
               </span>
             </div>
             {(() => {
