@@ -5,12 +5,12 @@ import { URL } from "../config/config";
 const SOCKET_URL = URL;
 
 const isOrderActive = (order) => {
-  const status = order.orderStatus.toLowerCase();
+  const status = order?.orderStatus?.toLowerCase();
   return status !== "delivered" && status !== "cancelled";
 };
 
 const getTimeLeft = (order) => {
-  const status = order.orderStatus.toLowerCase();
+  const status = order?.orderStatus?.toLowerCase();
   if (status === "delivered") return "Delivered";
   if (status === "cancelled") return "Cancelled";
 
@@ -26,7 +26,7 @@ const getTimeLeft = (order) => {
 };
 
 const getStatusColor = (status) => {
-  switch (status.toLowerCase()) {
+  switch (status?.toLowerCase()) {
     case "preparing":
       return "text-yellow-600";
     case "on the way":
@@ -49,7 +49,7 @@ const TrackOrder = () => {
 
   useEffect(() => {
     const stored = localStorage.getItem("orderHistory");
-    if (stored) {
+    if (stored && stored !== "[]") {
       const activeOrders = JSON.parse(stored).filter(isOrderActive);
       setOrders(activeOrders);
     }

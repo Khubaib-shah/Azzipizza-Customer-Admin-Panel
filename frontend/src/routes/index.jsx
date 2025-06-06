@@ -4,6 +4,7 @@ import Home from "../pages/Home";
 import About from "../pages/About";
 import Contact from "../pages/ContactUs";
 import Cart from "../pages/Cart";
+import OrderSuccess from "../components/paymentPages/OrderSuccess";
 import PaymentSuccess from "../components/paymentPages/PaymentSuccess";
 import PaymentError from "../components/paymentPages/PaymentError";
 import PaymentCancelled from "../components/paymentPages/PaymentCancelled";
@@ -31,7 +32,11 @@ const router = createBrowserRouter([
       },
 
       {
-        path: "order-success",
+        path: "order-success/:orderId",
+        element: <OrderSuccess />,
+      },
+      {
+        path: "payment-success",
         element: <PaymentSuccess />,
       },
       {

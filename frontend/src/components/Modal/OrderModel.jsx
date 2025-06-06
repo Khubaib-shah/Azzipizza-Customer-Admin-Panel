@@ -78,6 +78,9 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
 
     const formattedItems = cartItems.map((item) => ({
       menuItem: item._id,
+      name: item.name,
+      price: Number(item.price).toFixed(2),
+      ...(method === "paypal" && { discount: item.discount || 0 }),
       quantity: item.quantity,
       selectedIngredients: item.selectedIngredients || [],
     }));
@@ -100,26 +103,26 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
       let response;
 
       if (method === "paypal") {
-        response = await baseUri.post("/api/payment/create", orderData);
-        if (response.status === 200 && response.data.redirectUrl) {
-          saveOrderToLocalStorage(response.data);
+        console.log("Starting PayPal payment with order data:", orderData);
+        response = await baseUri.post("/api/payment/create-payment", orderData);
+        console.log(response);
+        if (response.status >= 200 <= 300 && response.data.approvalUrl) {
+          window.location.href = response.data.approvalUrl;
+          setIsSubmitting(false);
 
-          window.location.href = response.data.redirectUrl;
-          toast.success("🎉 Ordine effettuato! Lo stiamo preparando per te.", {
-            position: "top-center",
-          });
           return;
         } else {
-          toast.error("Failed to start direct Satispay payment", {
+          toast.error("Failed to start direct paypal payment", {
             position: "top-center",
           });
+          setIsSubmitting(false);
+
           return;
         }
       }
 
       if (["scan", "bancomat", "cash"].includes(method)) {
         response = await baseUri.post("/api/orders", orderData);
-
         if (response.status >= 200 && response.status < 300) {
           saveOrderToLocalStorage(response.data);
 
@@ -129,7 +132,7 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
 
           closeModal();
 
-          setTimeout(() => navigate("/order-success"), 50);
+          setTimeout(() => navigate(`/order-success/${response.data._id}`), 50);
           return;
         }
       }
