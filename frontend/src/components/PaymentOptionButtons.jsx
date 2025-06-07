@@ -10,7 +10,7 @@ export function PaymentModal({ isSubmitting, handleOrderSubmit, totalPrice }) {
     { value: "cash", label: "Paga in contanti" },
     { value: "scan", label: "Scan to Pay (QR)" },
     { value: "bancomat", label: "Bancomat alla consegna" },
-    { value: "paypal", label: "Paga con paypal" },
+    { value: "paypal", label: "pagamento online" },
   ];
 
   useEffect(() => {
@@ -59,11 +59,7 @@ export function PaymentModal({ isSubmitting, handleOrderSubmit, totalPrice }) {
               : "bg-green-600 hover:bg-green-700"
           }`}
         >
-          {isSubmitting
-            ? "Processing..."
-            : paymentMethod === "satispay"
-            ? "Not Available yet"
-            : "Conferma pagamento"}
+          {isSubmitting ? "Processing..." : "Conferma pagamento"}
         </Button>
       </div>
     </div>
