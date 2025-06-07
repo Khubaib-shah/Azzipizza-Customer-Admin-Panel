@@ -80,7 +80,6 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
       menuItem: item._id,
       name: item.name,
       price: Number(item.price).toFixed(2),
-      ...(method === "paypal" && { discount: item.discount || 0 }),
       quantity: item.quantity,
       selectedIngredients: item.selectedIngredients || [],
     }));
