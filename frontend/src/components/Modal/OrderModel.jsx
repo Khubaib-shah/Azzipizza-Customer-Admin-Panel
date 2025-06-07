@@ -34,7 +34,7 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
         customizations: "",
       });
       setFormErrors({});
-      setIsTime(!isWithinOrderingHours());
+      // setIsTime(!isWithinOrderingHours());
     }
   }, [isOpen]);
 
