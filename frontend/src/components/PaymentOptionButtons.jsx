@@ -54,7 +54,7 @@ export function PaymentModal({ isSubmitting, handleOrderSubmit, totalPrice }) {
           onClick={() => handleOrderSubmit(paymentMethod)}
           disabled={isSubmitting || !paymentMethod}
           className={`text-white ${
-            isSubmitting || !paymentMethod || paymentMethod === "satispay"
+            isSubmitting || !paymentMethod
               ? "bg-green-300 cursor-not-allowed"
               : "bg-green-600 hover:bg-green-700"
           }`}
