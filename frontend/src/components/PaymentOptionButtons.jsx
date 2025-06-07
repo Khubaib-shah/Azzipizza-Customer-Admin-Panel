@@ -10,10 +10,10 @@ export function PaymentModal({ isSubmitting, handleOrderSubmit, totalPrice }) {
     { value: "cash", label: "Paga in contanti" },
     { value: "scan", label: "Scan to Pay (QR)" },
     { value: "bancomat", label: "Bancomat alla consegna" },
-    // { value: "paypal", label: "pagamento online" },
+    { value: "paypal", label: "pagamento online" },
   ];
 
-  // console.log("paymentMethod selected:", paymentMethod);
+  console.log("paymentMethod selected:", paymentMethod);
   useEffect(() => {
     if (paymentMethod === "scan") {
       setQrCodeModal(true);
@@ -38,7 +38,6 @@ export function PaymentModal({ isSubmitting, handleOrderSubmit, totalPrice }) {
             </option>
           );
         })}
-        <option value="paypal">pagamento online</option>
       </select>
 
       {qrCodeModal && (

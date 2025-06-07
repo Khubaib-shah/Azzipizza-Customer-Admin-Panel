@@ -10,9 +10,9 @@ function App() {
 
   const shouldHideHeaderFooter =
     location.pathname.startsWith("/order-success/") ||
-    location.pathname === "/payment-error" ||
-    location.pathname === "/payment-success" ||
-    location.pathname === "/payment-cancelled";
+    location.pathname === "/payment-error/" ||
+    location.pathname === "/payment-success/" ||
+    location.pathname === "/payment-cancelled/";
 
   return (
     <ContextProvider>
