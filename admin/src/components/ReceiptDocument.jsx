@@ -228,10 +228,10 @@ const ReceiptDocument = ({ order }) => {
           })()}
           {(() => {
             const methodMap = {
-              cash: "in contanti alla consegna",
-              scan: "pagamento effettuato tramite QR code",
-              bancomat: "con Bancomat alla consegna",
-              paypal: "tramite PayPal",
+              cash: "paga in contanti alla consegna",
+              scan: "bancomat alla consegna",
+              bancomat: "pagato tramite Satispay",
+              paypal: "pagato tramite PayPal",
             };
 
             const methodLabel =
@@ -240,8 +240,8 @@ const ReceiptDocument = ({ order }) => {
 
             const paymentMessage =
               order.paymentStatus === "Completed"
-                ? `Pagato con ${methodLabel}`
-                : `Pagare con ${methodLabel}`;
+                ? `${methodLabel}`
+                : `${methodLabel}`;
 
             return (
               <Text
