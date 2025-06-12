@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Table,
   TableBody,
@@ -7,7 +6,6 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
-import { Button } from "./ui/button";
 import { Clock } from "lucide-react";
 const ActiveOrderTable = ({ filteredOrders, handleSelectOrder }) => {
   const getStatusColor = (status) => {
@@ -35,7 +33,6 @@ const ActiveOrderTable = ({ filteredOrders, handleSelectOrder }) => {
             <TableHead>Total</TableHead>
             <TableHead>ETA</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -83,15 +80,6 @@ const ActiveOrderTable = ({ filteredOrders, handleSelectOrder }) => {
                   >
                     {order.orderStatus}
                   </span>
-                </TableCell>
-                <TableCell className="text-right">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-primary hover:text-primary/80"
-                  >
-                    Manage
-                  </Button>
                 </TableCell>
               </TableRow>
             ))}

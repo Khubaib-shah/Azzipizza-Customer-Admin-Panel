@@ -6,7 +6,6 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
-import { Button } from "./ui/button";
 
 const CompletedOrderTable = ({ filteredOrders, handleSelectOrder }) => {
   const getStatusColor = (status) => {
@@ -34,7 +33,6 @@ const CompletedOrderTable = ({ filteredOrders, handleSelectOrder }) => {
             <TableHead>Items</TableHead>
             <TableHead>Total</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -66,15 +64,6 @@ const CompletedOrderTable = ({ filteredOrders, handleSelectOrder }) => {
                   >
                     {order.orderStatus}
                   </span>
-                </TableCell>
-                <TableCell className="text-right">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-primary hover:text-primary/80"
-                  >
-                    View
-                  </Button>
                 </TableCell>
               </TableRow>
             ))}

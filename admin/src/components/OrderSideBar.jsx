@@ -135,7 +135,7 @@ const OrderSideBar = ({
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-500">Method</span>
               <span className={"px-2 py-1 text-xs rounded-full"}>
-                {selectedOrder.paymentMethod.toUpperCase()}
+                {selectedOrder.paymentMethod?.toUpperCase()}
               </span>
             </div>
             <div className="flex items-center justify-between">
@@ -237,8 +237,8 @@ const OrderSideBar = ({
                       </div>
                       <span className="text-sm font-medium">
                         €
-                        {item.price.toFixed(2) ||
-                          item.menuItem?.price.toFixed(2)}
+                        {item?.price?.toFixed(2) ||
+                          item.menuItem?.price?.toFixed(2)}
                       </span>
                     </div>
                     {item.selectedIngredients &&
