@@ -177,7 +177,7 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
                   onChange={handleChange}
                   className={`w-full p-3 border ${
                     formErrors.name ? "border-red-500" : "border-gray-300"
-                  } rounded-lg focus:ring-2 focus:ring-blue-400`}
+                  }`}
                 />
                 {formErrors.name && (
                   <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>

@@ -1,13 +1,23 @@
 import { createBrowserRouter } from "react-router-dom";
+import { lazy } from "react";
 import App from "../App";
 import Home from "../pages/Home";
-import About from "../pages/About";
-import Contact from "../pages/ContactUs";
-import Cart from "../pages/Cart";
-import OrderSuccess from "../components/paymentPages/OrderSuccess";
-import PaymentSuccess from "../components/paymentPages/PaymentSuccess";
-import PaymentError from "../components/paymentPages/PaymentError";
-import PaymentCancelled from "../components/paymentPages/PaymentCancelled";
+
+const About = lazy(() => import("../pages/About"));
+const Contact = lazy(() => import("../pages/ContactUs"));
+const Cart = lazy(() => import("../pages/Cart"));
+const OrderSuccess = lazy(() =>
+  import("../components/paymentPages/OrderSuccess")
+);
+const PaymentSuccess = lazy(() =>
+  import("../components/paymentPages/PaymentSuccess")
+);
+const PaymentError = lazy(() =>
+  import("../components/paymentPages/PaymentError")
+);
+const PaymentCancelled = lazy(() =>
+  import("../components/paymentPages/PaymentCancelled")
+);
 
 const router = createBrowserRouter([
   {
@@ -30,7 +40,6 @@ const router = createBrowserRouter([
         path: "cart",
         element: <Cart />,
       },
-
       {
         path: "order-success/:orderId",
         element: <OrderSuccess />,

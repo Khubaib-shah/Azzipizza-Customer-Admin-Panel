@@ -4,6 +4,7 @@ import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
 import "./index.css";
 import { ToastContainer } from "react-toastify";
+import { Suspense } from "react";
 
 function App() {
   const location = useLocation();
@@ -21,7 +22,9 @@ function App() {
         <main className="bg-gray-100 flex-grow relative">
           <div className="grid grid-cols-12">
             <div className="col-span-12">
-              <Outlet />
+              <Suspense fallback="Loading....">
+                <Outlet />
+              </Suspense>
             </div>
           </div>
         </main>
