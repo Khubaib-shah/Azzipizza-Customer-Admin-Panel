@@ -1,44 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
 import { URL } from "../config/config";
+import { getStatusColor } from "../utils/getStatusColor";
+import { getTimeLeft } from "../utils/GetTimeLeft";
 
-const SOCKET_URL = URL;
+// const SOCKET_URL = URL;
 
 const isOrderActive = (order) => {
   const status = order?.orderStatus?.toLowerCase();
   return status !== "delivered" && status !== "cancelled";
-};
-
-const getTimeLeft = (order) => {
-  const status = order?.orderStatus?.toLowerCase();
-  if (status === "delivered") return "Delivered";
-  if (status === "cancelled") return "Cancelled";
-
-  const now = new Date();
-  let targetTime = order.eta
-    ? new Date(order.eta)
-    : new Date(new Date(order.createdAt).getTime() + 20 * 60000);
-
-  const remainingMs = targetTime - now;
-
-  if (remainingMs <= 0) return "Time expired";
-  return `${Math.ceil(remainingMs / 60000)} min remaining`;
-};
-
-const getStatusColor = (status) => {
-  switch (status?.toLowerCase()) {
-    case "preparing":
-      return "text-yellow-600";
-    case "on the way":
-    case "out for delivery":
-      return "text-blue-600";
-    case "delivered":
-      return "text-green-600";
-    case "cancelled":
-      return "text-red-600";
-    default:
-      return "text-orange-600";
-  }
 };
 
 const TrackOrder = () => {
@@ -47,87 +17,87 @@ const TrackOrder = () => {
   const [socketConnected, setSocketConnected] = useState(false);
   const wrapperRef = useRef();
 
-  useEffect(() => {
-    const stored = localStorage.getItem("orderHistory");
-    if (stored && stored !== "[]") {
-      const activeOrders = JSON.parse(stored).filter(isOrderActive);
-      setOrders(activeOrders);
-    }
+  // useEffect(() => {
+  //   const stored = localStorage.getItem("orderHistory");
+  //   if (stored && stored !== "[]") {
+  //     const activeOrders = JSON.parse(stored).filter(isOrderActive);
+  //     setOrders(activeOrders);
+  //   }
 
-    const socketInstance = io(SOCKET_URL, {
-      transports: ["websocket", "polling"],
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-    });
+  //   const socketInstance = io(SOCKET_URL, {
+  //     transports: ["websocket", "polling"],
+  //     reconnection: true,
+  //     reconnectionAttempts: 5,
+  //     reconnectionDelay: 1000,
+  //   });
 
-    socketInstance.on("connect", () => {
-      setSocketConnected(true);
-      console.log("Connected to socket server");
-    });
+  //   socketInstance.on("connect", () => {
+  //     setSocketConnected(true);
+  //     console.log("Connected to socket server");
+  //   });
 
-    socketInstance.on("disconnect", () => {
-      setSocketConnected(false);
-      console.log("Disconnected from socket server");
-    });
+  //   socketInstance.on("disconnect", () => {
+  //     setSocketConnected(false);
+  //     console.log("Disconnected from socket server");
+  //   });
 
-    socketInstance.on("order:new", (newOrder) => {
-      if (!isOrderActive(newOrder)) return;
+  //   socketInstance.on("order:new", (newOrder) => {
+  //     if (!isOrderActive(newOrder)) return;
 
-      setOrders((prev) => {
-        const exists = prev.some((o) => o._id === newOrder._id);
-        return exists ? prev : [newOrder, ...prev];
-      });
+  //     setOrders((prev) => {
+  //       const exists = prev.some((o) => o._id === newOrder._id);
+  //       return exists ? prev : [newOrder, ...prev];
+  //     });
 
-      const stored = localStorage.getItem("orderHistory") || "[]";
-      const parsed = JSON.parse(stored);
-      if (!parsed.some((o) => o._id === newOrder._id)) {
-        localStorage.setItem(
-          "orderHistory",
-          JSON.stringify([newOrder, ...parsed])
-        );
-      }
-    });
+  //     const stored = localStorage.getItem("orderHistory") || "[]";
+  //     const parsed = JSON.parse(stored);
+  //     if (!parsed.some((o) => o._id === newOrder._id)) {
+  //       localStorage.setItem(
+  //         "orderHistory",
+  //         JSON.stringify([newOrder, ...parsed])
+  //       );
+  //     }
+  //   });
 
-    socketInstance.on("order:update", (updatedOrder) => {
-      setOrders((prev) => {
-        if (!isOrderActive(updatedOrder)) {
-          return prev.filter((o) => o._id !== updatedOrder._id);
-        }
-        return prev.map((order) =>
-          order._id === updatedOrder._id ? updatedOrder : order
-        );
-      });
+  //   socketInstance.on("order:update", (updatedOrder) => {
+  //     setOrders((prev) => {
+  //       if (!isOrderActive(updatedOrder)) {
+  //         return prev.filter((o) => o._id !== updatedOrder._id);
+  //       }
+  //       return prev.map((order) =>
+  //         order._id === updatedOrder._id ? updatedOrder : order
+  //       );
+  //     });
 
-      const stored = localStorage.getItem("orderHistory") || "[]";
-      const parsed = JSON.parse(stored).map((order) =>
-        order._id === updatedOrder._id ? updatedOrder : order
-      );
-      localStorage.setItem("orderHistory", JSON.stringify(parsed));
-    });
+  //     const stored = localStorage.getItem("orderHistory") || "[]";
+  //     const parsed = JSON.parse(stored).map((order) =>
+  //       order._id === updatedOrder._id ? updatedOrder : order
+  //     );
+  //     localStorage.setItem("orderHistory", JSON.stringify(parsed));
+  //   });
 
-    socketInstance.on("order:delete", (deletedOrderId) => {
-      setOrders((prev) => prev.filter((o) => o._id !== deletedOrderId));
-      const parsed = JSON.parse(localStorage.getItem("orderHistory") || "[]");
-      localStorage.setItem(
-        "orderHistory",
-        JSON.stringify(parsed.filter((o) => o._id !== deletedOrderId))
-      );
-    });
+  //   socketInstance.on("order:delete", (deletedOrderId) => {
+  //     setOrders((prev) => prev.filter((o) => o._id !== deletedOrderId));
+  //     const parsed = JSON.parse(localStorage.getItem("orderHistory") || "[]");
+  //     localStorage.setItem(
+  //       "orderHistory",
+  //       JSON.stringify(parsed.filter((o) => o._id !== deletedOrderId))
+  //     );
+  //   });
 
-    const handleClickOutside = (e) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
-        setExpandedOrderId(null);
-      }
-    };
+  //   const handleClickOutside = (e) => {
+  //     if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+  //       setExpandedOrderId(null);
+  //     }
+  //   };
 
-    document.addEventListener("mousedown", handleClickOutside);
+  //   document.addEventListener("mousedown", handleClickOutside);
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      socketInstance.disconnect();
-    };
-  }, []);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //     socketInstance.disconnect();
+  //   };
+  // }, []);
 
   if (!orders.length) return null;
 

@@ -4,7 +4,6 @@ import { PiListBulletsBold } from "react-icons/pi";
 import smoothscroll from "smoothscroll-polyfill";
 import Context from "../../context/dataContext";
 import MenuModal from "../Modal/MenuModel";
-import CompDetails from "../CompDetails";
 import ProductsListSkeleton from "../ProductsListSkeleton";
 import TrackOrder from "../TrackOrder";
 import { FaSearch } from "react-icons/fa";
@@ -73,7 +72,7 @@ function ProductsList() {
     <div className="container  mx-auto px-4 pt-5 mt-3">
       {isLoading ? (
         <ProductsListSkeleton />
-      ) : (
+      ) : items.length > 0 ? (
         <>
           <div className="relative mt-5">
             <FaSearch
@@ -134,6 +133,12 @@ function ProductsList() {
             </div>
           )}
         </>
+      ) : (
+        <h1 className="font-mono text-gray-500 tracking-tight">
+          Backend Deployment <strong> expired</strong>. <br /> If you are the
+          owner please
+          <strong> Contact Developer</strong> to Renew.{" "}
+        </h1>
       )}
 
       {searchQuery ? (
@@ -184,7 +189,6 @@ function ProductsList() {
           </div>
         ))
       )}
-      <CompDetails />
 
       <TrackOrder />
 

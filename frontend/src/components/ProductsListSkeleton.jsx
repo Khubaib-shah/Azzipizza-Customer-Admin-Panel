@@ -1,5 +1,3 @@
-import React from "react";
-
 const ProductsListSkeleton = () => {
   return (
     <div className="container mx-auto px-4 pt-5 mt-3">

@@ -66,21 +66,21 @@ function Header() {
   return (
     <>
       <header
-        className={`sticky top-0 z-50 backdrop-blur-lg dark:bg-gray-900/70 shadow-md transition-all duration-300 ${
+        className={`sticky top-0 z-50 backdrop-blur-lg  dark:bg-orange-600/20 shadow-md transition-all duration-300 ${
           scrolled ? "py-0" : "py-1"
         }`}
       >
         <div className="container mx-auto flex items-center justify-between">
           <Link
             to="/"
-            className="flex items-center transition-transform hover:scale-105"
+            className={`flex items-center transition-transform hover:scale-105 ${
+              scrolled ? "h-12 w-16" : "h-14 w-20"
+            }`}
           >
             <img
               src={logo}
               alt="Pizza Logo"
-              className={`object-contain transition-all duration-300 ${
-                scrolled ? "h-16 w-16" : "h-20 w-20"
-              }`}
+              className={`object-contain transition-all duration-300 scale-150`}
             />
           </Link>
 
@@ -94,7 +94,7 @@ function Header() {
                   className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${
                     activePage === item.label
                       ? "bg-orange-400 text-white shadow-md"
-                      : "bg-gray-100 text-black hover:bg-gray-200 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+                      : "bg-gray-100 text-black hover:bg-gray-200 dark:bg-orange-400 dark:text-white dark:hover:bg-orange-600/40"
                   }`}
                 >
                   {item.label}
@@ -116,7 +116,7 @@ function Header() {
                     ? "text-amber-500"
                     : scrolled
                     ? "text-white dark:text-white"
-                    : "text-white"
+                    : "text-orange-400 "
                 }`}
               />
               {cartCount > 0 && (
@@ -133,7 +133,7 @@ function Header() {
               >
                 <div
                   className={`w-[36px] h-[36px] rounded-full flex items-center justify-center transition-colors duration-300 ${
-                    scrolled ? "text-black dark:text-white" : "text-white"
+                    scrolled ? "text-black dark:text-white" : "text-orange-400"
                   }`}
                 >
                   <MdOutlineMenu className="text-[26px]" />
