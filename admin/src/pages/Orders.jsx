@@ -20,15 +20,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNotifications } from "../hooks/useNotifications";
 import NotificationSound from "/notification-sound.wav";
 import CompletedOrderTable from "../components/CompletedOrderTable";
 import ActiveOrderTable from "../components/ActiveOrderTable";
 import { reducer } from "../utils/reducer";
+
+const ENABLE_SOCKET = import.meta.env.VITE_ENABLE_SOCKET === "true";
 
 const initialState = {
   loading: false,
@@ -49,7 +49,28 @@ const Orders = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const audio = useRef(new Audio(NotificationSound)).current;
 
-  const socket = useMemo(() => io(URL, { transports: ["websocket"] }), []);
+  const socketRef = useRef(null);
+
+  useEffect(() => {
+    if (ENABLE_SOCKET && !socketRef.current) {
+      socketRef.current = io(URL, { transports: ["websocket"] });
+
+      socketRef.current.on("connect", () => {
+        console.log("Socket connected:", socketRef.current.id);
+      });
+
+      socketRef.current.on("disconnect", () => {
+        console.log(" Socket disconnected");
+      });
+    }
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
+    };
+  }, []);
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -74,71 +95,69 @@ const Orders = () => {
     await fetchOrders();
     setTimeout(() => setRefreshing(false), 500);
   };
-  console.log("Socket connected:", socket.connected);
 
   useEffect(() => {
     fetchOrders();
 
-    const handleNewOrder = (newOrder) => {
-      console.log("New order received via socket:", newOrder);
+    if (ENABLE_SOCKET && socketRef.current) {
+      const handleNewOrder = (newOrder) => {
+        console.log("📦 New order received via socket:", newOrder);
 
-      setOrders((prevOrders) => {
-        const exists = prevOrders.some(
-          (order) => order._id.toString() === newOrder._id.toString()
+        setOrders((prevOrders) => {
+          const exists = prevOrders.some(
+            (order) => order._id.toString() === newOrder._id.toString()
+          );
+          if (!exists) {
+            setNotifications((prev) => [
+              ...prev,
+              {
+                id: newOrder._id,
+                message: "New order received!",
+                items: newOrder,
+              },
+            ]);
+            audio.play();
+            return [newOrder, ...prevOrders];
+          }
+          return prevOrders;
+        });
+      };
+
+      const handleOrderUpdate = (updatedOrder) => {
+        setOrders((prev) =>
+          prev.map((order) =>
+            order._id === updatedOrder._id ? updatedOrder : order
+          )
         );
-        if (!exists) {
-          console.log("Adding new order to state");
 
-          setNotifications((prev) => [
-            ...prev,
-            {
-              id: newOrder._id,
-              message: "New order received!",
-              items: newOrder,
-            },
-          ]);
-
-          audio.play();
-          return [newOrder, ...prevOrders];
-        } else {
-          console.log("Order already exists in state");
+        if (selectedOrder?._id === updatedOrder._id) {
+          setSelectedOrder(updatedOrder);
         }
+      };
 
-        return prevOrders;
-      });
-    };
+      const handleOrderDelete = (deletedOrderId) => {
+        setOrders((prev) =>
+          prev.filter((order) => order._id !== deletedOrderId)
+        );
 
-    const handleOrderUpdate = (updatedOrder) => {
-      setOrders((prev) =>
-        prev.map((order) =>
-          order._id === updatedOrder._id ? updatedOrder : order
-        )
-      );
+        if (selectedOrder?._id === deletedOrderId) {
+          setSelectedOrder(null);
+        }
+      };
 
-      if (selectedOrder?._id === updatedOrder._id) {
-        setSelectedOrder(updatedOrder);
-      }
-    };
+      socketRef.current.on("order:new", handleNewOrder);
+      socketRef.current.on("order:update", handleOrderUpdate);
+      socketRef.current.on("order:delete", handleOrderDelete);
 
-    const handleOrderDelete = (deletedOrderId) => {
-      setOrders((prev) => prev.filter((order) => order._id !== deletedOrderId));
-
-      if (selectedOrder?._id === deletedOrderId) {
-        setSelectedOrder(null);
-      }
-    };
-
-    socket.on("order:new", handleNewOrder);
-    console.log("Socket connected:", socket.connected);
-    socket.on("order:update", handleOrderUpdate);
-    socket.on("order:delete", handleOrderDelete);
-
-    return () => {
-      socket.off("order:new", handleNewOrder);
-      socket.off("order:update", handleOrderUpdate);
-      socket.off("order:delete", handleOrderDelete);
-    };
-  }, [fetchOrders, selectedOrder, setNotifications, socket, audio]);
+      return () => {
+        if (socketRef.current) {
+          socketRef.current.off("order:new", handleNewOrder);
+          socketRef.current.off("order:update", handleOrderUpdate);
+          socketRef.current.off("order:delete", handleOrderDelete);
+        }
+      };
+    }
+  }, [fetchOrders, selectedOrder, setNotifications, audio]);
 
   const applyFilters = useCallback((orders, search, status) => {
     let result = [...orders];
@@ -199,10 +218,12 @@ const Orders = () => {
         setSelectedOrder((prev) => ({ ...prev, eta: etaTime }));
       }
 
-      socket.emit("order:update", {
-        ...data.updatedOrder,
-        eta: etaTime,
-      });
+      if (ENABLE_SOCKET && socketRef.current) {
+        socketRef.current.emit("order:update", {
+          ...data.updatedOrder,
+          eta: etaTime,
+        });
+      }
 
       dispatch({ type: "SET_UP_LOADING", payload: false });
     } catch (error) {
@@ -230,10 +251,12 @@ const Orders = () => {
         setSelectedOrder((prev) => ({ ...prev, orderStatus: newStatus }));
       }
 
-      socket.emit("order:update", {
-        ...data.updatedOrder,
-        orderStatus: newStatus,
-      });
+      if (ENABLE_SOCKET && socketRef.current) {
+        socketRef.current.emit("order:update", {
+          ...data.updatedOrder,
+          orderStatus: newStatus,
+        });
+      }
 
       dispatch({ type: "SET_UP_LOADING", payload: false });
     } catch (error) {
@@ -255,7 +278,9 @@ const Orders = () => {
         setSelectedOrder(null);
       }
 
-      socket.emit("order:delete", orderId);
+      if (ENABLE_SOCKET && socketRef.current) {
+        socketRef.current.emit("order:delete", orderId);
+      }
 
       dispatch({ type: "SET_DEL_LOADING", payload: false });
     } catch (error) {
@@ -264,7 +289,6 @@ const Orders = () => {
       dispatch({ type: "SET_DEL_LOADING", payload: false });
     }
   };
-
   const statusOptions = [
     "Pending",
     "Preparing",
@@ -428,7 +452,7 @@ const Orders = () => {
           </TabsContent>
         </Tabs>
       </div>
-
+      ;
       <OrderSideBar
         selectedOrder={selectedOrder}
         etaMinutes={etaMinutes}
