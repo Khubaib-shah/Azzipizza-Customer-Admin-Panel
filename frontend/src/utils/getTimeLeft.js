@@ -1,4 +1,4 @@
-export const getTimeLeft = (order) => {
+const getTimeLeft = (order) => {
   const status = order?.orderStatus?.toLowerCase();
   if (status === "delivered") return "Delivered";
   if (status === "cancelled") return "Cancelled";
@@ -13,3 +13,5 @@ export const getTimeLeft = (order) => {
   if (remainingMs <= 0) return "Time expired";
   return `${Math.ceil(remainingMs / 60000)} min remaining`;
 };
+
+export default getTimeLeft;

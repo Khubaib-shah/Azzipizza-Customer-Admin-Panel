@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { URL } from "../config/config";
 import { getStatusColor } from "../utils/getStatusColor";
-import { getTimeLeft } from "../utils/GetTimeLeft";
+import getTimeLeft from "../utils/GetTimeLeft";
 
 const SOCKET_URL = URL;
 
