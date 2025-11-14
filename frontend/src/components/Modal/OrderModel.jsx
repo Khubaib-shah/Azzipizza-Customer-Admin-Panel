@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Modal from "./Modal";
-import { isWithinOrderingHours } from "../../utils/isWithinOrderingHours";
 import { PaymentModal } from "../PaymentOptionButtons";
 import { baseUri } from "../../config/config";
 import { saveOrderToLocalStorage } from "../../utils/SavedOrderSucces";
+import { useRestaurantStatus } from "../../utils/useRestaurantStatus";
 
 function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
   const [formData, setFormData] = useState({
@@ -18,6 +18,7 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
     doorbellName: "",
     deliveryTime: "",
   });
+  const { isOpen: restaurantOpen } = useRestaurantStatus();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState({});
@@ -38,7 +39,7 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
         deliveryTime: "",
       });
       setFormErrors({});
-      setIsTime(isWithinOrderingHours());
+      setIsTime(restaurantOpen);
     }
   }, [isOpen]);
 
@@ -158,16 +159,12 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
 
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
-      {isTime ? (
+      {!isTime ? (
         <div className="text-center text-gray-700 py-10">
           <h2 className="text-2xl font-semibold mb-4">😴 We’re Closed!</h2>
-          <p>
-            Our ordering hours are between <strong>6:00 PM</strong> and{" "}
-            <strong>10:30 PM</strong>.
-          </p>
 
           <p>
-            Please come back during that time to place your delicious order.
+            The restaurant is currently offline. Please come back later to place your delicious order.
           </p>
         </div>
       ) : (
