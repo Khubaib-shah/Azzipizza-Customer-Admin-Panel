@@ -9,6 +9,7 @@ import {
   ChevronUp,
   ChevronDown,
   Printer,
+  CloudCog,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -43,20 +44,6 @@ const OrderSideBar = ({
 }) => {
   if (!selectedOrder) return null;
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Delivered":
-        return "bg-green-500 text-white";
-      case "Out for Delivery":
-        return "bg-yellow-500 text-white";
-      case "Preparing":
-        return "bg-blue-500 text-white";
-      case "Cancelled":
-        return "bg-red-500 text-white";
-      default:
-        return "bg-gray-400 text-white";
-    }
-  };
   const getPaymentStatusColor = (status) => {
     switch (status) {
       case "Completed":
@@ -153,7 +140,7 @@ const OrderSideBar = ({
                 (sum, item) =>
                   sum +
                   (item.originalPrice || item.menuItem?.price || 0) *
-                    item.quantity,
+                  item.quantity,
                 0
               );
 
@@ -199,12 +186,34 @@ const OrderSideBar = ({
                   <User className="h-4 w-4 text-gray-500" />
                   <span className="text-sm">{selectedOrder.name}</span>
                 </div>
+
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">Doorbell Name:</span>
+                  <span className="text-sm">{selectedOrder.doorbellName || "N/A"}</span>
+                </div>
+
+                {selectedOrder.deliveryTime && (
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm">
+                      {typeof selectedOrder.deliveryTime === "string" &&
+                        !selectedOrder.deliveryTime.includes("T")
+                        ? selectedOrder.deliveryTime
+                        : new Date(selectedOrder.deliveryTime).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                    </span>
+                  </div>
+                )}
+                
                 <div className="flex items-center gap-2">
                   <Phone className="h-4 w-4 text-gray-500" />
                   <span className="text-sm">
                     {selectedOrder.phoneNumber || "N/A"}
                   </span>
                 </div>
+
                 <div className="flex items-start gap-2">
                   <MapPin className="h-4 w-4 text-gray-500 mt-0.5" />
                   <span className="text-sm">
@@ -216,6 +225,7 @@ const OrderSideBar = ({
               </CardContent>
             </Card>
           </div>
+
 
           <div className="space-y-2">
             <h3 className="text-sm font-medium text-gray-900">Order Items</h3>
