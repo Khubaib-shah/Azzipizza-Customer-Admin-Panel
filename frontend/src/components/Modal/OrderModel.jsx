@@ -211,17 +211,34 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
               </div>
             </div>
 
+            <input
+              type="text"
+              name="street"
+              placeholder="Street Address *"
+              value={formData.street}
+              onChange={handleChange}
+              className={`w-full p-3 border ${formErrors.street ? "border-red-500" : "border-gray-300"
+                } rounded-lg focus:ring-2 focus:ring-blue-400`}
+            />
+            {formErrors.street && (
+              <p className="text-red-500 text-sm mt-1">{formErrors.street}</p>
+            )}
+
             <div className="flex gap-3">
               <div className="w-1/2">
                 <input
                   type="text"
                   name="doorbellName"
-                  required
                   placeholder="Nome sul campanello"
                   value={formData.doorbellName}
                   onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
+                  className={`w-full p-3 border ${formErrors.city ? "border-red-500" : "border-gray-300"
+                    } rounded-lg focus:ring-2 focus:ring-blue-400`}
                 />
+
+                {formErrors.doorbellName && (
+                  <p className="text-red-500 text-sm mt-1">{formErrors.doorbellName}</p>
+                )}
               </div>
               <div className="w-1/2">
                 <input
@@ -233,21 +250,6 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
                 />
               </div>
-            </div>
-
-            <div>
-              <input
-                type="text"
-                name="street"
-                placeholder="Street Address *"
-                value={formData.street}
-                onChange={handleChange}
-                className={`w-full p-3 border ${formErrors.street ? "border-red-500" : "border-gray-300"
-                  } rounded-lg focus:ring-2 focus:ring-blue-400`}
-              />
-              {formErrors.street && (
-                <p className="text-red-500 text-sm mt-1">{formErrors.street}</p>
-              )}
             </div>
 
             <div className="flex gap-3">
