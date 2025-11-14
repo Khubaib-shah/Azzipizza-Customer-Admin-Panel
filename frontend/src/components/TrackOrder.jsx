@@ -121,9 +121,8 @@ const TrackOrder = () => {
           return (
             <div
               key={order._id}
-              className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                isExpanded ? "max-h-[999px]" : "max-h-[64px]"
-              } border-b border-orange-200 last:border-b-0`}
+              className={`transition-all duration-300 ease-in-out overflow-hidden ${isExpanded ? "max-h-[999px]" : "max-h-[64px]"
+                } border-b border-orange-200 last:border-b-0`}
             >
               <div
                 className="flex justify-between items-center px-4 py-3 cursor-pointer bg-orange-100 hover:bg-orange-200 transition-colors sm:px-6"
@@ -163,12 +162,22 @@ const TrackOrder = () => {
                         })}
                       </p>
                     )}
+                    {/* New fields */}
+                    {order.doorbellName && (
+                      <p>
+                        <strong>Doorbell Name:</strong> {order.doorbellName}
+                      </p>
+                    )}
+                    {order.deliveryTime && (
+                      <p>
+                        <strong>Delivery Time:</strong> {order.deliveryTime}
+                      </p>
+                    )}
                   </div>
 
                   <p className="text-gray-700">
                     <strong>Delivery:</strong> {order.deliveryAddress.street},{" "}
-                    {order.deliveryAddress.city} -{" "}
-                    {order.deliveryAddress.zipCode}
+                    {order.deliveryAddress.city} - {order.deliveryAddress.zipCode}
                   </p>
                   <p className="text-gray-700 mb-2">
                     <strong>Phone:</strong> {order.phoneNumber}
@@ -179,12 +188,10 @@ const TrackOrder = () => {
                     <ul className="list-disc ml-6 mt-1">
                       {order.items.map((item) => (
                         <li key={item._id} className="mb-1">
-                          {item.customizations} (x{item.quantity})<br />
+                          {item.customizations} (x{item.quantity})
+                          <br />
                           <span className="text-xs sm:text-sm text-gray-500">
-                            Ingredients:{" "}
-                            {item.selectedIngredients
-                              ?.map((i) => i.name)
-                              .join(", ")}
+                            Ingredients: {item.selectedIngredients?.map((i) => i.name).join(", ")}
                           </span>
                         </li>
                       ))}
@@ -203,6 +210,7 @@ const TrackOrder = () => {
                   </div>
                 </div>
               )}
+
             </div>
           );
         })}

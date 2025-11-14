@@ -15,6 +15,8 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
     city: "",
     zipCode: "",
     customizations: "",
+    doorbellName: "",
+    deliveryTime: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,6 +34,8 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
         city: "",
         zipCode: "",
         customizations: "",
+        doorbellName: "",
+        deliveryTime: "",
       });
       setFormErrors({});
       setIsTime(isWithinOrderingHours());
@@ -53,6 +57,7 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
     if (!formData.city.trim()) errors.city = "City is required";
     if (!zipRegex.includes(Number(formData.zipCode)))
       errors.zipCode = "Invalid ZIP code";
+    if (!formData.doorbellName.trim()) errors.doorbellName = "Required";
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -93,6 +98,8 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
         city: formData.city,
         zipCode: formData.zipCode,
       },
+      doorbellName: formData.doorbellName,
+      deliveryTime: formData.deliveryTime,
       paymentMethod: method,
       total: totalPrice,
       customizations: formData.customizations || "",
@@ -145,7 +152,9 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
         setIsSubmitting(false);
       }
     }
+
   };
+
 
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
@@ -175,9 +184,8 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
                   placeholder="Full Name *"
                   value={formData.name}
                   onChange={handleChange}
-                  className={`w-full p-3 border ${
-                    formErrors.name ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`w-full p-3 border ${formErrors.name ? "border-red-500" : "border-gray-300"
+                    }`}
                 />
                 {formErrors.name && (
                   <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>
@@ -190,17 +198,40 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
                   placeholder="Phone Number *"
                   value={formData.phoneNumber}
                   onChange={handleChange}
-                  className={`w-full p-3 border ${
-                    formErrors.phoneNumber
-                      ? "border-red-500"
-                      : "border-gray-300"
-                  } rounded-lg focus:ring-2 focus:ring-blue-400`}
+                  className={`w-full p-3 border ${formErrors.phoneNumber
+                    ? "border-red-500"
+                    : "border-gray-300"
+                    } rounded-lg focus:ring-2 focus:ring-blue-400`}
                 />
                 {formErrors.phoneNumber && (
                   <p className="text-red-500 text-sm mt-1">
                     {formErrors.phoneNumber}
                   </p>
                 )}
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <div className="w-1/2">
+                <input
+                  type="text"
+                  name="doorbellName"
+                  required
+                  placeholder="Nome sul campanello"
+                  value={formData.doorbellName}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
+                />
+              </div>
+              <div className="w-1/2">
+                <input
+                  type="time"
+                  name="deliveryTime"
+                  placeholder="Ora"
+                  value={formData.deliveryTime}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
+                />
               </div>
             </div>
 
@@ -211,9 +242,8 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
                 placeholder="Street Address *"
                 value={formData.street}
                 onChange={handleChange}
-                className={`w-full p-3 border ${
-                  formErrors.street ? "border-red-500" : "border-gray-300"
-                } rounded-lg focus:ring-2 focus:ring-blue-400`}
+                className={`w-full p-3 border ${formErrors.street ? "border-red-500" : "border-gray-300"
+                  } rounded-lg focus:ring-2 focus:ring-blue-400`}
               />
               {formErrors.street && (
                 <p className="text-red-500 text-sm mt-1">{formErrors.street}</p>
@@ -228,9 +258,8 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
                   placeholder="City *"
                   value={formData.city}
                   onChange={handleChange}
-                  className={`w-full p-3 border ${
-                    formErrors.city ? "border-red-500" : "border-gray-300"
-                  } rounded-lg focus:ring-2 focus:ring-blue-400`}
+                  className={`w-full p-3 border ${formErrors.city ? "border-red-500" : "border-gray-300"
+                    } rounded-lg focus:ring-2 focus:ring-blue-400`}
                 />
                 {formErrors.city && (
                   <p className="text-red-500 text-sm mt-1">{formErrors.city}</p>
@@ -243,9 +272,8 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
                   placeholder="ZIP Code *"
                   value={formData.zipCode}
                   onChange={handleChange}
-                  className={`w-full p-3 border ${
-                    formErrors.zipCode ? "border-red-500" : "border-gray-300"
-                  } rounded-lg focus:ring-2 focus:ring-blue-400`}
+                  className={`w-full p-3 border ${formErrors.zipCode ? "border-red-500" : "border-gray-300"
+                    } rounded-lg focus:ring-2 focus:ring-blue-400`}
                 />
                 {formErrors.zipCode && (
                   <p className="text-red-500 text-sm mt-1">
