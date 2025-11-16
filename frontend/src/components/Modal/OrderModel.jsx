@@ -23,7 +23,7 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [isTime, setIsTime] = useState(false);
-
+  const [minDeliveryTime, setMinDeliveryTime] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,8 +40,14 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
       });
       setFormErrors({});
       setIsTime(restaurantOpen);
+
+      const now = new Date();
+      now.setMinutes(now.getMinutes() + 40);
+      const hours = now.getHours().toString().padStart(2, "0");
+      const minutes = now.getMinutes().toString().padStart(2, "0");
+      setMinDeliveryTime(`${hours}:${minutes}`);
     }
-  }, [isOpen]);
+  }, [isOpen, restaurantOpen]);
 
   const validateForm = () => {
     const errors = {};
@@ -59,9 +65,25 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
     if (!zipRegex.includes(Number(formData.zipCode)))
       errors.zipCode = "Invalid ZIP code";
     if (!formData.doorbellName.trim()) errors.doorbellName = "Required";
-
+    if (formData.deliveryTime && !validateDeliveryTime()) {
+      errors.deliveryTime =
+        "Delivery time must be at least 40 minutes from now";
+    }
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
+  };
+
+  const validateDeliveryTime = () => {
+    if (!formData.deliveryTime) return true; // optional, allow empty
+
+    const [hour, minute] = formData.deliveryTime.split(":").map(Number);
+    const selectedTime = new Date();
+    selectedTime.setHours(hour, minute, 0, 0);
+
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 40); // minimum allowed time
+
+    return selectedTime >= now;
   };
 
   const handleChange = (e) => {
@@ -153,9 +175,7 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
         setIsSubmitting(false);
       }
     }
-
   };
-
 
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
@@ -164,7 +184,8 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
           <h2 className="text-2xl font-semibold mb-4">😴 We’re Closed!</h2>
 
           <p>
-            The restaurant is currently offline. Please come back later to place your delicious order.
+            The restaurant is currently offline. Please come back later to place
+            your delicious order.
           </p>
         </div>
       ) : (
@@ -181,8 +202,9 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
                   placeholder="Full Name *"
                   value={formData.name}
                   onChange={handleChange}
-                  className={`w-full p-3 border ${formErrors.name ? "border-red-500" : "border-gray-300"
-                    }`}
+                  className={`w-full p-3 border ${
+                    formErrors.name ? "border-red-500" : "border-gray-300"
+                  }`}
                 />
                 {formErrors.name && (
                   <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>
@@ -195,10 +217,11 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
                   placeholder="Phone Number *"
                   value={formData.phoneNumber}
                   onChange={handleChange}
-                  className={`w-full p-3 border ${formErrors.phoneNumber
-                    ? "border-red-500"
-                    : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-400`}
+                  className={`w-full p-3 border ${
+                    formErrors.phoneNumber
+                      ? "border-red-500"
+                      : "border-gray-300"
+                  } rounded-lg focus:ring-2 focus:ring-blue-400`}
                 />
                 {formErrors.phoneNumber && (
                   <p className="text-red-500 text-sm mt-1">
@@ -214,8 +237,9 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
               placeholder="Street Address *"
               value={formData.street}
               onChange={handleChange}
-              className={`w-full p-3 border ${formErrors.street ? "border-red-500" : "border-gray-300"
-                } rounded-lg focus:ring-2 focus:ring-blue-400`}
+              className={`w-full p-3 border ${
+                formErrors.street ? "border-red-500" : "border-gray-300"
+              } rounded-lg focus:ring-2 focus:ring-blue-400`}
             />
             {formErrors.street && (
               <p className="text-red-500 text-sm mt-1">{formErrors.street}</p>
@@ -229,12 +253,15 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
                   placeholder="Nome sul campanello"
                   value={formData.doorbellName}
                   onChange={handleChange}
-                  className={`w-full p-3 border ${formErrors.city ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-400`}
+                  className={`w-full p-3 border ${
+                    formErrors.city ? "border-red-500" : "border-gray-300"
+                  } rounded-lg focus:ring-2 focus:ring-blue-400`}
                 />
 
                 {formErrors.doorbellName && (
-                  <p className="text-red-500 text-sm mt-1">{formErrors.doorbellName}</p>
+                  <p className="text-red-500 text-sm mt-1">
+                    {formErrors.doorbellName}
+                  </p>
                 )}
               </div>
               <div className="w-1/2">
@@ -243,9 +270,19 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
                   name="deliveryTime"
                   placeholder="Ora"
                   value={formData.deliveryTime}
+                  min={minDeliveryTime}
                   onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
+                  className={`w-full p-3 border ${
+                    formErrors.deliveryTime
+                      ? "border-red-500"
+                      : "border-gray-300"
+                  } rounded-lg focus:ring-2 focus:ring-blue-400`}
                 />
+                {formErrors.deliveryTime && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {formErrors.deliveryTime}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -257,8 +294,9 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
                   placeholder="City *"
                   value={formData.city}
                   onChange={handleChange}
-                  className={`w-full p-3 border ${formErrors.city ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-400`}
+                  className={`w-full p-3 border ${
+                    formErrors.city ? "border-red-500" : "border-gray-300"
+                  } rounded-lg focus:ring-2 focus:ring-blue-400`}
                 />
                 {formErrors.city && (
                   <p className="text-red-500 text-sm mt-1">{formErrors.city}</p>
@@ -271,8 +309,9 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
                   placeholder="ZIP Code *"
                   value={formData.zipCode}
                   onChange={handleChange}
-                  className={`w-full p-3 border ${formErrors.zipCode ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring-2 focus:ring-blue-400`}
+                  className={`w-full p-3 border ${
+                    formErrors.zipCode ? "border-red-500" : "border-gray-300"
+                  } rounded-lg focus:ring-2 focus:ring-blue-400`}
                 />
                 {formErrors.zipCode && (
                   <p className="text-red-500 text-sm mt-1">
