@@ -23,7 +23,6 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [isTime, setIsTime] = useState(false);
-  const [minDeliveryTime, setMinDeliveryTime] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,9 +42,15 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
 
       const now = new Date();
       now.setMinutes(now.getMinutes() + 40);
+
       const hours = now.getHours().toString().padStart(2, "0");
       const minutes = now.getMinutes().toString().padStart(2, "0");
-      setMinDeliveryTime(`${hours}:${minutes}`);
+      const defaultTime = `${hours}:${minutes}`;
+
+      setFormData((prev) => ({
+        ...prev,
+        deliveryTime: defaultTime,
+      }));
     }
   }, [isOpen, restaurantOpen]);
 
@@ -65,7 +70,7 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
     if (!zipRegex.includes(Number(formData.zipCode)))
       errors.zipCode = "Invalid ZIP code";
     if (!formData.doorbellName.trim()) errors.doorbellName = "Required";
-    if (formData.deliveryTime && !validateDeliveryTime()) {
+    if (!validateDeliveryTime()) {
       errors.deliveryTime =
         "Delivery time must be at least 40 minutes from now";
     }
@@ -74,14 +79,13 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
   };
 
   const validateDeliveryTime = () => {
-    if (!formData.deliveryTime) return true; // optional, allow empty
-
     const [hour, minute] = formData.deliveryTime.split(":").map(Number);
     const selectedTime = new Date();
     selectedTime.setHours(hour, minute, 0, 0);
 
     const now = new Date();
-    now.setMinutes(now.getMinutes() + 40); // minimum allowed time
+    now.setMinutes(now.getMinutes() + 35);
+    console.log(selectedTime >= now);
 
     return selectedTime >= now;
   };
@@ -231,26 +235,28 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
               </div>
             </div>
 
-            <input
-              type="text"
-              name="street"
-              placeholder="Street Address *"
-              value={formData.street}
-              onChange={handleChange}
-              className={`w-full p-3 border ${
-                formErrors.street ? "border-red-500" : "border-gray-300"
-              } rounded-lg focus:ring-2 focus:ring-blue-400`}
-            />
-            {formErrors.street && (
-              <p className="text-red-500 text-sm mt-1">{formErrors.street}</p>
-            )}
+            <div>
+              <input
+                type="text"
+                name="street"
+                placeholder="Street Address *"
+                value={formData.street}
+                onChange={handleChange}
+                className={`w-full p-3 border ${
+                  formErrors.street ? "border-red-500" : "border-gray-300"
+                } rounded-lg focus:ring-2 focus:ring-blue-400`}
+              />
+              {formErrors.street && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.street}</p>
+              )}
+            </div>
 
             <div className="flex gap-3">
               <div className="w-1/2">
                 <input
                   type="text"
                   name="doorbellName"
-                  placeholder="Nome sul campanello"
+                  placeholder="Nome sul campanello *"
                   value={formData.doorbellName}
                   onChange={handleChange}
                   className={`w-full p-3 border ${
@@ -264,13 +270,13 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
                   </p>
                 )}
               </div>
+
               <div className="w-1/2">
                 <input
                   type="time"
                   name="deliveryTime"
-                  placeholder="Ora"
+                  placeholder="Preferred Delivery Time *"
                   value={formData.deliveryTime}
-                  min={minDeliveryTime}
                   onChange={handleChange}
                   className={`w-full p-3 border ${
                     formErrors.deliveryTime

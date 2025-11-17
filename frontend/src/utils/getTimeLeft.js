@@ -6,7 +6,7 @@ const getTimeLeft = (order) => {
   const now = new Date();
   let targetTime = order.eta
     ? new Date(order.eta)
-    : new Date(new Date(order.createdAt).getTime() + 20 * 60000);
+    : new Date(new Date(order.createdAt).getTime() + 40 * 60000);
 
   const remainingMs = targetTime - now;
 
