@@ -20,7 +20,7 @@
 
 - 🧾 **Online Ordering** – Browse menu, customize pizzas, and checkout online.
 - 🍕 **Pizza Customization** – Choose size, crust, toppings, and extras.
-- 💳 **Secure Payments** – Integrated with **Satispay** or **Stripe**.
+- 💳 **Secure Payments** – Integrated with **Satispay** or **Paypal**.
 - 📦 **Real-Time Order System** – Kitchen receives instant order notifications via **socket.io**.
 - 📱 **Responsive UI** – Works flawlessly on mobile, tablet, and desktop.
 - 🔔 **Live Order Notifications** – Sound alerts for new orders.
@@ -34,7 +34,7 @@
 - React.js (Vite)
 - Tailwind CSS
 - ShadCN/UI
-- Zustand (or Context API for state)
+- Context API
 
 ### Backend:
 - Node.js
@@ -45,7 +45,7 @@
 
 ### Others:
 - Socket.io (for real-time updates)
-- Satispay or Stripe (payment integration)
+- Satispay or Paypal (payment integration)
 - dotenv (environment config)
 
 ---
