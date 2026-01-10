@@ -1,23 +1,41 @@
 import { useNavigate } from "react-router-dom";
+import { AlertCircle, ArrowLeft, RefreshCw } from "lucide-react";
 
 const PaymentCancelled = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-orange-50 px-4">
-      <h1 className="text-3xl font-bold text-yellow-600 mb-4">
-        Payment Cancelled
-      </h1>
-      <p className="text-lg text-gray-700 mb-6">
-        You have cancelled the payment. If this was a mistake, you can try
-        again.
-      </p>
-      <button
-        onClick={() => navigate("/cart")}
-        className="px-6 py-3 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition cursor-pointer"
-      >
-        Return to Home
-      </button>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12 font-['Poppins']">
+      <div className="bg-white rounded-[2rem] shadow-xl p-8 md:p-12 max-w-md w-full text-center relative overflow-hidden animate-fade-in">
+        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-amber-400 to-orange-500"></div>
+
+        <div className="mx-auto w-20 h-20 bg-amber-50 text-amber-500 rounded-full flex items-center justify-center mb-6">
+          <AlertCircle size={40} />
+        </div>
+
+        <h1 className="text-3xl font-bold text-gray-800 mb-2 font-['Playfair_Display']">
+          Payment Cancelled
+        </h1>
+        <p className="text-gray-500 mb-8">
+          The payment process was cancelled. No charges were made to your account.
+        </p>
+
+        <div className="space-y-3">
+          <button
+            onClick={() => navigate("/cart")}
+            className="w-full py-4 bg-amber-500 text-white rounded-xl font-bold shadow-lg hover:bg-amber-600 hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
+          >
+            <RefreshCw size={18} /> Try Again
+          </button>
+
+          <button
+            onClick={() => navigate("/")}
+            className="w-full py-3 text-gray-400 hover:text-gray-600 font-medium text-sm transition-colors flex items-center justify-center gap-2"
+          >
+            <ArrowLeft size={16} /> Return to Shop
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

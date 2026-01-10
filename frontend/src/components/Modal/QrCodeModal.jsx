@@ -1,33 +1,31 @@
-import ReactDOM from "react-dom";
 import QrCodeImage from "../../../public/QrCode.jpeg";
-import Button from "../ui/Button";
 
 export default function QrCodeModal({ setQrCodeModal, totalPrice }) {
-  return ReactDOM.createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md mx-4 text-center relative">
-        <p className="text-lg font-medium">
-          Scansiona questo QR code con l'app Satispay
-        </p>
+  return (
+    <div className="flex flex-col items-center p-4 bg-gray-50 rounded-xl border border-gray-200 mt-4 animate-fade-in text-center">
+      <h3 className="font-['Playfair_Display'] font-bold text-lg mb-2 text-[var(--color-primary)]">
+        Scan to Pay
+      </h3>
+      <p className="text-sm text-gray-600 mb-4">
+        Open your Satispay app and scan the code below.
+      </p>
+
+      <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 mb-4">
         <img
           src={QrCodeImage}
-          alt="QR Code"
-          className="mx-auto rounded-2xl my-4"
+          alt="Satispay QR Code"
+          className="w-48 h-48 object-contain rounded-lg"
         />
-        <div className="flex justify-between items-center px-4 mt-4">
-          <h3 className="text-lg font-semibold">
-            Totale:{" "}
-            <span className="text-green-600">€{totalPrice.toFixed(2)}</span>
-          </h3>
-          <Button
-            className="bg-green-600 text-white hover:bg-green-700"
-            onClick={() => setQrCodeModal(false)}
-          >
-            Ho Pagato
-          </Button>
-        </div>
       </div>
-    </div>,
-    document.getElementById("qr-code-portal")
+
+      <div className="flex flex-col gap-2 w-full max-w-xs">
+        <p className="font-bold text-gray-800 text-lg">
+          Amount: <span className="text-[var(--color-primary)]">€{totalPrice.toFixed(2)}</span>
+        </p>
+        <p className="text-xs text-gray-500 mb-2">
+          Click "Confirm Order" below once payment is sent.
+        </p>
+      </div>
+    </div>
   );
 }

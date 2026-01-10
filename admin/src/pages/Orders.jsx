@@ -157,7 +157,7 @@ const Orders = () => {
         }
       };
     }
-  }, [fetchOrders, selectedOrder, setNotifications, audio]);
+  }, [fetchOrders,  setNotifications, audio]);
 
   const applyFilters = useCallback((orders, search, status) => {
     let result = [...orders];

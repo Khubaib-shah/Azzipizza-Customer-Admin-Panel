@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useMemo, useCallback } from "react";
 import { baseUri } from "../config/config";
 
 const Context = createContext();
@@ -11,7 +11,7 @@ export const ContextProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchMenu = async () => {
+  const fetchMenu = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
@@ -23,17 +23,17 @@ export const ContextProvider = ({ children }) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchMenu();
-  }, []);
+  }, [fetchMenu]);
 
   useEffect(() => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  const addToCart = (item, selectedIngredients = [], customizations = "") => {
+  const addToCart = useCallback((item, selectedIngredients = [], customizations = "") => {
     setCartItems((prevCart) => {
       const ingredientsKey = JSON.stringify(
         [...selectedIngredients].sort((a, b) => a.name.localeCompare(b.name))
@@ -71,44 +71,50 @@ export const ContextProvider = ({ children }) => {
         ];
       }
     });
-  };
+  }, []);
 
-  const CartDecrement = (itemId) => {
-    setCartItems((prevCart) =>
-      prevCart
+  const CartDecrement = useCallback((item) => {
+    setCartItems((prevCart) => {
+      const targetIngredientsKey = JSON.stringify(
+        [...item.selectedIngredients].sort((a, b) =>
+          a.name.localeCompare(b.name)
+        )
+      );
+
+      return prevCart
         .map((cartItem) => {
-          if (cartItem._id === itemId) {
-            const ingredientsPerPortion = cartItem.selectedIngredients.slice(
-              0,
-              cartItem.selectedIngredients.length / cartItem.quantity
-            );
+          const currentIngredientsKey = JSON.stringify(
+            [...cartItem.selectedIngredients].sort((a, b) =>
+              a.name.localeCompare(b.name)
+            )
+          );
 
+          if (
+            cartItem._id === item._id &&
+            currentIngredientsKey === targetIngredientsKey &&
+            cartItem.customizations === item.customizations
+          ) {
             return {
               ...cartItem,
               quantity: cartItem.quantity - 1,
-              selectedIngredients: cartItem.selectedIngredients.slice(
-                0,
-                cartItem.selectedIngredients.length -
-                  ingredientsPerPortion.length
-              ),
             };
           }
           return cartItem;
         })
-        .filter((cartItem) => cartItem.quantity > 0)
-    );
-  };
+        .filter((cartItem) => cartItem.quantity > 0);
+    });
+  }, []);
 
-  const removeFromCart = (itemId) => {
+  const removeFromCart = useCallback((itemId) => {
     setCartItems((prevCart) => prevCart.filter((item) => item._id !== itemId));
-  };
+  }, []);
 
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setCartItems([]);
     localStorage.removeItem("cartItems");
-  };
+  }, []);
 
-  const prepareOrderData = (customerInfo) => {
+  const prepareOrderData = useCallback((customerInfo) => {
     return {
       ...customerInfo,
       items: cartItems.map((item) => ({
@@ -129,38 +135,55 @@ export const ContextProvider = ({ children }) => {
       paymentStatus: "Pending",
       orderStatus: "Preparing",
     };
-  };
+  }, [cartItems]);
 
-  const cartTotal = cartItems.reduce((total, item) => {
-    const discountedPrice =
-      item.price - (item.discount ? (item.price * item.discount) / 100 : 0);
+  const cartTotal = useMemo(() => {
+    return cartItems.reduce((total, item) => {
+      const discountedPrice =
+        item.price - (item.discount ? (item.price * item.discount) / 100 : 0);
 
-    const ingredientsTotal =
-      item.selectedIngredients?.reduce((sum, ing) => sum + ing.price, 0) || 0;
+      const ingredientsTotal =
+        item.selectedIngredients?.reduce((sum, ing) => sum + ing.price, 0) || 0;
 
-    return total + (discountedPrice + ingredientsTotal) * item.quantity;
-  }, 0);
+      return total + (discountedPrice + ingredientsTotal) * item.quantity;
+    }, 0);
+  }, [cartItems]);
 
-  const refreshMenu = async () => {
+  const refreshMenu = useCallback(async () => {
     await fetchMenu();
-  };
+  }, [fetchMenu]);
+
+  const contextValue = useMemo(
+    () => ({
+      items,
+      cartItems,
+      isLoading,
+      error,
+      addToCart,
+      removeFromCart,
+      CartDecrement,
+      clearCart,
+      cartTotal,
+      prepareOrderData,
+      refreshMenu,
+    }),
+    [
+      items,
+      cartItems,
+      isLoading,
+      error,
+      addToCart,
+      removeFromCart,
+      CartDecrement,
+      clearCart,
+      cartTotal,
+      prepareOrderData,
+      refreshMenu,
+    ]
+  );
 
   return (
-    <Context.Provider
-      value={{
-        items,
-        cartItems,
-        isLoading,
-        error,
-        addToCart,
-        removeFromCart,
-        CartDecrement,
-        clearCart,
-        cartTotal,
-        prepareOrderData,
-        refreshMenu,
-      }}
-    >
+    <Context.Provider value={contextValue}>
       {children}
     </Context.Provider>
   );

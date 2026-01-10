@@ -5,7 +5,6 @@ import smoothscroll from "smoothscroll-polyfill";
 import Context from "../../context/dataContext";
 import MenuModal from "../Modal/MenuModel";
 import ProductsListSkeleton from "../ProductsListSkeleton";
-import TrackOrder from "../TrackOrder";
 import { FaSearch } from "react-icons/fa";
 
 function ProductsList() {
@@ -69,20 +68,21 @@ function ProductsList() {
   };
 
   return (
-    <div className="container  mx-auto px-4 pt-5 mt-3">
+    <div className="container mx-auto px-4 pt-8 pb-12" id="menu">
       {isLoading ? (
         <ProductsListSkeleton />
       ) : items.length > 0 ? (
         <>
-          <div className="relative mt-5">
+          {/* Search Bar */}
+          <div className="relative max-w-2xl mx-auto mb-8">
             <FaSearch
-              size={18}
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-500"
+              size={20}
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 text-red-500"
             />
             <input
               type="text"
-              placeholder="Cerca il prodotto..."
-              className="pl-10 pr-3 py-2 w-full border border-amber-500 rounded-3xl focus:ring-0 focus:ring-sky-500 text-sm sm:text-base "
+              placeholder="🔍 Search for your favorite pizza..."
+              className="pl-12 pr-4 py-4 w-full border-2 border-red-200 rounded-2xl focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 text-base shadow-md transition-all duration-300"
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -101,11 +101,10 @@ function ProductsList() {
                 {menuItems?.map((item) => (
                   <button
                     key={item}
-                    className={`px-5 py-1 font-semibold text-sm sm:text-base transition rounded-md uppercase ${
-                      activeCategory === item
-                        ? "bg-orange-400 text-white"
-                        : "text-black hover:bg-orange-400 cursor-pointer hover:text-white"
-                    }`}
+                    className={`px-5 py-1 font-semibold text-sm sm:text-base transition rounded-md uppercase ${activeCategory === item
+                      ? "bg-orange-400 text-white"
+                      : "text-black hover:bg-orange-400 cursor-pointer hover:text-white"
+                      }`}
                     onClick={(e) => {
                       handleCategoryClick(item);
                       const container = categoriesContainerRef.current;
@@ -125,10 +124,10 @@ function ProductsList() {
                 ))}
               </div>
               <button
-                className="w-20 h-10 flex items-center justify-center bg-white-200 hover:bg-white-300 rounded-md transition ml-2 cursor-pointer"
+                className="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 rounded-full transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
                 onClick={() => setIsModalOpen(true)}
               >
-                <PiListBulletsBold size={22} />
+                <PiListBulletsBold size={24} className="text-white" />
               </button>
             </div>
           )}
@@ -163,18 +162,25 @@ function ProductsList() {
           <div
             key={category}
             ref={(el) => (categoryRefs.current[category] = el)}
-            className="mt-6"
+            className="mt-10 mb-8"
           >
-            <h2 className="text-lg sm:text-xl font-semibold capitalize">
-              {category}
-            </h2>
+            <div className="flex items-center gap-4 mb-6">
+              <div className="decorative-line flex-grow max-w-[100px]"></div>
+              <h2 className="text-2xl sm:text-3xl font-bold capitalize text-gray-800">
+                {category}
+              </h2>
+              <div className="decorative-line flex-grow"></div>
+            </div>
+            <p className="text-center text-gray-600 mb-6 italic">
+              Handcrafted with love and authentic Italian ingredients
+            </p>
             {listing[category]?.length > 0 ? (
               <div className="relative mt-4">
-                <div className="flex gap-4 overflow-x-auto whitespace-nowrap scroll-smooth styled-scrollbar pb-4">
+                <div className="flex gap-4 overflow-x-auto whitespace-nowrap styled-scrollbar pb-4 will-change-scroll">
                   {listing[category].map((item) => (
                     <div
                       key={item._id}
-                      className="inline-block flex-shrink-0 w-[250px]"
+                      className="inline-block flex-shrink-0 w-[250px] will-change-transform"
                     >
                       <ProductCard product={item} />
                     </div>
@@ -190,7 +196,7 @@ function ProductsList() {
         ))
       )}
 
-      <TrackOrder />
+
 
       {isModalOpen && (
         <MenuModal

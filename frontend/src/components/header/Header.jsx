@@ -7,10 +7,12 @@ import {
   AiOutlinePhone,
 } from "react-icons/ai";
 import { MdOutlineMenu } from "react-icons/md";
+import { PiListBulletsBold } from "react-icons/pi";
 import { Button } from "@mui/material";
 import Context from "../../context/dataContext";
 import HeaderModal from "../Modal/headerModal";
 import logo from "../../assets/logo-pizza.png";
+import { ShoppingBag } from "lucide-react";
 
 function Header() {
   const { cartItems } = useContext(Context);
@@ -23,17 +25,24 @@ function Header() {
 
   const handlePageChange = (page) => {
     setActivePage(page);
-    console.log("Current page:", page);
     setOpen(false);
   };
 
   useEffect(() => {
+    let timeoutId;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      if (timeoutId) return;
+      timeoutId = setTimeout(() => {
+        setScrolled(window.scrollY > 50);
+        timeoutId = null;
+      }, 100);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, []);
 
   const navItems = [
@@ -43,16 +52,23 @@ function Header() {
       icon: <AiOutlineHome className="text-[24px]" />,
     },
     {
-      path: "/contact",
-      label: "Contact Us",
-      icon: <AiOutlinePhone className="text-[24px]" />,
+      path: "/menu",
+      label: "Menu",
+      icon: <PiListBulletsBold className="text-[24px]" />,
     },
-
     {
       path: "/about",
       label: "About Us",
       icon: <AiOutlineInfoCircle className="text-[24px]" />,
     },
+    {
+      path: "/contact",
+      label: "Contact Us",
+      icon: <AiOutlinePhone className="text-[24px]" />,
+
+    },
+
+    { path: "/my-orders", label: "My Orders", icon: <ShoppingBag className="text-[24px]" /> }
   ];
 
   const location = useLocation();
@@ -66,36 +82,49 @@ function Header() {
   return (
     <>
       <header
-        className={`sticky top-0 z-50 backdrop-blur-lg  dark:bg-orange-600/20 shadow-md transition-all duration-300 ${
-          scrolled ? "py-0" : "py-1"
-        }`}
+        className={`sticky top-0 z-50 transition-all duration-300 ${scrolled
+          ? "glass shadow-lg py-2"
+          : "bg-gradient-to-r from-red-600 to-red-700 shadow-md py-3"
+          }`}
       >
         <div className="container mx-auto flex items-center justify-between">
+          {/* Logo */}
           <Link
             to="/"
-            className={`flex items-center transition-transform hover:scale-105 ${
-              scrolled ? "h-12 w-16" : "h-14 w-20"
-            }`}
+            className={`flex items-center gap-3 transition-transform hover:scale-105 ${scrolled ? "h-12" : "h-14"
+              }`}
           >
             <img
               src={logo}
-              alt="Pizza Logo"
-              className={`object-contain transition-all duration-300 scale-150`}
+              alt="Azzipizza Logo"
+              className="object-contain h-full scale-150"
             />
+            <div className="hidden sm:block">
+              <h2 className={`font-serif font-bold ${scrolled ? "text-red-600 text-xl" : "text-white text-2xl"}`}>
+                Azzipizza
+              </h2>
+              <p className={`text-xs italic ${scrolled ? "text-amber-600" : "text-amber-300"}`}>
+                Mica Pizza e Fichi
+              </p>
+            </div>
           </Link>
 
-          <div className="flex flex-1 justify-center items-center gap-4 text-black dark:text-white">
+          {/* Navigation */}
+          <div className="flex flex-1 justify-center items-center gap-4">
             <nav className="hidden md:flex gap-2">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
                   onClick={() => handlePageChange(item.label)}
-                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${
-                    activePage === item.label
-                      ? "bg-orange-400 text-white shadow-md"
-                      : "bg-gray-100 text-black hover:bg-gray-200 dark:bg-orange-400 dark:text-white dark:hover:bg-orange-600/40"
-                  }`}
+                  className={`px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${activePage === item.label
+                    ? scrolled
+                      ? "bg-gradient-to-r from-red-600 to-red-700 text-white shadow-md"
+                      : "bg-white text-red-600 shadow-md"
+                    : scrolled
+                      ? "text-gray-700 hover:bg-red-50"
+                      : "text-white/90 hover:bg-white/10"
+                    }`}
                 >
                   {item.label}
                 </Link>
@@ -103,45 +132,63 @@ function Header() {
             </nav>
           </div>
 
+          {/* Cart and Menu */}
           <div className="flex items-center gap-4">
+            {/* Cart */}
             <Link
               to="/cart"
-              className="relative hover:scale-110 transition-transform"
+              className="relative group"
               onMouseEnter={() => setIsCartHovered(true)}
               onMouseLeave={() => setIsCartHovered(false)}
             >
-              <AiOutlineShoppingCart
-                className={`text-[26px] transition duration-300 ${
-                  isCartHovered
-                    ? "text-amber-500"
+              <div className={`p-2 rounded-full transition-all duration-300 ${scrolled
+                ? "hover:bg-red-50"
+                : "hover:bg-white/10"
+                }`}>
+                <AiOutlineShoppingCart
+                  className={`text-[28px] transition-all duration-300 ${isCartHovered
+                    ? "text-amber-500 scale-110"
                     : scrolled
-                    ? "text-white dark:text-white"
-                    : "text-orange-400 "
-                }`}
-              />
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full animate-pulse">
-                  {cartCount}
-                </span>
-              )}
+                      ? "text-red-600"
+                      : "text-white"
+                    }`}
+                />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-amber-500 to-amber-600 text-white text-xs w-6 h-6 flex items-center justify-center rounded-full font-bold shadow-lg animate-bounce">
+                    {cartCount}
+                  </span>
+                )}
+              </div>
             </Link>
+
+            {/* Mobile Menu Button */}
             <div className="md:hidden">
               <Button
                 onClick={() => setOpen(!open)}
                 variant="text"
-                className="!min-w-[40px] !h-[40px] !p-0 !rounded-full  md:hidden  hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300"
+                className="!min-w-[40px] !h-[40px] !p-0 !rounded-full"
               >
                 <div
-                  className={`w-[36px] h-[36px] rounded-full flex items-center justify-center transition-colors duration-300 ${
-                    scrolled ? "text-black dark:text-white" : "text-orange-400"
-                  }`}
+                  className={`w-[40px] h-[40px] rounded-full flex items-center justify-center transition-all duration-300 ${scrolled
+                    ? "text-red-600 hover:bg-red-50"
+                    : "text-white hover:bg-white/10"
+                    }`}
                 >
-                  <MdOutlineMenu className="text-[26px]" />
+                  <MdOutlineMenu className="text-[28px]" />
                 </div>
               </Button>
             </div>
           </div>
         </div>
+
+        {/* Promotional Banner */}
+        {!scrolled && (
+          <div className="bg-amber-400 text-center py-1 mt-2 animate-slide-down">
+            <p className="text-sm font-semibold text-gray-800">
+              🎉 Free Delivery on every Order 🍕
+            </p>
+          </div>
+        )}
       </header>
       <HeaderModal open={open} setOpen={setOpen} navItems={navItems} />
     </>

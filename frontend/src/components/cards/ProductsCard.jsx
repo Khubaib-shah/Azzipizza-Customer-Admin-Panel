@@ -1,9 +1,11 @@
-import { FaPlus } from "react-icons/fa";
-import { lazy, Suspense, useContext, useMemo, useState } from "react";
+import { FaPlus, FaStar } from "react-icons/fa";
+import { lazy, Suspense, useContext, useMemo, useState, memo } from "react";
+import { motion } from "framer-motion";
 import Context from "../../context/dataContext";
 import { toast } from "react-toastify";
 const Modal = lazy(() => import("../Modal/Modal"));
-function ProductCard({ product }) {
+
+const ProductCard = memo(({ product }) => {
   const { addToCart } = useContext(Context);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedToppings, setSelectedToppings] = useState([]);
@@ -16,7 +18,7 @@ function ProductCard({ product }) {
   );
 
   const rating = useMemo(
-    () => product.rating || Math.floor(Math.random() * 50) + 100,
+    () => product.rating || 4.5,
     [product.rating]
   );
   const reviews = useMemo(
@@ -47,215 +49,206 @@ function ProductCard({ product }) {
     e.stopPropagation();
     const cartItem = { ...product, price: finalPrice };
     addToCart(cartItem, selectedToppings);
-    toast.success(`${product.name} added to cart!`, {
-      position: "bottom-right",
-      autoClose: 2000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: false,
-      draggable: false,
-    });
+    toast.success(`"${product.name.toUpperCase()}" added to cart!`);
   };
+
+  // Determine if item is special
+  const isNew = product.isNew || Math.random() > 0.7;
+  const isChefSpecial = product.isChefSpecial || (product.category === "pizze rosse" && Math.random() > 0.8);
+
+  const container = {
+    hidden: {},
+    show: {
+      transition: {
+        delayChildren: 0.15,
+        staggerChildren: 0.08,
+      },
+    },
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 15 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring", stiffness: 120 },
+    },
+  };
+
 
   return (
     <>
-      <div
-        className="bg-white rounded-lg shadow-md hover:shadow-lg transition-transform hover:-translate-y-1 flex flex-col h-full cursor-pointer"
+      {/* Compact Card */}
+      <motion.div
+        className="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden border border-gray-100 flex flex-col h-full"
         onClick={() => setIsModalOpen(true)}
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ y: 0, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+        whileHover={{ y: -5 }}
       >
-        <div className="relative w-full aspect-square overflow-hidden">
-          <img
-            effect="blur"
-            loading="lazy"
-            src={product.image}
-            alt={product.name}
-            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-          />
-
+        {/* Badges */}
+        <div className="absolute top-2 left-2 z-10 flex flex-col gap-1.5">
           {discount > 0 && (
-            <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded shadow z-2">
-              -{discount}% OFF
-            </div>
+            <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+              -{discount}%
+            </span>
           )}
-          {product?.category !== "bibite" && product?.category !== "birre" && (
-            <span className="absolute top-2 left-2 bg-amber-500 text-white text-xs font-bold px-2 py-1 rounded">
-              Popular
+          {isChefSpecial && (
+            <span className="bg-amber-400 text-black text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
+              <FaStar size={8} /> Special
             </span>
           )}
         </div>
 
-        <div className="p-4 flex flex-col flex-grow">
-          <div className="flex justify-between items-start mb-2">
-            <h1 className="text-lg font-bold text-gray-800 truncate capitalize">
-              {product.name}
-            </h1>
-            <div className="text-sm text-right">
-              {discount > 0 && (
-                <div className="line-through text-gray-400">
-                  €{basePrice.toFixed(2)}
-                </div>
-              )}
-              <div className="text-amber-800 font-semibold">
-                €{discountedPrice.toFixed(2)}
-              </div>
-            </div>
-          </div>
+        {/* Image Container */}
+        <div className="relative aspect-[4/3] overflow-hidden bg-gray-50">
+          <img
+            loading="lazy"
+            src={product.image}
+            alt={product.name}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          />
 
-          <p className="text-sm text-gray-600 line-clamp-2 mb-3">
-            {product.description}
-          </p>
-
-          <div className="flex justify-between items-center mt-auto">
-            <div className="flex items-center">
-              {[...Array(5)].map((_, i) => (
-                <svg
-                  key={i}
-                  className={`w-4 h-4 ${
-                    i < Math.floor(rating) ? "text-amber-500" : "text-gray-300"
-                  }`}
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-              ))}
-              <span className="ml-2 text-sm text-gray-700">
-                {rating} ({reviews})
-              </span>
-            </div>
+          {/* Quick View Overlay */}
+          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
             <button
-              className="bg-amber-500 hover:bg-amber-600 text-white p-2 rounded-full transition-colors shadow-md hover:shadow-lg active:scale-95"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsModalOpen(true);
-              }}
-              aria-label={`Add ${product.name} to cart`}
+              className="bg-white text-gray-800 text-xs font-bold px-4 py-2 rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 hover:bg-[var(--color-primary)] hover:text-white"
+              onClick={(e) => { e.stopPropagation(); setIsModalOpen(true); }}
             >
-              <FaPlus size={14} />
+              Quick View
             </button>
           </div>
         </div>
-      </div>
 
-      {/* Modal */}
-      {isModalOpen && (
-        <Suspense fallback={<div className="p-6">Loading...</div>}>
-          <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-            <div className="max-w-4xl w-full rounded-lg flex flex-col max-h-[95vh] sm:max-h-[90vh] md:max-h-[85vh] lg:max-h-[80vh] overflow-hidden">
-              <div className="grid md:grid-cols-2 gap-6 overflow-y-auto p-6">
-                <div className="relative w-full h-28 md:h-auto">
-                  <img
-                    className="w-full h-full object-cover"
-                    src={product.image}
-                    alt={product.name}
-                    loading="lazy"
-                  />
-                  {product.category !== "bibite" &&
-                    product.category !== "birre" && (
-                      <span className="absolute top-4 left-4 bg-amber-500 text-white text-sm font-bold px-3 py-1 rounded">
-                        Popular
-                      </span>
-                    )}
-                  {discount > 0 && (
-                    <div className="absolute top-4 right-0 bg-red-600 text-white text-sm font-bold px-3 py-1 rounded shadow">
-                      -{discount}% OFF
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex flex-col">
-                  <h1 className="text-2xl font-bold text-gray-800/90  capitalize mb-2">
-                    {product.name}
-                  </h1>
-
-                  <div className="flex items-center">
-                    {discount > 0 && (
-                      <span className="text-lg text-gray-400 line-through mr-2">
-                        €{basePrice.toFixed(2)}
-                      </span>
-                    )}
-                    <span className="text-xl font-bold text-amber-600">
-                      €{discountedPrice.toFixed(2)}
-                    </span>
-                    {selectedToppings.length > 0 && (
-                      <span className="text-sm text-gray-500 ml-2">
-                        (+€{toppingsTotal.toFixed(2)})
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="mb-2.5 overflow-y-auto max-h-[200px]">
-                    <p className="text-gray-600 whitespace-pre-line">
-                      {product.description}
-                    </p>
-                  </div>
-
-                  {product.ingredients?.length > 0 && (
-                    <h3 className="font-semibold text-gray-800 mb-2">
-                      Toppings
-                    </h3>
-                  )}
-                  {product.ingredients?.length > 0 && (
-                    <div className="relative mb-6 overflow-y-auto max-h-[200px]">
-                      <div
-                        className="fixed bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white
-  dark:from-gray-900 to-transparent pointer-events-none z-50"
-                      />
-
-                      <ul className="space-y-2 text-gray-600 relative z-20 px-1">
-                        {product.ingredients.map((ingredient) => (
-                          <li key={ingredient._id}>
-                            <label className="flex justify-between items-center cursor-pointer">
-                              <div className="flex items-center gap-2">
-                                <input
-                                  type="checkbox"
-                                  className="w-5 h-5 accent-orange-500 rounded"
-                                  checked={selectedToppings.some(
-                                    (t) => t._id === ingredient._id
-                                  )}
-                                  onChange={(e) =>
-                                    handleToppingToggle(e, ingredient)
-                                  }
-                                />
-                                <span className="text-sm">
-                                  {ingredient.name}
-                                </span>
-                              </div>
-                              <span className="text-sm font-medium">
-                                +€{ingredient.price.toFixed(2)}
-                              </span>
-                            </label>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  <div className="mt-auto pt-4 border-t border-gray-200 flex justify-between">
-                    <button
-                      className="px-6 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg cursor-pointer text-orange-400 font-semibold"
-                      onClick={() => setIsModalOpen(false)}
-                    >
-                      Close
-                    </button>
-                    <button
-                      className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-lg flex items-center gap-2 cursor-pointer"
-                      onClick={(e) => {
-                        handleAddToCart(e);
-                        setIsModalOpen(false);
-                      }}
-                    >
-                      <FaPlus /> Add to Cart
-                    </button>
-                  </div>
-                </div>
-              </div>
+        {/* Content */}
+        <div className="p-3 flex flex-col flex-grow">
+          <div className="flex justify-between items-start mb-1">
+            <h3 className="font-bold text-gray-800 text-sm leading-tight line-clamp-1 group-hover:text-[var(--color-primary)] transition-colors">
+              {product.name}
+            </h3>
+            <div className="flex items-center gap-1 text-[10px] text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">
+              <FaStar className="text-amber-400" />
+              <span>{rating}</span>
             </div>
-          </Modal>
-        </Suspense>
-      )}
+          </div>
+
+          <p className="text-[11px] text-gray-500 line-clamp-2 mb-3 leading-relaxed flex-grow">
+            {product.description}
+          </p>
+
+          <div className="flex items-center justify-between mt-auto pt-2 border-t border-gray-50">
+            <div className="flex flex-col">
+              {discount > 0 && (
+                <span className="text-[10px] text-gray-400 line-through">€{basePrice.toFixed(2)}</span>
+              )}
+              <span className="font-bold text-base text-[var(--color-primary)]">€{discountedPrice.toFixed(2)}</span>
+            </div>
+
+            <button
+              className="bg-[var(--color-primary)] text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-black transition-colors shadow-sm"
+              onClick={(e) => { e.preventDefault(); setIsModalOpen(true); }}
+              aria-label="Add to cart"
+            >
+              <FaPlus size={12} />
+            </button>
+          </div>
+        </div>
+      </motion.div >
+
+      {/* Detail Modal */}
+      {
+        isModalOpen && (
+          <Suspense fallback={null}>
+            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+              <motion.div initial={{ opacity: 0, scale: 0.95, y: 30 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.5 }} className="max-w-4xl w-full bg-white rounded-3xl overflow-hidden flex flex-col md:flex-row max-h-[90vh] shadow-2xl">
+                {/* Image Side */}
+                <div className="w-full md:w-1/2 h-48 md:h-auto relative">
+                  <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                  <div className="absolute top-4 left-4 flex flex-col gap-2">
+                    {isChefSpecial && <span className="bg-amber-400 text-xs font-bold px-3 py-1 rounded-full">Chef's Special</span>}
+                  </div>
+                </div>
+
+                {/* Content Side */}
+                <div className="flex-1 p-6 md:p-8 flex flex-col overflow-y-auto">
+                  <div className="mb-4">
+                    <h2 className="text-3xl font-bold font-['Playfair_Display'] text-gray-900 mb-2">{product.name}</h2>
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <div className="flex text-amber-400"><FaStar /></div>
+                      <span>{rating} ({reviews} reviews)</span>
+                    </div>
+                  </div>
+
+                  <p className="text-gray-600 mb-6 leading-relaxed text-sm">
+                    {product.description}
+                  </p>
+
+                  {/* Toppings Section */}
+                  {product.ingredients?.length > 0 && (
+                    <div className="mb-6">
+                      <h3 className="font-bold text-gray-800 mb-3 text-sm uppercase tracking-wider">Customize Extras</h3>
+                      <motion.div
+                        className="space-y-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar"
+                        variants={container}
+                        initial="hidden"
+
+                        whileInView="show"
+                        viewport={{ once: true }}
+
+                      >
+                        {product.ingredients.map((ing) => (
+                          <motion.label
+                            key={ing._id}
+                            variants={item}
+                            className="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:border-[var(--color-primary)] cursor-pointer transition-colors bg-gray-50/50"
+                          >
+                            <div className="flex items-center gap-3">
+                              <input
+                                type="checkbox"
+                                className="rounded text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
+                                checked={selectedToppings.some(t => t._id === ing._id)}
+                                onChange={(e) => handleToppingToggle(e, ing)}
+                              />
+                              <span className="text-sm font-medium text-gray-700">
+                                {ing.name}
+                              </span>
+                            </div>
+
+                            <span className="text-xs font-bold text-[var(--color-primary)]">
+                              +€{ing.price.toFixed(2)}
+                            </span>
+                          </motion.label>
+                        ))}
+                      </motion.div>
+
+                    </div>
+                  )}
+
+                  {/* Footer Actions */}
+                  <div className="mt-auto pt-6 border-t border-gray-100 flex items-center justify-between gap-4">
+                    <div className="flex flex-col">
+                      <span className="text-gray-400 text-xs uppercase font-bold">Total Price</span>
+                      <span className="text-2xl font-bold text-[var(--color-primary)]">€{finalPrice.toFixed(2)}</span>
+                    </div>
+                    <button
+                      onClick={(e) => { handleAddToCart(e); setIsModalOpen(false); }}
+                      className="flex-1 bg-[var(--color-primary)] text-white py-4 rounded-xl font-bold text-lg shadow-lg shadow-red-200 hover:-translate-y-1 transition-all flex items-center justify-center gap-2"
+                    >
+                      <FaPlus size={16} /> Add to Order
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </Modal >
+          </Suspense >
+        )
+      }
     </>
   );
-}
+});
+
+ProductCard.displayName = 'ProductCard';
 
 export default ProductCard;

@@ -1,10 +1,12 @@
 import { createBrowserRouter } from "react-router-dom";
 import { lazy } from "react";
 import App from "../App";
-import Home from "../pages/Home";
 
+const Landing = lazy(() => import("../pages/Landing"));
+const Menu = lazy(() => import("../pages/Menu"));
 const About = lazy(() => import("../pages/About"));
 const Contact = lazy(() => import("../pages/ContactUs"));
+const MyOrders = lazy(() => import("../pages/MyOrders"));
 const Cart = lazy(() => import("../pages/Cart"));
 const OrderSuccess = lazy(() =>
   import("../components/paymentPages/OrderSuccess")
@@ -26,7 +28,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Home />,
+        element: <Landing />,
+      },
+      {
+        path: "menu",
+        element: <Menu />,
       },
       {
         path: "about",
@@ -55,6 +61,10 @@ const router = createBrowserRouter([
       {
         path: "payment-cancelled",
         element: <PaymentCancelled />,
+      },
+      {
+        path: "my-orders",
+        element: <MyOrders />,
       },
     ],
   },
