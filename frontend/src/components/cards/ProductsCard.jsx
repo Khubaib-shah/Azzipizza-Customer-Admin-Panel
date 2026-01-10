@@ -22,8 +22,8 @@ const ProductCard = memo(({ product }) => {
     [product.rating]
   );
   const reviews = useMemo(
-    () => product.reviews || Math.floor(Math.random() * 50) + 100,
-    [product.reviews]
+    () => product.reviews || (product._id ? (parseInt(product._id.slice(-2), 16) % 30) + 120 : 150),
+    [product.reviews, product._id]
   );
 
   const toppingsTotal = useMemo(
@@ -52,26 +52,25 @@ const ProductCard = memo(({ product }) => {
     toast.success(`"${product.name.toUpperCase()}" added to cart!`);
   };
 
-  // Determine if item is special
-  const isNew = product.isNew || Math.random() > 0.7;
-  const isChefSpecial = product.isChefSpecial || (product.category === "pizze rosse" && Math.random() > 0.8);
+  // Determine if item is special (derived from product data, not random)
+  const isNew = product.isNew || false;
+  const isChefSpecial = product.isChefSpecial || product.category?.toLowerCase().includes("special");
 
   const container = {
-    hidden: {},
+    hidden: { opacity: 0 },
     show: {
+      opacity: 1,
       transition: {
-        delayChildren: 0.15,
-        staggerChildren: 0.08,
+        staggerChildren: 0.05,
       },
     },
   };
 
   const item = {
-    hidden: { opacity: 0, y: 15 },
+    hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      y: 0,
-      transition: { type: "spring", stiffness: 120 },
+      transition: { duration: 0.3 },
     },
   };
 
@@ -79,14 +78,10 @@ const ProductCard = memo(({ product }) => {
   return (
     <>
       {/* Compact Card */}
-      <motion.div
-        className="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden border border-gray-100 flex flex-col h-full"
+      <div
+        className="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden border border-gray-100 flex flex-col h-full transform-gpu hover:-translate-y-1 active:scale-95 will-change-transform"
         onClick={() => setIsModalOpen(true)}
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ y: 0, opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-        whileHover={{ y: -5 }}
+        style={{ contain: 'layout' }}
       >
         {/* Badges */}
         <div className="absolute top-2 left-2 z-10 flex flex-col gap-1.5">
@@ -106,6 +101,7 @@ const ProductCard = memo(({ product }) => {
         <div className="relative aspect-[4/3] overflow-hidden bg-gray-50">
           <img
             loading="lazy"
+            decoding="async"
             src={product.image}
             alt={product.name}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
@@ -155,7 +151,7 @@ const ProductCard = memo(({ product }) => {
             </button>
           </div>
         </div>
-      </motion.div >
+      </div>
 
       {/* Detail Modal */}
       {

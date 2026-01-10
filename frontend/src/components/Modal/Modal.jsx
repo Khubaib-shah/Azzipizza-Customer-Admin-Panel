@@ -1,16 +1,16 @@
-import { Dialog } from "@headlessui/react";
+import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { X } from "lucide-react";
 
 export default function Modal({ isOpen, onClose, children, className }) {
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
-      <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-md transition-opacity"
-        aria-hidden="true"
+      <DialogBackdrop
+        transition
+        className="fixed inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-300 ease-out data-[closed]:opacity-0"
       />
 
       <div className="fixed inset-0 flex items-center justify-center p-4 overflow-y-auto">
-        <Dialog.Panel
+        <DialogPanel
           className={`bg-white p-0 rounded-[2rem] w-full max-w-2xl relative max-h-[90vh] overflow-y-auto shadow-2xl ring-1 ring-black/5 ${className} animate-scale-in`}
         >
           <button
@@ -20,7 +20,7 @@ export default function Modal({ isOpen, onClose, children, className }) {
             <X size={20} />
           </button>
           {children}
-        </Dialog.Panel>
+        </DialogPanel>
       </div>
     </Dialog>
   );

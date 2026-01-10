@@ -12,7 +12,10 @@ export const ContextProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   const fetchMenu = useCallback(async () => {
-    setIsLoading(true);
+    // Only show loading if we don't have items yet to prevent flickering
+    if (items.length === 0) {
+      setIsLoading(true);
+    }
     setError(null);
     try {
       const { data } = await baseUri.get("/api/menu");
@@ -23,7 +26,7 @@ export const ContextProvider = ({ children }) => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [items.length]);
 
   useEffect(() => {
     fetchMenu();

@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, DialogBackdrop, DialogPanel, Transition, TransitionChild } from "@headlessui/react";
 import { Link, useLocation } from "react-router-dom";
 import {
   X,
@@ -7,7 +7,6 @@ import {
   Menu,
   Info,
   Phone,
-  User,
   ShoppingBag,
   Instagram,
   Facebook,
@@ -24,25 +23,18 @@ export default function HeaderModal({ open, setOpen, navItems }) {
   ];
 
   return (
-    <Transition.Root show={open} as={Fragment}>
+    <Transition show={open} as={Fragment}>
       <Dialog as="div" className="relative z-[60]" onClose={setOpen}>
         {/* Backdrop */}
-        <Transition.Child
-          as={Fragment}
-          enter="ease-in-out duration-500"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in-out duration-500"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" />
-        </Transition.Child>
+        <DialogBackdrop
+          transition
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-500 ease-in-out data-[closed]:opacity-0"
+        />
 
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
             <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-              <Transition.Child
+              <TransitionChild
                 as={Fragment}
                 enter="transform transition ease-in-out duration-500 sm:duration-700"
                 enterFrom="translate-x-full"
@@ -51,7 +43,7 @@ export default function HeaderModal({ open, setOpen, navItems }) {
                 leaveFrom="translate-x-0"
                 leaveTo="translate-x-full"
               >
-                <Dialog.Panel className="pointer-events-auto relative w-screen max-w-md">
+                <DialogPanel className="pointer-events-auto relative w-screen max-w-md">
                   <div className="flex h-full flex-col bg-white shadow-2xl">
                     {/* Header */}
                     <div className="px-6 py-6 bg-[var(--color-primary)] text-white">
@@ -147,12 +139,12 @@ export default function HeaderModal({ open, setOpen, navItems }) {
                       </p>
                     </div>
                   </div>
-                </Dialog.Panel>
-              </Transition.Child>
+                </DialogPanel>
+              </TransitionChild>
             </div>
           </div>
         </div>
       </Dialog>
-    </Transition.Root>
+    </Transition>
   );
 }

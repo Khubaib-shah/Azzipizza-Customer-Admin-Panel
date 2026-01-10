@@ -28,17 +28,13 @@ function App() {
         <div className="min-h-screen flex flex-col">
           {!shouldHideHeaderFooter && <Header />}
           <main className="bg-gray-100 flex-grow relative">
-            <div className="grid grid-cols-12">
-              <div className="col-span-12">
-                <AnimatePresence mode="wait">
-                  <Suspense fallback={<LoadingSpinner fullScreen />}>
-                    <PageTransition key={location.pathname}>
-                      <Outlet />
-                    </PageTransition>
-                  </Suspense>
-                </AnimatePresence>
-              </div>
-            </div>
+            <AnimatePresence mode="wait">
+              <Suspense fallback={<LoadingSpinner fullScreen />}>
+                <PageTransition key={location.pathname}>
+                  <Outlet />
+                </PageTransition>
+              </Suspense>
+            </AnimatePresence>
           </main>
           <ToastContainer
             position="top-right"

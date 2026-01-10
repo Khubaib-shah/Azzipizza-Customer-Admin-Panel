@@ -82,17 +82,16 @@ function Header() {
   return (
     <>
       <header
-        className={`sticky top-0 z-50 transition-all duration-300 ${scrolled
-          ? "glass shadow-lg py-2"
-          : "bg-gradient-to-r from-red-600 to-red-700 shadow-md py-3"
+        className={`sticky top-0 z-50 transition-[background-color,box-shadow,padding] duration-300 h-20 flex items-center ${scrolled
+          ? "bg-white shadow-xl"
+          : "bg-red-600 shadow-md"
           }`}
       >
         <div className="container mx-auto flex items-center justify-between">
           {/* Logo */}
           <Link
             to="/"
-            className={`flex items-center gap-3 transition-transform hover:scale-105 ${scrolled ? "h-12" : "h-14"
-              }`}
+            className={`flex items-center gap-3 transition-transform hover:scale-105 h-14`}
           >
             <img
               src={logo}
@@ -100,10 +99,10 @@ function Header() {
               className="object-contain h-full scale-150"
             />
             <div className="hidden sm:block">
-              <h2 className={`font-serif font-bold ${scrolled ? "text-red-600 text-xl" : "text-white text-2xl"}`}>
+              <h2 className={`font-serif font-bold text-xl md:text-2xl ${scrolled ? "text-red-600" : "text-white"}`}>
                 Azzipizza
               </h2>
-              <p className={`text-xs italic ${scrolled ? "text-amber-600" : "text-amber-300"}`}>
+              <p className={`text-xs italic ${scrolled ? "text-red-400" : "text-amber-300"}`}>
                 Mica Pizza e Fichi
               </p>
             </div>
@@ -111,13 +110,13 @@ function Header() {
 
           {/* Navigation */}
           <div className="flex flex-1 justify-center items-center gap-4">
-            <nav className="hidden md:flex gap-2">
+            <nav className="hidden lg:flex gap-2">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
                   onClick={() => handlePageChange(item.label)}
-                  className={`px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${activePage === item.label
+                  className={`px-5 py-2 rounded-full text-sm font-semibold transition-[background-color,color,border-color,transform] duration-300 ${activePage === item.label
                     ? scrolled
                       ? "bg-gradient-to-r from-red-600 to-red-700 text-white shadow-md"
                       : "bg-white text-red-600 shadow-md"
@@ -162,7 +161,7 @@ function Header() {
             </Link>
 
             {/* Mobile Menu Button */}
-            <div className="md:hidden">
+            <div className="lg:hidden">
               <Button
                 onClick={() => setOpen(!open)}
                 variant="text"
@@ -182,13 +181,13 @@ function Header() {
         </div>
 
         {/* Promotional Banner */}
-        {!scrolled && (
-          <div className="bg-amber-400 text-center py-1 mt-2 animate-slide-down">
-            <p className="text-sm font-semibold text-gray-800">
-              🎉 Free Delivery on every Order 🍕
-            </p>
-          </div>
-        )}
+        {/* {!scrolled && ( */}
+        <div className="absolute top-18 left-1/2 w-full transform -translate-x-1/2 bg-amber-400 text-center py-1 mt-2 animate-slide-down">
+          <p className="text-sm font-semibold text-gray-800">
+            🎉 Free Delivery on every Order 🍕
+          </p>
+        </div>
+        {/* )} */}
       </header>
       <HeaderModal open={open} setOpen={setOpen} navItems={navItems} />
     </>

@@ -1,21 +1,27 @@
-import { useState, useRef, useContext, useMemo } from "react";
+import { useState, useRef, useContext, useMemo, Fragment } from "react";
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition, Portal } from "@headlessui/react";
 import ProductCard from "../components/cards/ProductsCard";
-import { PiListBulletsBold } from "react-icons/pi";
 import Context from "../context/dataContext";
-import MenuModal from "../components/Modal/MenuModel";
 import ProductsListSkeleton from "../components/ProductsListSkeleton";
-import TrackOrder from "../components/TrackOrder";
-import { FaSearch, FaFilter, FaTh, FaList } from "react-icons/fa";
+import { FaSearch, FaFilter, FaTh, FaList, FaChevronDown, FaCheck } from "react-icons/fa";
 
 function Menu() {
     const { items, isLoading } = useContext(Context);
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const categoryRefs = useRef({});
     const [searchQuery, setSearchQuery] = useState("");
     const [activeCategory, setActiveCategory] = useState("all");
     const [sortBy, setSortBy] = useState("default");
     const [viewMode, setViewMode] = useState("grid"); // grid or list
     const categoriesContainerRef = useRef(null);
+    const sortOptions = [
+        { id: "discount", label: "Best Offers" },
+        { id: "default", label: "Sort By: Default" },
+        { id: "price-low", label: "Price: Low to High" },
+        { id: "price-high", label: "Price: High to Low" },
+        { id: "name", label: "Name: A-Z" },
+    ];
+
+    const currentSortLabel = sortOptions.find(o => o.id === sortBy)?.label || "Sort By: Default";
 
     const menuItems = useMemo(() => {
         if (!Array.isArray(items)) return [];
@@ -64,7 +70,6 @@ function Menu() {
                 sorted.sort((a, b) => (b.discount || 0) - (a.discount || 0));
                 break;
             default:
-                // Keep original order
                 break;
         }
 
@@ -76,21 +81,19 @@ function Menu() {
         return items?.filter(item => item.discount && item.discount > 0) || [];
     }, [items]);
 
-    // Group by category
+    // Group by category (Optimized single-pass grouping)
     const listing = useMemo(() => {
         const result = {};
-        menuItems.forEach((category) => {
-            const categoryItems = sortedItems.filter(
-                (item) => item.category === category
-            );
-            if (categoryItems.length > 0) {
-                result[category] = categoryItems;
+        sortedItems.forEach((item) => {
+            if (!result[item.category]) {
+                result[item.category] = [];
             }
+            result[item.category].push(item);
         });
         return result;
-    }, [sortedItems, menuItems]);
+    }, [sortedItems]);
 
-    const visibleCategories = Object.keys(listing);
+    const visibleCategories = useMemo(() => Object.keys(listing), [listing]);
 
     const handleCategoryClick = (category) => {
         setActiveCategory(category);
@@ -128,17 +131,13 @@ function Menu() {
                     <>
                         {/* Special Offers Section */}
                         {offerItems.length > 0 && (
-                            <section className="mb-12 animate-slide-up">
-                                <div className="bg-gradient-to-r from-red-50 to-amber-50 rounded-2xl p-8 border-2 border-red-200">
+                            <section className="mb-12">
+                                <div className="bg-gradient-to-r from-red-50 to-amber-50 rounded-2xl p-8 border-2 border-red-200 shadow-sm">
                                     <div className="flex items-center justify-center gap-4 mb-6">
                                         <div className="decorative-line flex-grow max-w-[100px]"></div>
                                         <div className="text-center">
-                                            <div className="inline-block bg-red-600 text-white px-4 py-1 rounded-full mb-2 animate-bounce">
-                                                <span className="font-bold">🔥 SPECIAL OFFERS 🔥</span>
-                                            </div>
-                                            <h2 className="text-3xl font-bold text-gray-800">
-                                                Limited Time Deals
-                                            </h2>
+                                            <h2 className="text-3xl font-bold text-red-600 mb-1">Weekly Specials</h2>
+                                            <p className="text-gray-600 text-sm">Don't miss out on these exclusive deals</p>
                                         </div>
                                         <div className="decorative-line flex-grow max-w-[100px]"></div>
                                     </div>
@@ -153,18 +152,18 @@ function Menu() {
                         )}
 
                         {/* Search and Filters */}
-                        <div className="card-premium p-6 mb-6">
-                            <div className="grid grid-cols-2 md:grid-cols-12 gap-4">
+                        <div className="card-premium p-6 mb-6 overflow-visible">
+                            <div className="grid grid-cols-2 md:grid-cols-12 gap-4 overflow-visible">
                                 {/* Search Bar */}
-                                <div className="md:col-span-5 relative">
+                                <div className="md:col-span-5 relative group">
                                     <FaSearch
                                         size={20}
-                                        className="absolute left-4 top-1/2 transform -translate-y-1/2 text-red-500"
+                                        className="absolute left-4 top-1/2 transform -translate-y-1/2 text-red-500 group-focus-within:text-red-600 transition-colors z-10"
                                     />
                                     <input
                                         type="text"
                                         placeholder="Search for your favorite pizza..."
-                                        className="pl-12 pr-4 py-3 w-full border-2 border-gray-200 rounded-xl focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all"
+                                        className="pl-12 pr-4 py-3.5 w-full border-2 border-gray-100 rounded-2xl focus:outline-none focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition-all bg-gray-50/50 hover:bg-white hover:border-red-200 font-semibold text-gray-700 shadow-sm"
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                     />
@@ -172,26 +171,63 @@ function Menu() {
 
                                 {/* Sort Dropdown */}
                                 <div className="col-span-1 md:col-span-3 relative">
-                                    <FaFilter className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                                    <select
-                                        value={sortBy}
-                                        onChange={(e) => setSortBy(e.target.value)}
-                                        className="pl-10 pr-4 py-3 w-full border-2 border-gray-200 rounded-xl focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200 transition-all appearance-none cursor-pointer"
-                                    >
-                                        <option value="default">Sort By: Default</option>
-                                        <option value="price-low">Price: Low to High</option>
-                                        <option value="price-high">Price: High to Low</option>
-                                        <option value="name">Name: A-Z</option>
-                                        <option value="discount">Best Offers</option>
-                                    </select>
+                                    <Listbox value={sortBy} onChange={setSortBy}>
+                                        <div className="relative group">
+                                            <FaFilter className="absolute left-4 top-1/2 transform -translate-y-1/2 text-red-500 group-focus-within:text-red-600 transition-colors z-10" />
+                                            <ListboxButton className="relative pl-12 pr-10 py-3.5 w-full border-2 border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-red-500/10 transition-all bg-gray-50/50 hover:bg-white hover:border-red-200 font-semibold text-gray-700 shadow-sm text-left truncate">
+                                                {currentSortLabel}
+                                                <span className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-400 group-focus-within:text-red-500 transition-colors z-10">
+                                                    <FaChevronDown size={14} />
+                                                </span>
+                                            </ListboxButton>
+
+                                            <Portal>
+                                                <Transition
+                                                    as={Fragment}
+                                                    leave="transition ease-in duration-100"
+                                                    leaveFrom="opacity-100"
+                                                    leaveTo="opacity-0"
+                                                >
+                                                    <ListboxOptions
+                                                        anchor="bottom end"
+                                                        className="z-[9999] mt-1 w-[var(--button-width)] overflow-auto rounded-2xl bg-white p-1 text-base shadow-2xl ring-1 ring-black/5 focus:outline-none max-h-72 [--anchor-gap:8px]"
+                                                    >
+                                                        {sortOptions.map((option) => (
+                                                            <ListboxOption
+                                                                key={option.id}
+                                                                value={option.id}
+                                                                className={({ active }) =>
+                                                                    `relative cursor-pointer select-none py-3 pl-10 pr-4 rounded-xl transition-all ${active ? "bg-red-50 text-red-600" : "text-gray-700 hover:bg-gray-50"
+                                                                    }`
+                                                                }
+                                                            >
+                                                                {({ selected }) => (
+                                                                    <>
+                                                                        <span className={`block truncate ${selected ? "font-bold" : "font-medium"}`}>
+                                                                            {option.label}
+                                                                        </span>
+                                                                        {selected && (
+                                                                            <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-red-500">
+                                                                                <FaCheck size={12} aria-hidden="true" />
+                                                                            </span>
+                                                                        )}
+                                                                    </>
+                                                                )}
+                                                            </ListboxOption>
+                                                        ))}
+                                                    </ListboxOptions>
+                                                </Transition>
+                                            </Portal>
+                                        </div>
+                                    </Listbox>
                                 </div>
 
                                 {/* View Mode Toggle */}
-                                <div className="col-span-2 md:col-span-2 flex gap-2 hidden md:block">
+                                <div className="col-span-2 md:col-span-4 gap-2 hidden md:flex">
                                     <button
                                         onClick={() => setViewMode("grid")}
-                                        className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all ${viewMode === "grid"
-                                            ? "bg-red-600 text-white"
+                                        className={`flex-1 py-3.5 px-4 rounded-2xl font-semibold transition-all ${viewMode === "grid"
+                                            ? "bg-red-600 text-white shadow-md shadow-red-200"
                                             : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                                             }`}
                                     >
@@ -200,8 +236,8 @@ function Menu() {
                                     </button>
                                     <button
                                         onClick={() => setViewMode("list")}
-                                        className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all ${viewMode === "list"
-                                            ? "bg-red-600 text-white"
+                                        className={`flex-1 py-3.5 px-4 rounded-2xl font-semibold transition-all ${viewMode === "list"
+                                            ? "bg-red-600 text-white shadow-md shadow-red-200"
                                             : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                                             }`}
                                     >
@@ -210,29 +246,20 @@ function Menu() {
                                     </button>
                                 </div>
 
-                                {/* Menu Button */}
-                                <div className="hidden md:col-span-2">
-                                    <button
-                                        className="w-full h-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded-xl transition-all shadow-md hover:shadow-lg font-semibold"
-                                        onClick={() => setIsModalOpen(true)}
-                                    >
-                                        <PiListBulletsBold className="inline mr-2" size={20} />
-                                        Categories
-                                    </button>
-                                </div>
+
                             </div>
                         </div>
 
                         {/* Category Pills */}
-                        <div className="glass sticky top-[80px] z-30 py-4 px-4 rounded-2xl shadow-lg mb-6 overflow-visible">
+                        <div className="bg-white/95 backdrop-blur-md sticky top-[80px] z-20 py-4 px-4 rounded-2xl shadow-lg mb-6 overflow-visible border border-gray-100">
                             <div
                                 ref={categoriesContainerRef}
                                 className="flex overflow-x-auto gap-4 styled-scrollbar whitespace-nowrap p-2"
                             >
                                 <button
                                     onClick={() => handleCategoryClick("all")}
-                                    className={`px-6 py-2.5 font-semibold text-sm transition-all duration-300 rounded-full uppercase shadow-md ${activeCategory === "all"
-                                        ? "bg-gradient-to-r from-red-600 to-red-700 text-white scale-105"
+                                    className={`px-6 py-2.5 font-semibold text-sm transition-[background-color,color,border-color,transform] duration-300 rounded-full uppercase shadow-md ${activeCategory === "all"
+                                        ? "bg-gradient-to-r from-red-600 to-red-700 text-white"
                                         : "bg-white text-gray-700 hover:bg-red-50 hover:text-red-600 border-2 border-gray-200 hover:border-red-300"
                                         }`}
                                 >
@@ -241,8 +268,8 @@ function Menu() {
                                 {menuItems?.map((item) => (
                                     <button
                                         key={item}
-                                        className={`px-6 py-2.5 font-semibold text-sm transition-all duration-300 rounded-full uppercase shadow-md ${activeCategory === item
-                                            ? "bg-gradient-to-r from-red-600 to-red-700 text-white scale-105"
+                                        className={`px-6 py-2.5 font-semibold text-sm transition-[background-color,color,border-color,transform] duration-300 rounded-full uppercase shadow-md ${activeCategory === item
+                                            ? "bg-gradient-to-r from-red-600 to-red-700 text-white"
                                             : "bg-white text-gray-700 hover:bg-red-50 hover:text-red-600 border-2 border-gray-200 hover:border-red-300"
                                             }`}
                                         onClick={() => handleCategoryClick(item)}
@@ -323,18 +350,6 @@ function Menu() {
                 )}
 
 
-
-                {isModalOpen && (
-                    <MenuModal
-                        menuItems={menuItems}
-                        activeCategory={activeCategory}
-                        onClose={() => setIsModalOpen(false)}
-                        onSelectCategory={(category) => {
-                            handleCategoryClick(category);
-                            setIsModalOpen(false);
-                        }}
-                    />
-                )}
             </div>
         </div>
     );
