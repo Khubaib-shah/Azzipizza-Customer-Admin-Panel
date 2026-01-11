@@ -27,7 +27,7 @@ function HeroSection() {
       />
 
       {/* Premium Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-red-900/70 via-red-800/60 to-amber-900/50"></div>
+     <div className="absolute inset-0 bg-black/50"></div>
 
       {/* Decorative Elements */}
       <div className="absolute top-10 left-10 w-20 h-20 border-4 border-amber-400/30 rounded-full animate-float"></div>
@@ -37,7 +37,7 @@ function HeroSection() {
       <div className="relative z-10 flex flex-col items-center justify-center h-full px-4 text-center">
         {/* Main Heading */}
         <div className="animate-slide-down">
-          <h1 className="text-white text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold drop-shadow-2xl leading-tight max-w-4xl mb-4">
+          <h1 className="!text-white text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold drop-shadow-2xl leading-tight max-w-4xl mb-4">
             Azzipizza
           </h1>
           <p className="text-amber-300 text-2xl sm:text-3xl md:text-4xl font-serif italic mb-2">

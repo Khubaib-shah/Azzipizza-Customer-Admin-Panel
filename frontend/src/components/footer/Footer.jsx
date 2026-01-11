@@ -117,17 +117,11 @@ function Footer() {
               <li className="flex items-start gap-3">
                 <FaClock className="text-amber-600 mt-1 flex-shrink-0" size={16} />
                 <div className="text-sm">
-                  <p className="text-gray-800 font-semibold">Monday - Friday</p>
-                  <p className="text-gray-600">11:00 AM - 11:00 PM</p>
+                  <p className="text-gray-800 font-semibold">Tuesday - Sunday</p>
+                  <p className="text-gray-600">6:00 PM - 11:00 PM</p>
                 </div>
               </li>
-              <li className="flex items-start gap-3">
-                <FaClock className="text-amber-600 mt-1 flex-shrink-0" size={16} />
-                <div className="text-sm">
-                  <p className="text-gray-800 font-semibold">Saturday - Sunday</p>
-                  <p className="text-gray-600">12:00 PM - 12:00 AM</p>
-                </div>
-              </li>
+             
             </ul>
             <div className="mt-4 p-4 bg-gradient-to-r from-red-600 to-red-700 rounded-lg shadow-lg">
               <p className="text-base text-white font-bold">🍕 Free Delivery</p>

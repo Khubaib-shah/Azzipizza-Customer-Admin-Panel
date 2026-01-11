@@ -99,7 +99,7 @@ function Header() {
               className="object-contain h-full scale-150"
             />
             <div className="hidden sm:block">
-              <h2 className={`font-serif font-bold text-xl md:text-2xl ${scrolled ? "text-red-600" : "text-white"}`}>
+              <h2 className={`font-serif font-bold text-xl md:text-2xl ${scrolled ? "!text-black" : "text-white"}`}>
                 Azzipizza
               </h2>
               <p className={`text-xs italic ${scrolled ? "text-red-400" : "text-amber-300"}`}>
