@@ -1,34 +1,52 @@
 let whatsappTab = null;
+
+/**
+ * Normalize an Italian phone number to international format (no '+' prefix).
+ * Handles cases where the number already includes the country code.
+ */
+const normalizeItalianPhone = (raw) => {
+  // Strip spaces, dashes, and leading '+'
+  let phone = raw.replace(/[\s\-()]/g, "").replace(/^\+/, "");
+
+  // Remove leading '00' international prefix (e.g. 0039...)
+  if (phone.startsWith("00")) phone = phone.slice(2);
+
+  // If it already starts with Italy's code '39', keep it as-is
+  if (phone.startsWith("39") && phone.length > 9) return phone;
+
+  // Otherwise prepend the Italian country code
+  return `39${phone}`;
+};
+
 export const sendOrderUpdate = async (order, status) => {
   const customerName = order.name;
-  const customerPhone = `39${order.phoneNumber}`;
+  const customerPhone = normalizeItalianPhone(order.phoneNumber);
   const orderNumber = order._id.slice(-6).toUpperCase();
 
   let statusMessage = "";
 
   switch (status) {
     case "confirmed":
-      statusMessage = `Hello ${customerName}! Order #${orderNumber} confirmed! %0A Preparing your food. %0A Estimated delivery: 30-40 min. We'll notify you when it's out for delivery. %0A Thank you!`;
+      statusMessage = `Hello ${customerName}!\nOrder #${orderNumber} confirmed!\nPreparing your food.\nEstimated delivery: 30-40 min. We'll notify you when it's out for delivery.\nThank you!`;
       break;
 
     case "preparing":
-      statusMessage = `Hello ${customerName}! Order #${orderNumber} is being prepared! %0A Ready in 20-25 min. %0A Stay tuned for updates!`;
+      statusMessage = `Hello ${customerName}!\nOrder #${orderNumber} is being prepared!\nReady in 20-25 min.\nStay tuned for updates!`;
       break;
 
     case "out_for_delivery":
-      statusMessage = `Hello ${customerName}! Order #${orderNumber} is out for delivery! %0A Arrival: 15-20 min. %0A Please keep your phone handy!`;
+      statusMessage = `Hello ${customerName}!\nOrder #${orderNumber} is out for delivery!\nArrival: 15-20 min.\nPlease keep your phone handy!`;
       break;
 
     case "delivered":
-      statusMessage = `Hello ${customerName}! Order #${orderNumber} has been delivered! %0A Enjoy your meal! 🍕 %0A Thank you for choosing Azzipizza!`;
+      statusMessage = `Hello ${customerName}!\nOrder #${orderNumber} has been delivered!\nEnjoy your meal! 🍕\nThank you for choosing Azzipizza!`;
       break;
 
     default:
-      statusMessage = `Hello ${customerName}! Order #${orderNumber} received! %0A We're processing it and will update you soon.`;
+      statusMessage = `Hello ${customerName}!\nOrder #${orderNumber} received!\nWe're processing it and will update you soon.`;
   }
   const encodedMessage = encodeURIComponent(statusMessage);
-  const whatsappURL = `https://wa.me/send?phone=${customerPhone}&text=${encodedMessage}`;
-  //const whatsappURL = `https://web.whatsapp.com/send?phone=${customerPhone}&text=${encodedMessage}`;
+  const whatsappURL = `https://wa.me/${customerPhone}?text=${encodedMessage}`;
 
   console.log("WhatsApp Tab reference:", whatsappTab);
   console.log(
