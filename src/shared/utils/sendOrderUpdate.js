@@ -27,7 +27,8 @@ export const sendOrderUpdate = async (order, status) => {
       statusMessage = `Hello ${customerName}! Order #${orderNumber} received! %0A We're processing it and will update you soon.`;
   }
   const encodedMessage = encodeURIComponent(statusMessage);
-  const whatsappURL = `https://web.whatsapp.com/send?phone=${customerPhone}&text=${encodedMessage}`;
+  const whatsappURL = `https://wa.me/send?phone=${customerPhone}&text=${encodedMessage}`;
+  //const whatsappURL = `https://web.whatsapp.com/send?phone=${customerPhone}&text=${encodedMessage}`;
 
   console.log("WhatsApp Tab reference:", whatsappTab);
   console.log(
