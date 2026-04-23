@@ -18,13 +18,6 @@ const About = () => {
               From passion to perfection, one pizza at a time
             </p>
           </div>
-          <div className="mt-10 flex justify-center">
-            <img
-              src={pizzaImage}
-              alt="Azzipizza Logo"
-              className="w-48 h-48 filter drop-shadow-2xl animate-float"
-            />
-          </div>
         </div>
       </div>
 

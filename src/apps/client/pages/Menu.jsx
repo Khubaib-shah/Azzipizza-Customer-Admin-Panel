@@ -117,7 +117,7 @@ function Menu() {
             {/* Hero Banner */}
             <div className="bg-gradient-to-r from-red-600 to-red-700 text-white py-12">
                 <div className="container mx-auto px-4 text-center">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-3">Our Menu</h1>
+                    <h1 className="text-4xl md:text-5xl font-bold mb-3 text-white!">Our Menu</h1>
                     <p className="text-xl text-amber-200">
                         Explore our delicious selection of authentic Italian pizzas
                     </p>

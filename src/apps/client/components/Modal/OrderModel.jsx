@@ -88,16 +88,24 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
   }, [isOpen, restaurantOpen]);
 
   const validateDeliveryTime = (time) => {
-    if (!time) return false;
-    const [hour, minute] = time.split(":").map(Number);
-    const selectedTime = new Date();
-    selectedTime.setHours(hour, minute, 0, 0);
+  if (!time) return false;
 
-    const now = new Date();
-    now.setMinutes(now.getMinutes() + 35);
+  const [hour, minute] = time.split(":").map(Number);
 
-    return selectedTime >= now;
-  };
+  const now = new Date();
+  const minAllowed = new Date(now.getTime() + 35 * 60000);
+
+  const selectedTime = new Date();
+  selectedTime.setHours(hour, minute, 0, 0);
+
+  // ✅ FIX — if selected clock time already passed today, treat as tomorrow
+  if (selectedTime < now) {
+    selectedTime.setDate(selectedTime.getDate() + 1);
+  }
+
+  return selectedTime >= minAllowed;
+};
+
   const isFormValid = useMemo(() => {
     // Relaxed Phone: Allows + leading, then 8-15 digits
     const phoneRegex = /^\+?[\d\s]{8,15}$/;

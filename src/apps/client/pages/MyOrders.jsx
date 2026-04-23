@@ -41,7 +41,7 @@ const MyOrders = () => {
         <div className="min-h-screen bg-gray-50 py-12 px-4 font-['Poppins']">
             <div className="max-w-4xl mx-auto">
                 <header className="mb-10 text-center sm:text-left">
-                    <h1 className="text-4xl font-bold font-['Playfair_Display'] text-gray-900 mb-2">My Orders</h1>
+                    <h1 className="text-4xl font-bold font-['Playfair_Display'] text-gray-900 mb-2 !text-black">My Orders</h1>
                     <p className="text-gray-500">Track current deliveries and view your pizza history.</p>
                 </header>
 
