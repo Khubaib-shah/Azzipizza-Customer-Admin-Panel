@@ -1,0 +1,157 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,800&display=swap");
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+
+/* -------------------------------------------------------------------------- */
+/* CLIENT THEME SCOPE                                                       */
+/* -------------------------------------------------------------------------- */
+.client-theme {
+
+  /* Client CSS Variables */
+  --toastify-font-family: "Poppins", sans-serif;
+  --color-primary: #dc2626;
+  --color-primary-light: #ef4444;
+  --color-primary-dark: #991b1b;
+  --color-accent: #f59e0b;
+  --color-accent-light: #fcd34d;
+  --color-accent-dark: #d97706;
+  --color-basil: #65a30d;
+  --color-cream: #fef3c7;
+  --color-beige: #fdf4e3;
+  --color-background: #fffbeb;
+  --color-surface: #ffffff;
+  --color-text: #1f2937;
+  --color-text-light: #6b7280;
+  --color-text-lighter: #9ca3af;
+
+  font-family: "Poppins", sans-serif;
+  background: var(--color-background);
+  color: var(--color-text);
+  min-height: 100vh;
+}
+
+.client-theme h1, 
+.client-theme h2, 
+.client-theme h3, 
+.client-theme h4, 
+.client-theme h5, 
+.client-theme h6 {
+  font-family: "Playfair Display", serif;
+}
+
+/* -------------------------------------------------------------------------- */
+/* ADMIN THEME SCOPE                                                        */
+/* -------------------------------------------------------------------------- */
+.admin-theme {
+
+  /* Premium Admin Design Tokens */
+  --background: #fffbeb;
+  --foreground: #1f2937;
+  --card: #ffffff;
+  --card-foreground: #111827;
+  --popover: #ffffff;
+  --popover-foreground: #1f2937;
+  --primary: #dc2626;
+  --primary-foreground: #ffffff;
+  --secondary: #fef3c7;
+  --secondary-foreground: #92400e;
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280;
+  --accent: #f59e0b;
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #dc2626;
+  --radius: 0.75rem;
+
+  font-family: "Poppins", sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  min-height: 100vh;
+}
+
+.admin-theme h1,
+.admin-theme h2,
+.admin-theme h3,
+.admin-theme h4,
+.admin-theme h5,
+.admin-theme h6 {
+  font-family: "Playfair Display", serif;
+}
+
+/* Base resets that apply to both but are safe */
+* {
+  box-sizing: border-box;
+}
+
+/* Specific component styles from client */
+.client-theme .container {
+  width: 90%;
+  margin: auto;
+  max-width: 1400px;
+}
+
+.client-theme .btn-primary {
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+}
+
+/* Add more specific client/admin styles here if needed, 
+   or keep them in their respective component.css files */
+
+/* Premium Utility Classes */
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.text-gradient-gold {
+  background: linear-gradient(to right, #f59e0b, #d97706);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hover-lift {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #cbd5e1;
+}
+
+/* Animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
