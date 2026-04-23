@@ -133,7 +133,7 @@ const ListItems = () => {
       <div className="max-w-7xl mx-auto">
         <header className="flex flex-col lg:flex-row lg:items-end justify-between mb-12 gap-6">
           <div className="space-y-2">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black text-slate-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black !text-slate-900 tracking-tight">
               Collection <span className="text-red-600 italic underline underline-offset-8 decoration-amber-400/40">Gallery</span>
             </h1>
             <p className="text-slate-500 text-xs md:text-sm font-medium">

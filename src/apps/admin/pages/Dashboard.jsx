@@ -55,7 +55,7 @@ const Dashboard = () => {
         {/* Header */}
         <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
           <div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black text-slate-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black !text-slate-900 tracking-tight">
               Admin <span className="text-red-600 underline underline-offset-8 decoration-slate-200">Dashboard</span>
             </h1>
             <p className="text-slate-500 text-xs md:text-sm font-medium mt-1">Real-time performance metrics and business health.</p>

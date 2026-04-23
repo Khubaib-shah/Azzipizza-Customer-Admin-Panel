@@ -259,7 +259,7 @@ const Orders = () => {
       <div className="max-w-7xl mx-auto">
         <header className="flex flex-col lg:flex-row lg:items-end justify-between mb-8 md:mb-12 gap-6">
           <div className="space-y-2">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black text-slate-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black !text-slate-900 tracking-tight">
               Order <span className="text-red-600 underline underline-offset-8 decoration-slate-200">Management</span>
             </h1>
             <p className="text-slate-500 text-xs md:text-sm font-medium">Manage and track all incoming customer orders.</p>

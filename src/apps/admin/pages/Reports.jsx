@@ -79,7 +79,7 @@ const Reports = () => {
                 {/* Header */}
                 <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                     <div className="space-y-1">
-                        <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black text-slate-900 tracking-tight">
+                        <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black !text-slate-900 tracking-tight">
                             Azzipizza <span className="text-red-600 underline underline-offset-8 decoration-slate-200">Reports</span>
                         </h1>
                         <p className="text-slate-500 text-xs md:text-sm font-medium">Deep insights into business scale and performance.</p>

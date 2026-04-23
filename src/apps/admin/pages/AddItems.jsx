@@ -72,7 +72,7 @@ const AddItems = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormErrors({});
-    
+
     // 1. Validation
     const { isValid, errors } = validateMenuItem(formData);
     if (!isValid) {
@@ -164,7 +164,7 @@ const AddItems = () => {
       <div className="max-w-4xl mx-auto">
         <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="space-y-2">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black text-slate-900 tracking-tight flex items-center gap-3">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black !text-slate-900 tracking-tight flex items-center gap-3">
               Craft <span className="text-red-600 italic underline underline-offset-8 decoration-amber-400/40">New Delights</span>
               <Sparkles className="h-6 w-6 text-amber-500 animate-pulse" />
             </h1>
@@ -178,14 +178,14 @@ const AddItems = () => {
           <form onSubmit={handleSubmit}>
             <CardHeader className="bg-linear-to-br from-red-600 to-red-700 pt-10 pb-20 px-10 text-white relative">
               <div className="absolute top-0 right-0 p-12 opacity-10 rotate-12">
-                 <PlusCircle className="h-40 w-40" />
+                <PlusCircle className="h-40 w-40" />
               </div>
               <CardTitle className="text-2xl md:text-3xl font-serif font-bold mb-2">Item Blueprint</CardTitle>
               <CardDescription className="text-red-100/80 font-medium max-w-sm">
                 Fine-tune the name, pricing, and visual soul of your dish.
               </CardDescription>
             </CardHeader>
-            
+
             <CardContent className="space-y-10 -mt-10 bg-white rounded-t-[3rem] pt-12 px-6 md:px-10">
               {/* Basic Info Section */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -198,15 +198,14 @@ const AddItems = () => {
                     value={formData.name}
                     onChange={handleInputChange}
                     placeholder="e.g. Diavola Deluxe"
-                    className={`h-14 px-6 rounded-2xl border-slate-100 bg-slate-50/50 focus-visible:ring-red-600/10 font-bold text-slate-800 transition-all ${
-                      formErrors.name ? "border-red-300 bg-red-50/30" : "hover:border-slate-200"
-                    }`}
+                    className={`h-14 px-6 rounded-2xl border-slate-100 bg-slate-50/50 focus-visible:ring-red-600/10 font-bold text-slate-800 transition-all ${formErrors.name ? "border-red-300 bg-red-50/30" : "hover:border-slate-200"
+                      }`}
                   />
                   <AnimatePresence>
                     {formErrors.name && (
-                      <motion.p 
-                        initial={{ opacity: 0, y: -10 }} 
-                        animate={{ opacity: 1, y: 0 }} 
+                      <motion.p
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
                         className="text-[11px] font-bold text-red-500 ml-2"
                       >
                         {formErrors.name}
@@ -227,9 +226,8 @@ const AddItems = () => {
                       onChange={handleInputChange}
                       placeholder="0.00"
                       step="0.01"
-                      className={`h-14 px-6 rounded-2xl border-slate-100 bg-slate-50/50 focus-visible:ring-red-600/10 font-serif italic text-lg font-bold ${
-                        formErrors.price ? "border-red-300 bg-red-50/30" : "hover:border-slate-200"
-                      }`}
+                      className={`h-14 px-6 rounded-2xl border-slate-100 bg-slate-50/50 focus-visible:ring-red-600/10 font-serif italic text-lg font-bold ${formErrors.price ? "border-red-300 bg-red-50/30" : "hover:border-slate-200"
+                        }`}
                     />
                   </div>
                   <div className="space-y-2.5">
@@ -260,9 +258,8 @@ const AddItems = () => {
                       setFormData((prev) => ({ ...prev, category: value }))
                     }
                   >
-                    <SelectTrigger className={`h-14 px-6 rounded-2xl border-slate-100 bg-slate-50/50 focus:ring-red-600/10 font-bold text-slate-700 capitalize ${
-                      formErrors.category ? "border-red-300" : ""
-                    }`}>
+                    <SelectTrigger className={`h-14 px-6 rounded-2xl border-slate-100 bg-slate-50/50 focus:ring-red-600/10 font-bold text-slate-700 capitalize ${formErrors.category ? "border-red-300" : ""
+                      }`}>
                       <SelectValue placeholder="Where does it belong?" />
                     </SelectTrigger>
                     <SelectContent className="rounded-2xl border-slate-100 shadow-2xl">
@@ -274,12 +271,12 @@ const AddItems = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div className="h-14 flex items-center">
                   <AnimatePresence mode="wait">
                     {formData.price && formData.discount ? (
-                      <motion.div 
-                        initial={{ opacity: 0, scale: 0.9 }} 
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.9 }}
                         className="bg-amber-50/50 border border-amber-100/50 p-4 rounded-2xl w-full flex items-center justify-between"
@@ -306,9 +303,8 @@ const AddItems = () => {
                   value={formData.description}
                   onChange={handleInputChange}
                   placeholder="Describe the aroma, the crunch, and the soul of this dish..."
-                  className={`min-h-[120px] rounded-2xl border-slate-100 bg-slate-50/50 focus-visible:ring-red-600/10 font-medium p-6 resize-none transition-all ${
-                    formErrors.description ? "border-red-300 bg-red-50/30" : "hover:border-slate-200"
-                  }`}
+                  className={`min-h-[120px] rounded-2xl border-slate-100 bg-slate-50/50 focus-visible:ring-red-600/10 font-medium p-6 resize-none transition-all ${formErrors.description ? "border-red-300 bg-red-50/30" : "hover:border-slate-200"
+                    }`}
                 />
               </div>
 
@@ -372,14 +368,13 @@ const AddItems = () => {
                 <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">
                   The Visual Presentation
                 </label>
-                <div 
-                  className={`border-2 border-dashed rounded-[3rem] p-4 text-center transition-all relative min-h-[300px] flex items-center justify-center ${
-                    imagePreview ? "border-emerald-200 bg-emerald-50/10" : "border-slate-100 hover:border-red-200 hover:bg-red-50/10"
-                  }`}
+                <div
+                  className={`border-2 border-dashed rounded-[3rem] p-4 text-center transition-all relative min-h-[300px] flex items-center justify-center ${imagePreview ? "border-emerald-200 bg-emerald-50/10" : "border-slate-100 hover:border-red-200 hover:bg-red-50/10"
+                    }`}
                 >
                   <AnimatePresence mode="wait">
                     {imagePreview ? (
-                      <motion.div 
+                      <motion.div
                         key="preview"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -392,7 +387,7 @@ const AddItems = () => {
                           className="mx-auto h-[350px] w-full object-cover rounded-[2.5rem] shadow-2xl transition-transform group-hover:scale-[1.01]"
                         />
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-all rounded-[2.5rem] flex items-center justify-center backdrop-blur-[2px]">
-                           <Button
+                          <Button
                             type="button"
                             variant="destructive"
                             className="rounded-2xl font-black px-8 h-12 shadow-2xl scale-110"
@@ -407,12 +402,12 @@ const AddItems = () => {
                         </div>
                       </motion.div>
                     ) : (
-                      <motion.div 
+                      <motion.div
                         key="uploader"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="py-16 w-full cursor-pointer flex flex-col items-center" 
+                        className="py-16 w-full cursor-pointer flex flex-col items-center"
                         onClick={() => imageInputRef.current.click()}
                       >
                         <div className="h-20 w-20 flex items-center justify-center bg-slate-50 rounded-full mb-6 border border-slate-100 shadow-inner">
@@ -444,9 +439,9 @@ const AddItems = () => {
                 </div>
                 <AnimatePresence>
                   {formErrors.image && (
-                    <motion.p 
-                      initial={{ opacity: 0 }} 
-                      animate={{ opacity: 1 }} 
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
                       className="text-[11px] font-bold text-red-500 text-center"
                     >
                       {formErrors.image}
@@ -457,16 +452,16 @@ const AddItems = () => {
             </CardContent>
 
             <CardFooter className="flex flex-col sm:flex-row justify-between items-center gap-8 bg-slate-50/30 p-10 border-t border-slate-50">
-               <button
+              <button
                 type="button"
                 className="text-slate-400 font-bold text-xs uppercase tracking-widest hover:text-slate-600 transition-colors"
                 onClick={handleReset}
               >
                 Clear Blueprint
               </button>
-              
-              <Button 
-                type="submit" 
+
+              <Button
+                type="submit"
                 disabled={loading}
                 className="w-full sm:w-auto min-w-[240px] h-16 bg-red-600 hover:bg-red-700 text-white rounded-4xl font-black text-lg shadow-2xl shadow-red-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:grayscale"
               >
