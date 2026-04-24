@@ -310,7 +310,7 @@ const OrderSideBar = React.memo(
                       <SelectTrigger className={`rounded-xl border-slate-100 font-bold h-12 px-6 ${getStatusStyles(selectedOrder.orderStatus)}`}>
                         <SelectValue placeholder="Select status" />
                       </SelectTrigger>
-                      <SelectContent className="rounded-2xl border-slate-100 shadow-2xl p-2">
+                      <SelectContent className="rounded-2xl border-slate-100 shadow-2xl p-2 z-[1990] bg-slate-100">
                         {statusOptions.map((s) => (
                           <SelectItem key={s} value={s} className="font-bold cursor-pointer h-10 px-4">
                             {s}
