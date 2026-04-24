@@ -110,7 +110,7 @@ const Orders = () => {
     fetchOrders();
 
     if (ENABLE_SOCKET && !socketRef.current) {
-      socketRef.current = io(BASE_URL, { 
+      socketRef.current = io(BASE_URL, {
         transports: ["websocket", "polling"],
         reconnection: true,
         reconnectionAttempts: 5,
@@ -270,22 +270,22 @@ const Orders = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      {ENABLE_SOCKET && (
+        <div className={`mt-2 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border transition-colors ${isSocketConnected ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-red-50 text-red-600 border-red-100"}`}>
+          {isSocketConnected ? "● Live" : "○ Offline"}
+        </div>
+      )}
 
       <div className="max-w-7xl mx-auto">
         <header className="flex flex-col lg:flex-row lg:items-end justify-between mb-8 md:mb-12 gap-6">
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black !text-slate-900 tracking-tight">
-                Order <span className="text-red-600 underline underline-offset-8 decoration-slate-200">Management</span>
-              </h1>
-              {ENABLE_SOCKET && (
-                <div className={`mt-2 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border transition-colors ${isSocketConnected ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-red-50 text-red-600 border-red-100"}`}>
-                  {isSocketConnected ? "● Live" : "○ Offline"}
-                </div>
-              )}
-            </div>
-            <p className="text-slate-500 text-xs md:text-sm font-medium">Manage and track all incoming customer orders.</p>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black !text-slate-900 tracking-tight">
+              Order <span className="text-red-600 underline underline-offset-8 decoration-slate-200">Management</span>
+            </h1>
 
-          <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center bg-white p-3 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100">
+          </div>
+
+          <div className="flex flex-col xl:flex-row gap-4 items-stretch xl:items-center bg-white p-3 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100">
 
             <div className="flex items-center gap-4">
               <div className="relative group flex-1 md:min-w-[300px]">
