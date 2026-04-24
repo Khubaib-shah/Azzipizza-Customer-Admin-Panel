@@ -51,6 +51,7 @@ const Orders = () => {
   const { setNotifications } = useNotifications();
   const [isAudioBlocked, setIsAudioBlocked] = useState(false);
   const audio = useRef(new Audio(NotificationSound)).current;
+  const [isSocketConnected, setIsSocketConnected] = useState(false);
   const socketRef = useRef(null);
 
   // Prime audio on first interaction to bypass autoplay policies
@@ -81,19 +82,6 @@ const Orders = () => {
     }
   }, [audio]);
 
-  useEffect(() => {
-    if (ENABLE_SOCKET && !socketRef.current) {
-      socketRef.current = io(BASE_URL, { transports: ["websocket"] });
-      socketRef.current.on("connect", () => console.log("[Socket Connected]:", socketRef.current.id));
-    }
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-        socketRef.current = null;
-      }
-    };
-  }, []);
-
   const fetchOrders = useCallback(async () => {
     try {
       dispatch({ type: "SET_LOADING", payload: true });
@@ -121,7 +109,31 @@ const Orders = () => {
   useEffect(() => {
     fetchOrders();
 
-    if (ENABLE_SOCKET && socketRef.current) {
+    if (ENABLE_SOCKET && !socketRef.current) {
+      socketRef.current = io(BASE_URL, { 
+        transports: ["websocket", "polling"],
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000
+      });
+
+      const socket = socketRef.current;
+
+      socket.on("connect", () => {
+        console.log("[Socket Connected]:", socket.id);
+        setIsSocketConnected(true);
+      });
+
+      socket.on("disconnect", () => {
+        console.log("[Socket Disconnected]");
+        setIsSocketConnected(false);
+      });
+
+      socket.on("connect_error", (err) => {
+        console.error("[Socket Connection Error]:", err.message);
+        setIsSocketConnected(false);
+      });
+
       const handleNewOrder = (newOrder) => {
         if (!newOrder?._id) return;
         setOrders((prev) => {
@@ -129,7 +141,6 @@ const Orders = () => {
           return [newOrder, ...prev];
         });
 
-        // Side effects outside of setOrders
         setNotifications((n) => {
           if (n.some(item => item.id === newOrder._id)) return n;
           return [...n, { id: newOrder._id, message: "New Order!", items: newOrder }];
@@ -139,26 +150,30 @@ const Orders = () => {
       };
 
       const handleOrderUpdate = (updated) => {
+        if (!updated?._id) return;
         setOrders(prev => prev.map(o => o._id === updated._id ? updated : o));
-        if (selectedOrder?._id === updated._id) setSelectedOrder(updated);
+        setSelectedOrder(prev => prev?._id === updated._id ? updated : prev);
       };
 
       const handleOrderDelete = (id) => {
+        if (!id) return;
         setOrders(prev => prev.filter(o => o._id !== id));
-        if (selectedOrder?._id === id) setSelectedOrder(null);
+        setSelectedOrder(prev => prev?._id === id ? null : prev);
       };
 
-      socketRef.current.on("order:new", handleNewOrder);
-      socketRef.current.on("order:update", handleOrderUpdate);
-      socketRef.current.on("order:delete", handleOrderDelete);
+      socket.on("order:new", handleNewOrder);
+      socket.on("order:update", handleOrderUpdate);
+      socket.on("order:delete", handleOrderDelete);
 
       return () => {
-        socketRef.current?.off("order:new", handleNewOrder);
-        socketRef.current?.off("order:update", handleOrderUpdate);
-        socketRef.current?.off("order:delete", handleOrderDelete);
+        socket.off("order:new", handleNewOrder);
+        socket.off("order:update", handleOrderUpdate);
+        socket.off("order:delete", handleOrderDelete);
+        socket.disconnect();
+        socketRef.current = null;
       };
     }
-  }, [fetchOrders, setNotifications, playAlert]);
+  }, [fetchOrders, setNotifications, playAlert, selectedOrder?._id]);
 
   const filteredOrders = useMemo(() => {
     let result = [...orders];
@@ -258,12 +273,17 @@ const Orders = () => {
 
       <div className="max-w-7xl mx-auto">
         <header className="flex flex-col lg:flex-row lg:items-end justify-between mb-8 md:mb-12 gap-6">
-          <div className="space-y-2">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black !text-slate-900 tracking-tight">
-              Order <span className="text-red-600 underline underline-offset-8 decoration-slate-200">Management</span>
-            </h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black !text-slate-900 tracking-tight">
+                Order <span className="text-red-600 underline underline-offset-8 decoration-slate-200">Management</span>
+              </h1>
+              {ENABLE_SOCKET && (
+                <div className={`mt-2 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border transition-colors ${isSocketConnected ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-red-50 text-red-600 border-red-100"}`}>
+                  {isSocketConnected ? "● Live" : "○ Offline"}
+                </div>
+              )}
+            </div>
             <p className="text-slate-500 text-xs md:text-sm font-medium">Manage and track all incoming customer orders.</p>
-          </div>
 
           <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center bg-white p-3 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100">
 

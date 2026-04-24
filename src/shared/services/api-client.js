@@ -1,9 +1,10 @@
 import axios from "axios";
 
 // Environment variables for flexibility
-const BASE_URL = import.meta.env.VITE_API_BASE_URL_PRO_SOCKECT ||
-                 import.meta.env.VITE_API_BASE_URL_PRO ||
-                 import.meta.env.VITE_API_BASE_URL_DEV;
+const BASE_URL = import.meta.env.VITE_API_BASE_URL_PRO_SOCKECT
+// ||
+// import.meta.env.VITE_API_BASE_URL_PRO ||
+// import.meta.env.VITE_API_BASE_URL_DEV;
 
 /**
  * Standard API Client with interceptors for global error handling
@@ -36,7 +37,7 @@ apiClient.interceptors.response.use(
   (error) => {
     // Centralized error logging and formatting
     const message = error.response?.data?.message || error.message || "An unexpected error occurred";
-    
+
     // We can handle specific status codes here (e.g., 401 for logout)
     if (error.response?.status === 401) {
       // Handle unauthorized (redirect to login if needed)

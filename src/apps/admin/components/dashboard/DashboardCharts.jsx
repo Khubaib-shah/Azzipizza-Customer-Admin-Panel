@@ -15,12 +15,12 @@ import {
 } from "recharts";
 
 const CustomTooltip = ({ active, payload, label }) => {
-  if (active && payload && payload.length) {
+  if (active && payload && payload.length && payload[0] && payload[0].value !== undefined) {
     return (
       <div className="bg-white p-4 rounded-2xl shadow-2xl border border-slate-50">
         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{label}</p>
         <p className="text-xl font-serif font-black text-red-600">
-          ${parseFloat(payload[0].value).toFixed(2)}
+          €{parseFloat(payload[0].value || 0).toFixed(2)}
         </p>
       </div>
     );
