@@ -1,20 +1,12 @@
 let whatsappTab = null;
 
-/**
- * Normalize an Italian phone number to international format (no '+' prefix).
- * Handles cases where the number already includes the country code.
- */
 const normalizeItalianPhone = (raw) => {
-  // Strip spaces, dashes, and leading '+'
   let phone = raw.replace(/[\s\-()]/g, "").replace(/^\+/, "");
 
-  // Remove leading '00' international prefix (e.g. 0039...)
   if (phone.startsWith("00")) phone = phone.slice(2);
 
-  // If it already starts with Italy's code '39', keep it as-is
   if (phone.startsWith("39") && phone.length > 9) return phone;
 
-  // Otherwise prepend the Italian country code
   return `39${phone}`;
 };
 

@@ -12,6 +12,7 @@ import { AnimatePresence } from "framer-motion";
 import PageTransition from "./components/PageTransition";
 
 import TrackOrder from "./components/TrackOrder";
+import InstallPrompt from "./components/InstallPrompt";
 
 function App() {
   const location = useLocation();
@@ -52,6 +53,7 @@ function App() {
             progressClassName="toast-progress-premium"
           />
           <TrackOrder />
+          <InstallPrompt />
 
           {!shouldHideHeaderFooter && <Footer />}
         </div>
