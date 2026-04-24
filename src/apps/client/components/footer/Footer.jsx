@@ -159,35 +159,6 @@ function Footer() {
           </p>
         </div>
       </div>
-
-      <style jsx>{`
-        .footer-link {
-          position: relative;
-          display: inline-block;
-          transition: color 0.3s ease;
-        }
-
-        .footer-link::after {
-          content: '';
-          position: absolute;
-          bottom: -2px;
-          right: 0;
-          width: 0;
-          height: 2px;
-          background: linear-gradient(to right, #DC2626, #F59E0B);
-          transition: width 0.4s ease, right 0.4s ease;
-        }
-
-        .footer-link:hover {
-          color: #DC2626;
-        }
-
-        .footer-link:hover::after {
-          width: 100%;
-          right: auto;
-          left: 0;
-        }
-      `}</style>
     </footer>
   );
 }
