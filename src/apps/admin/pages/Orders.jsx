@@ -23,12 +23,12 @@ import {
 } from "@shared/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@shared/components/ui/tabs";
 import { useNotifications } from "../hooks/useNotifications";
-import NotificationSound from "/notification-sound.wav";
 import CompletedOrderTable from "../components/CompletedOrderTable";
 import ActiveOrderTable from "../components/ActiveOrderTable";
 import { reducer } from "@shared/utils/reducer";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
+import { playNotificationSound, subscribeToNotifications, showCoordinatedToast } from "@shared/utils/notification-utils";
 
 const ENABLE_SOCKET = import.meta.env.VITE_ENABLE_SOCKET === "true";
 
@@ -50,37 +50,18 @@ const Orders = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { setNotifications } = useNotifications();
   const [isAudioBlocked, setIsAudioBlocked] = useState(false);
-  const audio = useRef(new Audio(NotificationSound)).current;
   const [isSocketConnected, setIsSocketConnected] = useState(false);
   const socketRef = useRef(null);
 
-  // Prime audio on first interaction to bypass autoplay policies
-  useEffect(() => {
-    const primeAudio = () => {
-      audio.play().then(() => {
-        audio.pause();
-        audio.currentTime = 0;
-        console.log("[Audio]: Primed successfully");
-      }).catch(() => {
-        console.log("[Audio]: Waiting for interaction to prime");
-      });
-      window.removeEventListener("click", primeAudio);
-    };
-    window.addEventListener("click", primeAudio);
-    return () => window.removeEventListener("click", primeAudio);
-  }, [audio]);
-
   const playAlert = useCallback(async () => {
     try {
-      audio.volume = 1.0;
-      audio.currentTime = 0;
-      await audio.play();
+      await playNotificationSound();
       setIsAudioBlocked(false);
     } catch (err) {
       console.error("[Audio Playback Error]:", err);
       setIsAudioBlocked(true);
     }
-  }, [audio]);
+  }, []);
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -146,7 +127,7 @@ const Orders = () => {
           return [...n, { id: newOrder._id, message: "New Order!", items: newOrder }];
         });
         playAlert();
-        toast.success("New order received!");
+        showCoordinatedToast("New order received!", toast.success);
       };
 
       const handleOrderUpdate = (updated) => {
@@ -165,15 +146,23 @@ const Orders = () => {
       socket.on("order:update", handleOrderUpdate);
       socket.on("order:delete", handleOrderDelete);
 
+      // Subscribe to cross-tab notifications (e.g. from FCM foreground)
+      const unsubscribe = subscribeToNotifications((payload) => {
+        console.log("[Orders]: Received broadcasted notification", payload);
+        // We could manually trigger a refresh or add to list here if needed,
+        // but Socket.IO usually handles the data. This is mostly for sound coordination.
+      });
+
       return () => {
         socket.off("order:new", handleNewOrder);
         socket.off("order:update", handleOrderUpdate);
         socket.off("order:delete", handleOrderDelete);
         socket.disconnect();
         socketRef.current = null;
+        unsubscribe();
       };
     }
-  }, [fetchOrders, setNotifications, playAlert, selectedOrder?._id]);
+  }, [fetchOrders, setNotifications, playAlert]);
 
   const filteredOrders = useMemo(() => {
     let result = [...orders];
