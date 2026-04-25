@@ -10,7 +10,7 @@ import { orderService } from "@shared/services";
 import { URL as BASE_URL } from "@shared/config/api"; // Keep for socket
 import io from "socket.io-client";
 import OrderSideBar from "../components/OrderSideBar";
-import { Search, RefreshCw, ShoppingBag, Loader2 } from "lucide-react";
+import { Search, RefreshCw, ShoppingBag, Loader2, Bell, BellOff, Send } from "lucide-react";
 import { Input } from "@shared/components/ui/input";
 import { Button } from "@shared/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@shared/components/ui/card";
@@ -23,6 +23,7 @@ import {
 } from "@shared/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@shared/components/ui/tabs";
 import { useNotifications } from "../hooks/useNotifications";
+import { usePushNotifications } from "../hooks/usePushNotifications";
 import CompletedOrderTable from "../components/CompletedOrderTable";
 import ActiveOrderTable from "../components/ActiveOrderTable";
 import { reducer } from "@shared/utils/reducer";
@@ -49,6 +50,7 @@ const Orders = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
   const { setNotifications } = useNotifications();
+  const { permissionStatus, initNotifications, testPush, token } = usePushNotifications();
   const [isAudioBlocked, setIsAudioBlocked] = useState(false);
   const [isSocketConnected, setIsSocketConnected] = useState(false);
   const socketRef = useRef(null);
@@ -271,7 +273,33 @@ const Orders = () => {
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black !text-slate-900 tracking-tight">
               Order <span className="text-red-600 underline underline-offset-8 decoration-slate-200">Management</span>
             </h1>
-
+            <div className="flex items-center gap-3 ml-4">
+              <Button
+                variant={permissionStatus === "granted" ? "ghost" : "destructive"}
+                size="sm"
+                onClick={initNotifications}
+                className="rounded-full h-8 px-4 text-[10px] font-black uppercase tracking-widest gap-2"
+              >
+                {permissionStatus === "granted" ? (
+                  <Bell className="h-3 w-3 text-emerald-500" />
+                ) : (
+                  <BellOff className="h-3 w-3" />
+                )}
+                {permissionStatus === "granted" ? "Notifications Active" : "Enable Push"}
+              </Button>
+              
+              {permissionStatus === "granted" && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={testPush}
+                  className="rounded-full h-8 px-4 text-[10px] font-black uppercase tracking-widest gap-2 border-slate-200"
+                >
+                  <Send className="h-3 w-3 text-red-600" />
+                  Test Push
+                </Button>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-col xl:flex-row gap-4 items-stretch xl:items-center bg-white p-3 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100">

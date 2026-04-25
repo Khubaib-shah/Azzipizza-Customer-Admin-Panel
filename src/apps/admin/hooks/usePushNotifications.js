@@ -51,9 +51,31 @@ export const usePushNotifications = () => {
       .catch((err) => console.log("Failed to receive foreground message: ", err));
   }, []);
 
+  const testPush = useCallback(async () => {
+    try {
+      const response = await apiClient.post("/api/admin/test-push");
+      toast.success(`Test push sent to ${response.data.deviceCount} devices!`);
+    } catch (err) {
+      console.error("[PushNotifications]: Test failed", err);
+      toast.error(err.message || "Failed to send test push");
+    }
+  }, []);
+
+  const getDeviceCount = useCallback(async () => {
+    try {
+      const response = await apiClient.get("/api/admin/device/count");
+      return response.data.count;
+    } catch (err) {
+      console.error("[PushNotifications]: Failed to get count", err);
+      return 0;
+    }
+  }, []);
+
   return {
     token,
     permissionStatus,
     initNotifications,
+    testPush,
+    getDeviceCount
   };
 };
