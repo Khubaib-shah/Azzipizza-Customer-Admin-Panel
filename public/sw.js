@@ -20,31 +20,41 @@ self.addEventListener('fetch', () => {
 self.addEventListener("push", (event) => {
   if (!event.data) return;
 
-  const data = event.data.json();
+  let data = {};
+  try {
+    data = event.data.json();
+  } catch (e) {
+    console.error("[SW]: Failed to parse push data", e);
+    return;
+  }
+
+  // FCM payloads can be nested under .notification or .data
+  const title = data.notification?.title || data.title || "New Notification";
+  const body = data.notification?.body || data.body || "You have a new update!";
+  const payloadData = data.data || data || {};
+
   const options = {
-    body: data.body || "You have a new update!",
-    icon: "/icon.png",
-    badge: "/icon.png",
-    data: data.data || {},
+    body: body,
+    icon: "/Logo.jpg",
+    badge: "/Logo.jpg",
+    data: payloadData,
     vibrate: [200, 100, 200],
-    tag: 'new-order', // Prevents multiple notifications for the same thing
+    tag: 'new-order',
     renotify: true
   };
 
-  // UX Rule: Only show push notification if the app is NOT active
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
       const isAppActive = clientList.some((client) => client.visibilityState === 'visible');
-      
+
       if (!isAppActive) {
-        return self.registration.showNotification(data.title || "New Notification", options);
+        return self.registration.showNotification(title, options);
       }
       console.log("[SW]: App is active, skipping push notification (Socket.IO will handle it)");
     })
   );
 });
 
-// 🖱️ Notification Click Handling
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
 
@@ -53,14 +63,12 @@ self.addEventListener("notificationclick", (event) => {
 
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      // If a window is already open, focus it and navigate
       for (const client of clientList) {
         if (client.url.includes(self.location.origin) && 'focus' in client) {
           client.navigate(urlToOpen);
           return client.focus();
         }
       }
-      // Otherwise, open a new window
       if (self.clients.openWindow) {
         return self.clients.openWindow(urlToOpen);
       }

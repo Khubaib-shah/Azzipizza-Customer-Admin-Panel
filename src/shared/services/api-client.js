@@ -6,17 +6,13 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL_PRO_SOCKECT
 // import.meta.env.VITE_API_BASE_URL_PRO ||
 // import.meta.env.VITE_API_BASE_URL_DEV;
 
-/**
- * Standard API Client with interceptors for global error handling
- * and request/response standardization.
- */
 const apiClient = axios.create({
   baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
     "X-Custom": "force-cors",
   },
-  timeout: 15000, // 15s timeout for better UX on slow connections
+  timeout: 10000,
 });
 
 // Request Interceptor: Add Auth Tokens or common headers here

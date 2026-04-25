@@ -16,8 +16,12 @@ export const messaging = getMessaging(app);
 
 export const requestForToken = async () => {
   try {
+    // Ensure service worker is ready before getting token
+    const registration = await navigator.serviceWorker.getRegistration();
+    
     const currentToken = await getToken(messaging, {
       vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
+      serviceWorkerRegistration: registration,
     });
     if (currentToken) {
       console.log("FCM Token:", currentToken);
