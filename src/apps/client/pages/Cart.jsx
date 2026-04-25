@@ -33,7 +33,7 @@ function Cart() {
         <div className="bg-[var(--color-cream)] p-3 rounded-full">
           <ShoppingBag size={32} className="text-[var(--color-primary)]" />
         </div>
-        <h1 className="text-4xl md:text-5xl font-bold text-[var(--color-text)] font-['Playfair_Display']">
+        <h1 className="text-4xl md:text-5xl font-bold !text-[var(--color-text)] font-['Playfair_Display']">
           Your Cart
         </h1>
       </div>

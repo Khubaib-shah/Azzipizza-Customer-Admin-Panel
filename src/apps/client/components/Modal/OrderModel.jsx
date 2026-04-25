@@ -21,8 +21,8 @@ import {
 // InputField defined outside to prevent re-renders losing focus
 const InputField = ({ icon: Icon, name, placeholder, value, onChange, error, type = "text", className = "", ...props }) => (
   <div className={`relative group ${className}`}>
-    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors group-focus-within:text-[var(--color-primary)]">
-      <Icon size={16} className="text-gray-400 group-focus-within:text-[var(--color-primary)]" />
+    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors group-focus-within:text-gray-800">
+      <Icon size={18} className="text-gray-400 group-focus-within:text-gray-800" />
     </div>
     <input
       type={type}
@@ -30,13 +30,13 @@ const InputField = ({ icon: Icon, name, placeholder, value, onChange, error, typ
       placeholder={placeholder}
       value={value}
       onChange={onChange}
-      className={`w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:bg-white focus:ring-0 transition-all ${error
+      className={`w-full pl-11 pr-4 py-3 bg-gray-50/50 border border-gray-200 rounded-full text-sm text-gray-800 placeholder-gray-400 focus:bg-white focus:ring-0 transition-all ${error
         ? "border-red-300 focus:border-red-500 bg-red-50 text-red-900"
-        : "border-gray-200 focus:border-[var(--color-primary)] hover:border-gray-300"
+        : "focus:border-gray-800 hover:border-gray-300"
         }`}
       {...props}
     />
-    {error && <span className="absolute right-0 -bottom-4 text-[10px] text-red-500 font-medium whitespace-nowrap">{error}</span>}
+    {error && <span className="absolute right-2 -bottom-3 text-[10px] text-red-500 font-medium whitespace-nowrap">{error}</span>}
   </div>
 );
 
@@ -88,23 +88,23 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
   }, [isOpen, restaurantOpen]);
 
   const validateDeliveryTime = (time) => {
-  if (!time) return false;
+    if (!time) return false;
 
-  const [hour, minute] = time.split(":").map(Number);
+    const [hour, minute] = time.split(":").map(Number);
 
-  const now = new Date();
-  const minAllowed = new Date(now.getTime() + 35 * 60000);
+    const now = new Date();
+    const minAllowed = new Date(now.getTime() + 35 * 60000);
 
-  const selectedTime = new Date();
-  selectedTime.setHours(hour, minute, 0, 0);
+    const selectedTime = new Date();
+    selectedTime.setHours(hour, minute, 0, 0);
 
-  // ✅ FIX — if selected clock time already passed today, treat as tomorrow
-  if (selectedTime < now) {
-    selectedTime.setDate(selectedTime.getDate() + 1);
-  }
+    // ✅ FIX — if selected clock time already passed today, treat as tomorrow
+    if (selectedTime < now) {
+      selectedTime.setDate(selectedTime.getDate() + 1);
+    }
 
-  return selectedTime >= minAllowed;
-};
+    return selectedTime >= minAllowed;
+  };
 
   const isFormValid = useMemo(() => {
     // Relaxed Phone: Allows + leading, then 8-15 digits
@@ -128,14 +128,24 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
     const phoneRegex = /^\+?[\d\s]{8,15}$/;
     const zipRegex = /^\d{5}$/;
 
-    if (!formData.name.trim()) errors.name = "Required";
-    if (!phoneRegex.test(formData.phoneNumber))
-      errors.phoneNumber = "Invalid Number";
-    if (!formData.street.trim()) errors.street = "Required";
-    if (!formData.city.trim()) errors.city = "Required";
-    if (!zipRegex.test(formData.zipCode))
+    if (!formData.name.trim()) errors.name = "Full Name is Required";
+
+    if (!formData.phoneNumber.trim()) {
+      errors.phoneNumber = "WhatsApp No. is Required";
+    } else if (!phoneRegex.test(formData.phoneNumber)) {
+      errors.phoneNumber = "Invalid WhatsApp No.";
+    }
+
+    if (!formData.street.trim()) errors.street = "Street Address is Required";
+    if (!formData.city.trim()) errors.city = "City is Required";
+
+    if (!formData.zipCode.trim()) {
+      errors.zipCode = "ZIP is Required";
+    } else if (!zipRegex.test(formData.zipCode)) {
       errors.zipCode = "Must be 5 digits";
-    if (!formData.doorbellName.trim()) errors.doorbellName = "Required";
+    }
+
+    if (!formData.doorbellName.trim()) errors.doorbellName = "Doorbell is Required";
 
     // Time validation remains, but now invalid time will show explicit error below field
     if (!validateDeliveryTime(formData.deliveryTime)) {
@@ -149,9 +159,32 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    let sanitizedValue = value;
+
+    if (name === "name" || name === "city") {
+      // Only alphabets and spaces
+      sanitizedValue = value.replace(/[^a-zA-Z\s]/g, "");
+    } else if (name === "phoneNumber") {
+      // Only numbers
+      sanitizedValue = value.replace(/[^0-9]/g, "");
+    } else if (name === "zipCode") {
+      // Only up to 5 numbers
+      sanitizedValue = value.replace(/[^0-9]/g, "").slice(0, 5);
+    } else if (name === "street" || name === "doorbellName" || name === "customizations") {
+      // Basic sanitization
+      sanitizedValue = value.replace(/[<>]/g, "");
+    }
+
+    setFormData((prev) => ({ ...prev, [name]: sanitizedValue }));
     if (formErrors[name]) {
       setFormErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+  };
+
+  const handleKeyDownNumbers = (e) => {
+    // Prevent typing 'e', 'E', '+', '-', '.'
+    if (["e", "E", "+", "-", "."].includes(e.key)) {
+      e.preventDefault();
     }
   };
 
@@ -244,7 +277,7 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={closeModal} className="max-w-4xl">
+    <Modal isOpen={isOpen} onClose={closeModal} className="max-w-4xl !p-0 !bg-transparent">
       {!isTime ? (
         <div className="text-center py-20 px-8 flex flex-col items-center">
           <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-8 animate-bounce">
@@ -265,19 +298,18 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
         </div>
       ) : (
         <div className="flex flex-col lg:flex-row h-full font-['Poppins'] overflow-hidden">
-          {/* Left Column: Form */}
-          <div className="flex-1 p-5 lg:p-6 overflow-y-auto max-h-[85vh] hide-scrollbar">
-            <div className="mb-4 flex items-center gap-3 border-b border-gray-100 pb-3">
-              <h2 className="text-xl font-bold text-[var(--color-text)] font-['Playfair_Display']">
+          <div className="flex-1 p-6 lg:p-10 overflow-y-auto max-h-[85vh] hide-scrollbar bg-white rounded-t-3xl lg:rounded-l-3xl lg:rounded-tr-none">
+            <div className="mb-8 flex items-baseline gap-4">
+              <h2 className="text-4xl lg:text-5xl font-black text-slate-800 font-serif tracking-tight">
                 Checkout
               </h2>
-              <span className="text-xs text-gray-400">Fill details</span>
+              <span className="text-sm font-medium text-slate-400">Fill details</span>
             </div>
 
             <div className="space-y-4">
-              <section className="space-y-3">
-                <h3 className="!text-sm font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
-                  <User size={14} /> Contact
+              <section className="space-y-4">
+                <h3 className="text-2xl font-black text-slate-800 font-serif tracking-widest flex items-center gap-3">
+                  <User size={20} className="text-slate-600" /> CONTACT
                 </h3>
                 <div className="grid grid-cols-2 gap-3">
                   <InputField
@@ -295,24 +327,37 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
                     placeholder="WhatsApp No."
                     value={formData.phoneNumber}
                     onChange={handleChange}
+                    onKeyDown={handleKeyDownNumbers}
                     error={formErrors.phoneNumber}
                   />
                 </div>
               </section>
 
-              <section className="space-y-3">
-                <h3 className="!text-sm font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
-                  <MapPin size={14} /> Delivery Address
+              <section className="space-y-4 pt-6">
+                <h3 className="text-2xl font-black text-slate-800 font-serif tracking-widest flex items-center gap-3">
+                  <MapPin size={20} className="text-slate-600" /> DELIVERY ADDRESS
                 </h3>
                 <div className="space-y-3">
-                  <InputField
-                    icon={MapPin}
-                    name="street"
-                    placeholder="Street Address"
-                    value={formData.street}
-                    onChange={handleChange}
-                    error={formErrors.street}
-                  />
+                  <div className="grid grid-cols-7 gap-3">
+                    <InputField
+                      icon={MapPin}
+                      name="street"
+                      placeholder="Street Address"
+                      value={formData.street}
+                      onChange={handleChange}
+                      error={formErrors.street}
+                      className="col-span-4"
+                    />
+                    <InputField
+                      icon={Building}
+                      name="city"
+                      placeholder="City"
+                      value={formData.city}
+                      onChange={handleChange}
+                      error={formErrors.city}
+                      className="col-span-3"
+                    />
+                  </div>
 
                   <div className="grid grid-cols-3 gap-3">
                     <InputField
@@ -326,9 +371,11 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
                     <InputField
                       icon={MapPin}
                       name="zipCode"
+                      type="number"
                       placeholder="ZIP"
                       value={formData.zipCode}
                       onChange={handleChange}
+                      onKeyDown={handleKeyDownNumbers}
                       error={formErrors.zipCode}
                     />
                     <InputField
@@ -343,38 +390,38 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
                 </div>
               </section>
 
-              <section className="space-y-3">
-                <h3 className="!text-sm font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
-                  <Clock size={14} /> Time & Notes
+              <section className="space-y-4 pt-6">
+                <h3 className="text-2xl font-black text-slate-800 font-serif tracking-widest flex items-center gap-3">
+                  <Clock size={20} className="text-slate-600" /> TIME & NOTES
                 </h3>
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="col-span-1 relative group">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-[var(--color-primary)]  h-[36px]">
-                      <Clock className="w-[14px] h-[14px]" />
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="col-span-2 relative group">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-gray-800">
+                      <Clock size={18} />
                     </div>
                     <input
                       type="time"
                       name="deliveryTime"
                       value={formData.deliveryTime}
                       onChange={handleChange}
-                      className={`w-full pl-9 pr-2 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs sm:text-sm transition-all ${formErrors.deliveryTime
-                        ? "border-red-300 focus:border-red-500"
-                        : "border-gray-200 focus:border-[var(--color-primary)] hover:border-gray-300"
+                      className={`w-full pl-11 pr-2 py-3 bg-gray-50/50 border border-gray-200 rounded-full text-sm text-gray-800 transition-all ${formErrors.deliveryTime
+                        ? "border-red-300 focus:border-red-500 bg-red-50"
+                        : "focus:border-gray-800 hover:border-gray-300"
                         }`}
                     />
                   </div>
 
-                  <div className="col-span-2 relative group">
-                    <div className="absolute top-2.5 left-3 pointer-events-none text-gray-400 group-focus-within:text-[var(--color-primary)]">
-                      <StickyNote size={16} />
+                  <div className="col-span-2 relative group flex">
+                    <div className="absolute top-3.5 left-4 pointer-events-none text-gray-400 group-focus-within:text-gray-800">
+                      <StickyNote size={18} />
                     </div>
                     <textarea
                       name="customizations"
                       placeholder="Notes (buzzer, allergies...)"
                       value={formData.customizations}
                       onChange={handleChange}
-                      className="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm placeholder-gray-400 focus:bg-white focus:border-[var(--color-primary)] focus:ring-0 hover:border-gray-300 transition-all min-h-[42px] max-h-[80px] resize-none"
-                      rows="1"
+                      className="w-full pl-11 pr-4 py-3 bg-gray-50/50 border border-gray-200 rounded-3xl text-sm placeholder-gray-400 focus:bg-white focus:border-gray-800 focus:ring-0 hover:border-gray-300 transition-all min-h-[46px] resize-none"
+                      rows="2"
                     />
                   </div>
                 </div>
@@ -390,36 +437,35 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
               )}
             </div>
           </div>
-
           {/* Right Column: Order Summary & Payment */}
-          <div className="w-full lg:w-80 bg-[var(--color-primary)]/5 border-t lg:border-t-0 lg:border-l border-[var(--color-primary)]/10 p-5 lg:p-6 flex flex-col justify-between">
-            <div className="mb-4">
-              <h3 className="text-lg font-bold font-['Playfair_Display'] text-[var(--color-text)] mb-3 flex items-center gap-2">
-                <ShoppingBag size={18} className="text-[var(--color-primary)]" />
+          <div className="w-full lg:w-[380px] bg-red-50/50 p-6 lg:p-10 flex flex-col justify-between rounded-b-none lg:rounded-bl-none lg:rounded-r-[2rem] border-t lg:border-t-0 lg:border-l border-red-100">
+            <div className="mb-8">
+              <h3 className="text-3xl font-black font-serif text-slate-800 mb-2 md:mb-6 flex items-center gap-3 tracking-tight">
+                <ShoppingBag size={24} className="text-red-500" />
                 Summary
               </h3>
 
-              <div className="bg-white p-3 rounded-lg shadow-sm border border-[var(--color-primary)]/10 text-sm">
-                <div className="flex justify-between items-center text-gray-600 mb-1">
+              <div className="bg-white p-5 rounded-lg shadow-sm border border-red-50/50 text-base">
+                <div className="flex justify-between items-center text-slate-600 mb-1 md:mb-3">
                   <span>Items ({cartItems.length})</span>
                   <span>€{totalPrice.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between items-center text-gray-600 mb-2">
+                <div className="flex justify-between items-center text-slate-600 mb-1 md:mb-4">
                   <span>Delivery</span>
-                  <span className="text-[var(--color-basil)] font-medium">Free</span>
+                  <span className="text-green-600 font-bold">Free</span>
                 </div>
-                <div className="border-t border-dashed border-gray-200 pt-2 flex justify-between items-end">
-                  <span className="font-bold text-gray-800">Total</span>
-                  <span className="text-xl font-bold text-[var(--color-primary)] font-['Playfair_Display']">
+                <div className="border-t border-dashed border-gray-200 pt-2 md:pt-4 flex justify-between items-end">
+                  <span className="font-bold text-slate-800 text-lg">Total</span>
+                  <span className="text-2xl font-bold text-red-600 font-serif">
                     €{totalPrice.toFixed(2)}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <h4 className="font-bold text-gray-800 text-sm flex items-center gap-2">
-                <CreditCard size={16} /> Payment
+            <div className="space-y-4 mt-auto">
+              <h4 className="font-bold text-slate-800 text-sm flex mb-2 items-center justify-center gap-2">
+                <CreditCard size={18} className="text-slate-600" /> Payment
               </h4>
               <PaymentModal
                 totalPrice={totalPrice}
@@ -431,7 +477,7 @@ function OrderModal({ isOpen, closeModal, totalPrice, cartItems }) {
           </div>
         </div>
       )}
-    </Modal>
+    </Modal >
   );
 }
 

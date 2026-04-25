@@ -34,14 +34,14 @@ export function PaymentModal({ isSubmitting, handleOrderSubmit, totalPrice }) {
               key={option.value}
               onClick={() => setPaymentMethod(option.value)}
               disabled={isSubmitting}
-              className={`flex flex-col items-center justify-center p-2 rounded-lg border transition-all duration-200 relative cursor-pointer h-16 ${isSelected
-                ? "border-[var(--color-primary)] bg-[var(--color-primary)]/5 text-[var(--color-primary)] shadow-sm"
+              className={`flex flex-col items-center justify-center p-3 rounded-2xl border-2 transition-all duration-200 relative cursor-pointer h-20 ${isSelected
+                ? "border-orange-500 bg-white text-slate-800 shadow-sm outline-2 outline-offset-2 outline-orange-400/30"
                 : "border-gray-100 bg-white text-gray-500 hover:border-gray-200 hover:bg-gray-50"
                 }`}
               title={option.label}
             >
-              <Icon size={18} className={`mb-1 ${isSelected ? "text-[var(--color-primary)]" : "text-gray-400"}`} />
-              <span className="font-medium text-[10px] leading-tight">{option.label}</span>
+              <Icon size={20} className={`mb-2 ${isSelected ? (option.value === 'scan' ? 'text-red-500' : 'text-slate-800') : "text-gray-400"}`} />
+              <span className={`font-bold text-[10px] leading-tight ${isSelected ? "text-slate-800" : "text-slate-700"}`}>{option.label}</span>
             </button>
           );
         })}
@@ -55,9 +55,9 @@ export function PaymentModal({ isSubmitting, handleOrderSubmit, totalPrice }) {
       <button
         onClick={() => handleOrderSubmit(paymentMethod)}
         disabled={isSubmitting || !paymentMethod}
-        className={`w-full py-3 text-white font-bold text-base rounded-lg shadow-md transition-all transform active:scale-95 cursor-pointer ${isSubmitting || !paymentMethod
-          ? "bg-gray-300 cursor-not-allowed shadow-none"
-          : "btn-primary hover:-translate-y-0.5"
+        className={`w-full py-4 text-white font-black text-lg rounded-full shadow-sm transition-all transform active:scale-95 cursor-pointer ${isSubmitting || !paymentMethod
+          ? "bg-slate-300 cursor-not-allowed text-white shadow-none"
+          : "bg-red-600 hover:bg-red-700 hover:-translate-y-0.5"
           }`}
         title=""
       >

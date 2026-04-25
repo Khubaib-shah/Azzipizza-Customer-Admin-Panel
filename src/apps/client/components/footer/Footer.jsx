@@ -10,8 +10,8 @@ function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Brand Section */}
           <div>
-            <div className="flex items-center gap-3 mb-4">
-              <img src={logo} alt="Azzipizza" className="h-12 w-12" />
+            <div className="flex items-center gap-3 mb-2 md:mb-4">
+              <img src={logo} alt="Azzipizza" className="h-12 w-12 object-contain" />
               <div>
                 <h3 className="text-2xl font-bold font-serif text-gray-800">Azzipizza</h3>
                 <p className="text-red-600 text-sm italic font-semibold">Mica Pizza e Fichi</p>
@@ -25,7 +25,7 @@ function Footer() {
                 href="https://www.instagram.com/azzipizzamicapizzaefichi"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-gradient-to-br from-purple-500 to-pink-500 p-3 rounded-lg hover:scale-110 transition-transform shadow-lg text-white"
+                className="bg-red-600 p-3 rounded-lg hover:scale-110 transition-transform shadow-lg text-white"
                 aria-label="Instagram"
               >
                 <FaInstagram size={20} />
@@ -45,7 +45,7 @@ function Footer() {
           {/* Quick Links */}
           <div>
             <h4 className="text-xl font-bold mb-4 text-gray-800 border-b-2 border-red-600 pb-2 inline-block">Quick Links</h4>
-            <ul className="space-y-3 mt-4">
+            <ul className="space-y-1 md:space-y-3 mt-4">
               <li>
                 <Link to="/" className="footer-link text-gray-700 flex items-center gap-2 text-sm font-medium">
                   <span className="text-red-600">▸</span> Home
@@ -77,9 +77,9 @@ function Footer() {
           {/* Contact Info */}
           <div>
             <h4 className="text-xl font-bold mb-4 text-gray-800 border-b-2 border-red-600 pb-2 inline-block">Contact Us</h4>
-            <ul className="space-y-3 mt-4">
+            <ul className="space-y-1 md:space-y-3 mt-4">
               <li className="flex items-start gap-3">
-                <FaMapMarkerAlt className="text-red-600 mt-1 flex-shrink-0" size={16} />
+                <FaMapMarkerAlt className="text-gray-700 mt-1 flex-shrink-0" size={16} />
                 <a
                   href="https://maps.app.goo.gl/R5K5RN5gCXK7TSox9"
                   target="_blank"
@@ -90,7 +90,7 @@ function Footer() {
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <FaPhoneAlt className="text-green-600 flex-shrink-0" size={16} />
+                <FaPhoneAlt className="text-gray-700 flex-shrink-0" size={16} />
                 <a
                   href="tel:393713985810"
                   className="footer-link text-gray-700 text-sm"
@@ -99,7 +99,7 @@ function Footer() {
                 </a>
               </li>
               <li className="flex items-start gap-3">
-                <FaEnvelope className="text-blue-600 mt-1 flex-shrink-0" size={16} />
+                <FaEnvelope className="text-gray-700 mt-1 flex-shrink-0" size={16} />
                 <a
                   href="mailto:azzipizzamicapizzaefichi@gmail.com"
                   className="footer-link text-gray-700 text-sm break-all"
@@ -112,7 +112,7 @@ function Footer() {
 
           {/* Opening Hours */}
           <div>
-            <h4 className="text-xl font-bold mb-4 text-gray-800 border-b-2 border-red-600 pb-2 inline-block">Opening Hours</h4>
+            <h4 className="text-xl font-bold mb-1 md:mb-4 text-gray-800 border-b-2 border-red-600 pb-2 inline-block">Opening Hours</h4>
             <ul className="space-y-3 mt-4">
               <li className="flex items-start gap-3">
                 <FaClock className="text-amber-600 mt-1 flex-shrink-0" size={16} />
@@ -121,12 +121,12 @@ function Footer() {
                   <p className="text-gray-600">6:00 PM - 11:00 PM</p>
                 </div>
               </li>
-             
+
             </ul>
-            <div className="mt-4 p-4 bg-gradient-to-r from-red-600 to-red-700 rounded-lg shadow-lg">
+            {/* <div className="mt-4 p-4 bg-gradient-to-r from-red-600 to-red-700 rounded-lg shadow-lg">
               <p className="text-base text-white font-bold">🍕 Free Delivery</p>
               <p className="text-sm text-amber-200">On orders over €20</p>
-            </div>
+            </div> */}
           </div>
         </div>
 

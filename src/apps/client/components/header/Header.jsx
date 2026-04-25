@@ -83,8 +83,8 @@ function Header() {
     <>
       <header
         className={`sticky top-0 z-50 transition-[background-color,box-shadow,padding] duration-300 h-20 flex items-center ${scrolled
-          ? "bg-white shadow-xl"
-          : "bg-red-600 shadow-md"
+          ? "bg-white shadow-sm"
+          : "bg-red-600 shadow-sm"
           }`}
       >
         <div className="container mx-auto flex items-center justify-between">
@@ -96,7 +96,7 @@ function Header() {
             <img
               src={logo}
               alt="Azzipizza Logo"
-              className="object-contain h-full scale-150"
+              className="object-contain h-full"
             />
             <div className="hidden sm:block">
               <h2 className={`font-serif font-bold text-xl md:text-2xl ${scrolled ? "text-black!" : "text-white"}`}>
@@ -200,13 +200,13 @@ function Header() {
         </div>
 
         {/* Promotional Banner */}
-        {/* {!scrolled && ( */}
-        <div className="absolute top-18 left-1/2 w-full transform -translate-x-1/2 bg-amber-400 text-center py-1 mt-2 animate-slide-down">
-          <p className="text-sm font-semibold text-gray-800">
-            🎉 Free Delivery on every Order 🍕
-          </p>
-        </div>
-        {/* )} */}
+        {!scrolled && (
+          <div className="absolute top-18 left-1/2 w-full transform -translate-x-1/2 bg-amber-400 text-center py-1 mt-2 animate-slide-down">
+            <p className="text-sm font-semibold text-gray-800">
+              Free Delivery on every Order
+            </p>
+          </div>
+        )}
       </header>
       <HeaderModal open={open} setOpen={setOpen} navItems={navItems} />
     </>

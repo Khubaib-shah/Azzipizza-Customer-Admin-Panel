@@ -9,9 +9,9 @@ export default function Modal({ isOpen, onClose, children, className }) {
         className="fixed inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-300 ease-out data-[closed]:opacity-0"
       />
 
-      <div className="fixed inset-0 flex items-center justify-center p-4 overflow-y-auto">
+      <div className="fixed inset-0 flex items-end sm:items-center justify-center p-0 sm:p-4 z-50 overflow-hidden">
         <DialogPanel
-          className={`bg-white p-0 rounded-[2rem] w-full max-w-2xl relative max-h-[90vh] overflow-y-auto shadow-2xl ring-1 ring-black/5 ${className} animate-scale-in`}
+          className={`bg-white p-0 rounded-t-[2rem] sm:rounded-[2rem] rounded-b-none sm:rounded-b-[2rem] w-full max-w-2xl relative max-h-[95vh] sm:max-h-[90vh] overflow-y-auto shadow-2xl ring-1 ring-black/5 ${className} transition-all duration-300 ease-out`}
         >
           <button
             onClick={onClose}

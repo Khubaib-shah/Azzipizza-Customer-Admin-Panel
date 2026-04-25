@@ -27,7 +27,7 @@ function HeroSection() {
       />
 
       {/* Premium Gradient Overlay */}
-     <div className="absolute inset-0 bg-black/50"></div>
+      <div className="absolute inset-0 bg-black/50"></div>
 
       {/* Decorative Elements */}
       <div className="absolute top-10 left-10 w-20 h-20 border-4 border-amber-400/30 rounded-full animate-float"></div>
