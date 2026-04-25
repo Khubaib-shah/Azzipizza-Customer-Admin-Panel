@@ -84,7 +84,7 @@ const ListItems = () => {
     try {
       await menuService.deleteItem(id);
       setItems((prev) => prev.filter((item) => item._id !== id));
-      toast.success("Masterpiece removed from the gallery.");
+      toast.success("Item deleted.");
       setDeleteDialogOpen(false);
       setItemToDelete(null);
     } catch (error) {
@@ -115,7 +115,7 @@ const ListItems = () => {
       setItems((prev) =>
         prev.map((item) => (item._id === response.data._id ? response.data : item))
       );
-      toast.success("Masterpiece updated successfully.");
+      toast.success("Item updated.");
       setEditDialogOpen(false);
       setImagePreview(null);
     } catch (err) {
@@ -134,10 +134,10 @@ const ListItems = () => {
         <header className="flex flex-col lg:flex-row lg:items-end justify-between mb-12 gap-6">
           <div className="space-y-2">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black !text-slate-900 tracking-tight">
-              Collection <span className="text-red-600 italic underline underline-offset-8 decoration-amber-400/40">Gallery</span>
+              Menu <span className="text-red-600 italic underline underline-offset-8 decoration-amber-400/40">Items</span>
             </h1>
             <p className="text-slate-500 text-xs md:text-sm font-medium">
-              Oversee the artisanal menu that defines your brand.
+              Manage and edit your food menu.
             </p>
           </div>
 
@@ -146,7 +146,7 @@ const ListItems = () => {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-red-600 transition-colors" />
               <Input
                 type="search"
-                placeholder="Find a masterpiece..."
+                placeholder="Find an item..."
                 className="pl-12 w-full bg-slate-50 border-none rounded-xl focus-visible:ring-red-600/10 font-medium h-12"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -180,7 +180,7 @@ const ListItems = () => {
             >
               <div className="flex flex-col items-center gap-4">
                 <Loader2 className="h-10 w-10 text-red-600 animate-spin" />
-                <p className="text-slate-400 font-black text-xs uppercase tracking-widest">Gathering Masterpieces...</p>
+                <p className="text-slate-400 font-black text-xs uppercase tracking-widest">Loading items...</p>
               </div>
             </motion.div>
           ) : filteredItems.length === 0 ? (
@@ -194,7 +194,7 @@ const ListItems = () => {
               </div>
               <h3 className="text-2xl font-serif font-black text-slate-900 mb-2">No items found</h3>
               <p className="text-slate-400 font-medium">
-                Try adjusting your search or filters to see your work.
+                Try a different search or filter.
               </p>
             </motion.div>
           ) : (
@@ -221,6 +221,7 @@ const ListItems = () => {
                             setEditDialogOpen(true);
                           }}
                           className="bg-white/80 backdrop-blur-xl p-3 rounded-2xl border border-white/50 text-slate-700 hover:bg-white hover:text-blue-600 shadow-xl transition-all cursor-pointer"
+                          title="Change Photo"
                         >
                           <Edit3 className="size-5" />
                         </button>

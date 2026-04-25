@@ -44,7 +44,7 @@ const Dashboard = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 gap-4">
         <Loader2 className="w-12 h-12 text-red-600 animate-spin" />
-        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Syncing Intelligence...</p>
+        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Loading data...</p>
       </div>
     );
   }
@@ -58,7 +58,7 @@ const Dashboard = () => {
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black !text-slate-900 tracking-tight">
               Admin <span className="text-red-600 underline underline-offset-8 decoration-slate-200">Dashboard</span>
             </h1>
-            <p className="text-slate-500 text-xs md:text-sm font-medium mt-1">Real-time performance metrics and business health.</p>
+            <p className="text-slate-500 text-xs md:text-sm font-medium mt-1">View your latest sales and performance.</p>
           </div>
           <div className="flex gap-3">
             <Link to="/admin/reports">
@@ -99,7 +99,7 @@ const Dashboard = () => {
             description="/ per order"
           />
           <StatCard
-            title="Active Queue"
+            title="Active Orders"
             value={stats.activeOrders}
             icon={Clock}
             color="blue"
@@ -113,7 +113,7 @@ const Dashboard = () => {
           <Card className="lg:col-span-2 border-none shadow-premium rounded-4xl bg-white overflow-hidden">
             <CardHeader className="bg-white border-b border-slate-50 py-6 px-8 flex flex-row items-center justify-between">
               <div>
-                <CardTitle className="text-xl font-serif font-black text-slate-800">Revenue Performance</CardTitle>
+                <CardTitle className="text-xl font-serif font-black text-slate-800">Sales Trend</CardTitle>
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Last 7 Days Trend</p>
               </div>
               <div className="h-2 w-2 rounded-full bg-red-600 animate-pulse" />
@@ -148,7 +148,7 @@ const Dashboard = () => {
           <Card className="border-none shadow-premium rounded-4xl bg-white overflow-hidden">
             <CardHeader className="bg-white border-b border-slate-50 py-6 px-8">
               <CardTitle className="text-xl font-serif font-black text-slate-800">Peak Ordering Hours</CardTitle>
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Daily Traffic Analysis</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Peak Hours</p>
             </CardHeader>
             <CardContent className="p-8">
               <PeakHoursChart data={peakHours.slice(11, 24)} /> {/* Showing prime hours 11am - 12am */}
@@ -192,7 +192,7 @@ const Dashboard = () => {
                 }
                 {orders.length === 0 && (
                   <div className="p-12 text-center text-slate-300 font-bold uppercase tracking-widest text-xs">
-                    No sales data found
+                    No data yet.
                   </div>
                 )}
               </div>

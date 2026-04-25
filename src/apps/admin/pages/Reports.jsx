@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
     BarChart3,
     Calendar,
@@ -10,11 +10,9 @@ import {
     ChevronRight,
     Printer
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { orderService, analyticsService } from "@shared/services";
 import { Card, CardHeader, CardTitle, CardContent } from "@shared/components/ui/card";
 import { Button } from "@shared/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@shared/components/ui/tabs";
 import { RevenueTrendChart } from "../components/dashboard/DashboardCharts";
 
 const Reports = () => {
@@ -68,7 +66,7 @@ const Reports = () => {
         return (
             <div className="flex flex-col items-center justify-center min-h-[80vh] gap-4">
                 <Loader2 className="w-12 h-12 text-red-600 animate-spin" />
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Compiling Analytical Data...</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Loading reports...</p>
             </div>
         );
     }
@@ -82,7 +80,7 @@ const Reports = () => {
                         <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black !text-slate-900 tracking-tight">
                             Azzipizza <span className="text-red-600 underline underline-offset-8 decoration-slate-200">Reports</span>
                         </h1>
-                        <p className="text-slate-500 text-xs md:text-sm font-medium">Deep insights into business scale and performance.</p>
+                        <p className="text-slate-500 text-xs md:text-sm font-medium">View and print your sales reports.</p>
                     </div>
                     <div className="flex items-center gap-3 print:hidden">
                         <Button
@@ -126,7 +124,7 @@ const Reports = () => {
                         <div className="flex-1 lg:flex-none flex items-center justify-center gap-3 px-8 h-14 bg-red-600 rounded-2xl shadow-lg shadow-red-200 text-white">
                             <Calendar className="w-4 h-4" />
                             <span className="text-[10px] font-black uppercase tracking-widest">
-                                Applying Custom Intelligence
+                                Filtering Data
                             </span>
                         </div>
                         <Button variant="outline" className="hidden h-14 w-14 rounded-2xl border-slate-100 bg-slate-50 hover:bg-slate-100 transition-colors">
@@ -139,7 +137,7 @@ const Reports = () => {
                 <Card className="border-none shadow-premium rounded-44 bg-white overflow-hidden p-4 sm:p-8">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                         <div>
-                            <h3 className="text-xl font-serif font-black text-slate-900">Revenue Trajectory</h3>
+                            <h3 className="text-xl font-serif font-black text-slate-900">Sales Trend</h3>
                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">
                                 Visualizing fiscal momentum for your selected date range
                             </p>
@@ -147,7 +145,7 @@ const Reports = () => {
                         <div className="px-5 py-2.5 bg-red-50 rounded-2xl flex items-center gap-2">
                             <TrendingUp className="w-4 h-4 text-red-600" />
                             <span className="text-[11px] font-black text-red-600 uppercase tracking-widest">
-                                Optimized Momentum
+                                Sales Growth
                             </span>
                         </div>
                     </div>
@@ -160,7 +158,7 @@ const Reports = () => {
                         <CardHeader className="bg-white border-b border-slate-50 py-6 px-6 md:py-8 md:px-10">
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                                 <div>
-                                    <CardTitle className="text-2xl font-serif font-black text-slate-800">Operational Breakdown</CardTitle>
+                                    <CardTitle className="text-2xl font-serif font-black text-slate-800">Order List</CardTitle>
                                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Granular order history & unit metrics</p>
                                 </div>
                                 <div className="flex gap-6 md:gap-10">
@@ -181,10 +179,10 @@ const Reports = () => {
                                     <thead>
                                         <tr className="bg-slate-50/50 border-b border-slate-100">
                                             <th className="px-6 md:px-10 py-6 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">Transaction ID</th>
-                                            <th className="px-6 md:px-10 py-6 text-left text-[10px] font-black uppercase tracking-widest text-slate-400 hidden sm:table-cell">Temporal Stamp</th>
-                                            <th className="px-6 md:px-10 py-6 text-left text-[10px] font-black uppercase tracking-widest text-slate-400 hidden md:table-cell">Entities</th>
-                                            <th className="px-6 md:px-10 py-6 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">Flow Status</th>
-                                            <th className="px-6 md:px-10 py-6 text-right text-[10px] font-black uppercase tracking-widest text-slate-400">Net Value</th>
+                                            <th className="px-6 md:px-10 py-6 text-left text-[10px] font-black uppercase tracking-widest text-slate-400 hidden sm:table-cell">Date & Time</th>
+                                            <th className="px-6 md:px-10 py-6 text-left text-[10px] font-black uppercase tracking-widest text-slate-400 hidden md:table-cell">Items</th>
+                                            <th className="px-6 md:px-10 py-6 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">Status</th>
+                                            <th className="px-6 md:px-10 py-6 text-right text-[10px] font-black uppercase tracking-widest text-slate-400">Total</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-50">
@@ -235,7 +233,7 @@ const Reports = () => {
                                             <tr>
                                                 <td colSpan={5} className="px-10 py-20 text-center">
                                                     <BarChart3 className="w-16 h-16 text-slate-100 mx-auto mb-6" />
-                                                    <h3 className="text-xl font-serif font-black text-slate-900 mb-2">Architecting Reports...</h3>
+                                                    <h3 className="text-xl font-serif font-black text-slate-900 mb-2">No reports found.</h3>
                                                     <p className="text-slate-400 font-medium text-xs max-w-xs mx-auto">Transactional data will automatically populate this ledger as sales occur.</p>
                                                 </td>
                                             </tr>
@@ -250,7 +248,7 @@ const Reports = () => {
                                         className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-red-600"
                                         onClick={() => setVisibleCount(prev => prev + 15)}
                                     >
-                                        Load Full Intelligence Ledger <ChevronRight className="ml-2 w-4 h-4" />
+                                        Show more orders <ChevronRight className="ml-2 w-4 h-4" />
                                     </Button>
                                 </div>
                             )}

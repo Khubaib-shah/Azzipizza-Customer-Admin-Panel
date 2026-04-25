@@ -255,85 +255,99 @@ const Orders = () => {
               <RefreshCw className="h-5 w-5" />
             </div>
             <div>
-              <p className="font-black text-sm uppercase tracking-wider">Audio Alerts Blocked</p>
-              <p className="text-[10px] opacity-80 font-bold uppercase tracking-widest">Click anywhere to enable kitchen sound</p>
+              <p className="font-black text-sm uppercase tracking-wider">Sound Blocked</p>
+              <p className="text-[10px] opacity-80 font-bold uppercase tracking-widest">Click anywhere to turn on alert sound</p>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-      {ENABLE_SOCKET && (
-        <div className={`mt-2 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest border transition-colors ${isSocketConnected ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-red-50 text-red-600 border-red-100"}`}>
-          {isSocketConnected ? "● Live" : "○ Offline"}
-        </div>
-      )}
+
 
       <div className="max-w-7xl mx-auto">
-        <header className="flex flex-col lg:flex-row lg:items-end justify-between mb-8 md:mb-12 gap-6">
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black !text-slate-900 tracking-tight">
-              Order <span className="text-red-600 underline underline-offset-8 decoration-slate-200">Management</span>
-            </h1>
-            <div className="flex items-center gap-3 ml-4">
-              <Button
-                variant={permissionStatus === "granted" ? "ghost" : "destructive"}
-                size="sm"
-                onClick={initNotifications}
-                className="rounded-full h-8 px-4 text-[10px] font-black uppercase tracking-widest gap-2"
-              >
-                {permissionStatus === "granted" ? (
-                  <Bell className="h-3 w-3 text-emerald-500" />
-                ) : (
-                  <BellOff className="h-3 w-3" />
-                )}
-                {permissionStatus === "granted" ? "Notifications Active" : "Enable Push"}
-              </Button>
-              
-              {permissionStatus === "granted" && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={testPush}
-                  className="rounded-full h-8 px-4 text-[10px] font-black uppercase tracking-widest gap-2 border-slate-200"
-                >
-                  <Send className="h-3 w-3 text-red-600" />
-                  Test Push
-                </Button>
+        <header className="flex flex-col xl:flex-row xl:items-end justify-between mb-10 gap-8">
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <h1 className="!text-3xl sm:!text-4xl md:!text-5xl font-serif font-black !text-slate-900 tracking-tight">
+                Order <span className="text-red-600 italic underline underline-offset-8 decoration-red-600/20">Management</span>
+              </h1>
+
+              {ENABLE_SOCKET && (
+                <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.1em] border transition-all duration-500 flex items-center gap-2 ${isSocketConnected ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-red-50 text-red-600 border-red-100"}`}>
+                  <div className={`size-1.5 rounded-full ${isSocketConnected ? "bg-emerald-500 animate-pulse" : "bg-red-500"}`} />
+                  {isSocketConnected ? "Live" : "Offline"}
+                </div>
               )}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <p className="text-slate-500 !text-[12px] md:text-sm font-medium">
+                Manage your kitchen and track all orders.
+              </p>
+
+              <div className="h-4 w-px bg-slate-200 hidden sm:block" />
+
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={permissionStatus === "granted" ? "ghost" : "secondary"}
+                  size="sm"
+                  onClick={initNotifications}
+                  className={`h-7 px-3 text-[9px] font-black uppercase tracking-widest gap-2 rounded-lg ${permissionStatus === "granted" ? "text-emerald-600 bg-emerald-50/50" : ""}`}
+                >
+                  {permissionStatus === "granted" ? (
+                    <Bell className="h-3 w-3" />
+                  ) : (
+                    <BellOff className="h-3 w-3" />
+                  )}
+                  {permissionStatus === "granted" ? "Alerts Active" : "Enable Alerts"}
+                </Button>
+
+                {permissionStatus === "granted" && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={testPush}
+                    className="h-7 px-3 text-[9px] font-black uppercase tracking-widest gap-2 border-slate-200 rounded-lg text-slate-500 hover:text-red-600 transition-colors"
+                  >
+                    <Send className="h-3 w-3" />
+                    Test
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-col xl:flex-row gap-4 items-stretch xl:items-center bg-white p-3 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100">
-
-            <div className="flex items-center gap-4">
-              <div className="relative group flex-1 md:min-w-[300px]">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-red-600 transition-colors" />
-                <Input
-                  type="search"
-                  placeholder="Track any order..."
-                  className="pl-12 w-full bg-slate-50 border-none rounded-xl focus-visible:ring-red-600/10 font-bold h-12"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={refreshOrders}
-                className={`rounded-xl border-slate-100 h-12 w-12 hover:bg-slate-50 transition-all ${refreshing ? "animate-spin" : ""}`}
-              >
-                <RefreshCw className="h-4 w-4 text-slate-400" />
-              </Button>
+          <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center bg-white p-2 rounded-2xl shadow-premium border border-slate-100/50 w-full xl:w-auto">
+            <div className="relative group flex-1 md:min-w-[280px]">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-red-600 transition-colors" />
+              <Input
+                type="search"
+                placeholder="Track any order..."
+                className="pl-12 w-full bg-slate-50 border-none rounded-xl focus-visible:ring-red-600/10 font-bold h-11 text-sm"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
 
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-48 bg-slate-50 border-none rounded-xl focus:ring-red-600/10 font-bold text-slate-700 h-12 px-6">
+              <SelectTrigger className="w-full sm:w-44 bg-slate-50 border-none rounded-xl focus:ring-red-600/10 font-bold text-slate-700 h-11 px-4 text-sm">
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
-              <SelectContent className="rounded-2xl border-slate-100 shadow-2xl p-2">
-                <SelectItem value="All Statuses" className="font-bold cursor-pointer h-10">All Orders</SelectItem>
-                {statusOptions.map(s => <SelectItem key={s} value={s} className="font-medium cursor-pointer h-10">{s}</SelectItem>)}
+              <SelectContent className="rounded-2xl border-slate-100 shadow-2xl p-2 bg-white z-[60]">
+                <SelectItem value="All Statuses" className="font-bold cursor-pointer h-10 px-4">All Orders</SelectItem>
+                {statusOptions.map(s => (
+                  <SelectItem key={s} value={s} className="font-medium cursor-pointer h-10 px-4">{s}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
+
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={refreshOrders}
+              className={`rounded-xl border-slate-100 h-11 w-11 hover:bg-slate-50 transition-all ${refreshing ? "animate-spin" : ""}`}
+            >
+              <RefreshCw className="h-4 w-4 text-slate-400" />
+            </Button>
           </div>
         </header>
 
@@ -351,7 +365,7 @@ const Orders = () => {
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.98 }}>
                 <Card className="border-none shadow-premium rounded-4xl overflow-hidden bg-white">
                   <CardHeader className="bg-slate-50/50 border-b border-slate-100 py-6 px-10">
-                    <CardTitle className="text-xl font-serif font-black text-slate-800">Cooking Queue</CardTitle>
+                    <CardTitle className="text-xl font-serif font-black text-slate-800">Active Orders</CardTitle>
                   </CardHeader>
                   <CardContent className="p-0">
                     {state.loading ? (

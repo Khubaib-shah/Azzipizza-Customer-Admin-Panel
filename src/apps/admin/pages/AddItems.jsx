@@ -165,11 +165,11 @@ const AddItems = () => {
         <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="space-y-2">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black !text-slate-900 tracking-tight flex items-center gap-3">
-              Craft <span className="text-red-600 italic underline underline-offset-8 decoration-amber-400/40">New Delights</span>
+              Add <span className="text-red-600 italic underline underline-offset-8 decoration-amber-400/40">New Item</span>
               <Sparkles className="h-6 w-6 text-amber-500 animate-pulse" />
             </h1>
             <p className="text-slate-500 font-medium max-w-md">
-              Expanding the Azzipizza legacy, one ingredient at a time.
+              Add a new dish to your menu.
             </p>
           </div>
         </header>
@@ -180,9 +180,9 @@ const AddItems = () => {
               <div className="absolute top-0 right-0 p-12 opacity-10 rotate-12">
                 <PlusCircle className="h-40 w-40" />
               </div>
-              <CardTitle className="text-2xl md:text-3xl font-serif font-bold mb-2">Item Blueprint</CardTitle>
+              <CardTitle className="text-2xl md:text-3xl font-serif font-bold mb-2">Item Details</CardTitle>
               <CardDescription className="text-red-100/80 font-medium max-w-sm">
-                Fine-tune the name, pricing, and visual soul of your dish.
+                Enter the name, price, and photo.
               </CardDescription>
             </CardHeader>
 
@@ -191,7 +191,7 @@ const AddItems = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-2.5">
                   <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">
-                    Masterpiece Name
+                    Item Name
                   </label>
                   <Input
                     name="name"
@@ -260,7 +260,7 @@ const AddItems = () => {
                   >
                     <SelectTrigger className={`h-14 px-6 rounded-2xl border-slate-100 bg-slate-50/50 focus:ring-red-600/10 font-bold text-slate-700 capitalize ${formErrors.category ? "border-red-300" : ""
                       }`}>
-                      <SelectValue placeholder="Where does it belong?" />
+                      <SelectValue placeholder="Choose a category" />
                     </SelectTrigger>
                     <SelectContent className="rounded-2xl border-slate-100 shadow-2xl">
                       {["pizze rosse", "pizze bianche", "fritti", "dolci", "bibite", "birre"].map((cat) => (
@@ -296,13 +296,13 @@ const AddItems = () => {
               {/* Description Section */}
               <div className="space-y-2.5">
                 <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">
-                  Taste Narrative
+                  Description
                 </label>
                 <Textarea
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  placeholder="Describe the aroma, the crunch, and the soul of this dish..."
+                  placeholder="Tell us about this dish..."
                   className={`min-h-[120px] rounded-2xl border-slate-100 bg-slate-50/50 focus-visible:ring-red-600/10 font-medium p-6 resize-none transition-all ${formErrors.description ? "border-red-300 bg-red-50/30" : "hover:border-slate-200"
                     }`}
                 />
@@ -311,7 +311,7 @@ const AddItems = () => {
               {/* Ingredients Section */}
               <div className="space-y-4">
                 <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">
-                  Secret Ingredients (Optional Extra)
+                  Extra Ingredients (Optional)
                 </label>
                 <div className="flex flex-col sm:flex-row gap-4 bg-slate-50/40 p-4 rounded-4xl border border-slate-100/50">
                   <Input
@@ -366,7 +366,7 @@ const AddItems = () => {
               {/* Image Upload Section */}
               <div className="space-y-4 pt-4">
                 <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">
-                  The Visual Presentation
+                  Item Photo
                 </label>
                 <div
                   className={`border-2 border-dashed rounded-[3rem] p-4 text-center transition-all relative min-h-[300px] flex items-center justify-center ${imagePreview ? "border-emerald-200 bg-emerald-50/10" : "border-slate-100 hover:border-red-200 hover:bg-red-50/10"
@@ -414,9 +414,9 @@ const AddItems = () => {
                           <Upload className="h-8 w-8 text-slate-300" />
                         </div>
                         <div className="space-y-2">
-                          <p className="text-xl font-serif font-black text-slate-800">Visuals say it all</p>
+                          <p className="text-xl font-serif font-black text-slate-800">Photo</p>
                           <p className="text-sm text-slate-400 font-medium max-w-xs mx-auto">
-                            Add a high-resolution photo to showcase the artisan quality.
+                            Add a photo of the dish.
                           </p>
                         </div>
                         <Input
@@ -457,7 +457,7 @@ const AddItems = () => {
                 className="text-slate-400 font-bold text-xs uppercase tracking-widest hover:text-slate-600 transition-colors"
                 onClick={handleReset}
               >
-                Clear Blueprint
+                Clear Form
               </button>
 
               <Button
@@ -468,10 +468,10 @@ const AddItems = () => {
                 {loading ? (
                   <div className="flex items-center gap-3">
                     <Loader2 className="h-6 w-6 animate-spin" />
-                    Baking in database...
+                    Saving...
                   </div>
                 ) : (
-                  "Add to Global Menu"
+                  "Add to Menu"
                 )}
               </Button>
             </CardFooter>
