@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { requestForToken, onMessageListener } from "@shared/config/firebase";
 import { toast } from "react-toastify";
-import { apiClient } from "@shared/services/api-client";
+import apiClient from "@shared/services/api-client";
 import { playNotificationSound, broadcastNotification, showCoordinatedToast } from "@shared/utils/notification-utils";
 
 export const usePushNotifications = () => {
