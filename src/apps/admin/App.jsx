@@ -10,12 +10,12 @@ import Header from "./components/common/Header";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
-import NotificationManager from "./components/NotificationManager";
+import AudioManager from "./components/AudioManager";
 
 const App = () => {
   return (
     <Router>
-      <NotificationManager />
+      <AudioManager />
       <Routes>
         <Route path="/login" element={<Login />} />
 

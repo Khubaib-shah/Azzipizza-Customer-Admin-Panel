@@ -1,16 +1,11 @@
 import { useEffect } from "react";
-import { usePushNotifications } from "../hooks/usePushNotifications";
 import { initNotificationAudio } from "@shared/utils/notification-utils";
 import NotificationSound from "/notification-sound.wav";
 
-const NotificationManager = () => {
-  const { initNotifications } = usePushNotifications();
-
+const AudioManager = () => {
   useEffect(() => {
-    // Initialize audio
     const audio = initNotificationAudio(NotificationSound);
-    
-    // Prime audio on first interaction
+
     const primeAudio = () => {
       audio.play().then(() => {
         audio.pause();
@@ -23,13 +18,10 @@ const NotificationManager = () => {
     };
     window.addEventListener("click", primeAudio);
 
-    // Initialize Push Notifications
-    initNotifications();
-
     return () => window.removeEventListener("click", primeAudio);
-  }, [initNotifications]);
+  }, []);
 
   return null; // This component doesn't render anything
 };
 
-export default NotificationManager;
+export default AudioManager;

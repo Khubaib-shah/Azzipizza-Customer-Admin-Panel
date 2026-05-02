@@ -23,7 +23,6 @@ import {
 } from "@shared/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@shared/components/ui/tabs";
 import { useNotifications } from "../hooks/useNotifications";
-import { usePushNotifications } from "../hooks/usePushNotifications";
 import CompletedOrderTable from "../components/CompletedOrderTable";
 import ActiveOrderTable from "../components/ActiveOrderTable";
 import { reducer } from "@shared/utils/reducer";
@@ -50,7 +49,6 @@ const Orders = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
   const { setNotifications } = useNotifications();
-  const { permissionStatus, initNotifications, testPush, token } = usePushNotifications();
   const [isAudioBlocked, setIsAudioBlocked] = useState(false);
   const [isSocketConnected, setIsSocketConnected] = useState(false);
   const socketRef = useRef(null);
@@ -287,31 +285,7 @@ const Orders = () => {
               <div className="h-4 w-px bg-slate-200 hidden sm:block" />
 
               <div className="flex items-center gap-2">
-                <Button
-                  variant={permissionStatus === "granted" ? "ghost" : "secondary"}
-                  size="sm"
-                  onClick={initNotifications}
-                  className={`h-7 px-3 text-[9px] font-black uppercase tracking-widest gap-2 rounded-lg ${permissionStatus === "granted" ? "text-emerald-600 bg-emerald-50/50" : ""}`}
-                >
-                  {permissionStatus === "granted" ? (
-                    <Bell className="h-3 w-3" />
-                  ) : (
-                    <BellOff className="h-3 w-3" />
-                  )}
-                  {permissionStatus === "granted" ? "Alerts Active" : "Enable Alerts"}
-                </Button>
-
-                {permissionStatus === "granted" && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={testPush}
-                    className="h-7 px-3 text-[9px] font-black uppercase tracking-widest gap-2 border-slate-200 rounded-lg text-slate-500 hover:text-red-600 transition-colors"
-                  >
-                    <Send className="h-3 w-3" />
-                    Test
-                  </Button>
-                )}
+                {/* Push notification buttons removed */}
               </div>
             </div>
           </div>
